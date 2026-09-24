@@ -1,0 +1,242 @@
+/* NextGrade - Modern Child-Friendly Styling & Tablet UX */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&family=Patrick+Hand&display=swap');
+
+:root {
+  --font-main: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Fredoka', cursive, sans-serif;
+  --font-handwriting: 'Patrick Hand', cursive, sans-serif;
+  
+  --primary: #0EA5E9;
+  --primary-hover: #0284C7;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --purple: #8B5CF6;
+  
+  --card-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --card-border: 3px solid #E2E8F0;
+  --tablet-tap-min: 54px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: #F8FAFC;
+  background-image: 
+    radial-gradient(#E2E8F0 1.5px, transparent 1.5px), 
+    radial-gradient(#E2E8F0 1.5px, #F8FAFC 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+  color: #1E293B;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  touch-action: manipulation;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Tablet Optimized Tap Buttons */
+.btn-chunky {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  border-radius: 1.25rem;
+  padding: 0.875rem 1.75rem;
+  min-height: var(--tablet-tap-min);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  text-decoration: none;
+  font-size: 1.15rem;
+}
+
+.btn-chunky:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px !important;
+}
+
+.btn-primary {
+  background-color: #0EA5E9;
+  color: #FFFFFF;
+  border-bottom: 6px solid #0284C7;
+}
+.btn-primary:hover {
+  background-color: #38BDF8;
+}
+
+.btn-success {
+  background-color: #10B981;
+  color: #FFFFFF;
+  border-bottom: 6px solid #047857;
+}
+.btn-success:hover {
+  background-color: #34D399;
+}
+
+.btn-amber {
+  background-color: #F59E0B;
+  color: #FFFFFF;
+  border-bottom: 6px solid #B45309;
+}
+.btn-amber:hover {
+  background-color: #FBBF24;
+}
+
+.btn-purple {
+  background-color: #8B5CF6;
+  color: #FFFFFF;
+  border-bottom: 6px solid #6D28D9;
+}
+.btn-purple:hover {
+  background-color: #A78BFA;
+}
+
+.btn-white {
+  background-color: #FFFFFF;
+  color: #334155;
+  border: 3px solid #E2E8F0;
+  border-bottom: 6px solid #CBD5E1;
+}
+.btn-white:hover {
+  background-color: #F1F5F9;
+}
+
+/* Question Option Cards */
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #FFFFFF;
+  border: 3px solid #E2E8F0;
+  border-bottom: 6px solid #CBD5E1;
+  border-radius: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1E293B;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  min-height: 72px;
+}
+
+.option-card:hover {
+  border-color: #38BDF8;
+  background-color: #F0F9FF;
+  transform: translateY(-2px);
+}
+
+.option-card:active {
+  transform: translateY(3px);
+  border-bottom-width: 3px;
+}
+
+.option-card.selected-correct {
+  background-color: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  border-bottom-color: #047857 !important;
+  color: #065F46 !important;
+  animation: popSuccess 0.4s ease;
+}
+
+.option-card.selected-wrong {
+  background-color: #FEF2F2 !important;
+  border-color: #EF4444 !important;
+  border-bottom-color: #B91C1C !important;
+  color: #991B1B !important;
+  animation: shake 0.4s ease;
+}
+
+/* Animations */
+@keyframes popSuccess {
+  0% { transform: scale(0.96); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes floatAnim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: floatAnim 3s ease-in-out infinite;
+}
+
+/* Primary School Handwriting Ruling for Worksheets */
+.handwriting-box {
+  background-color: #FAFAFA;
+  border: 2px dashed #94A3B8;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.ruling-line {
+  position: relative;
+  height: 60px;
+  border-top: 1.5px solid #64748B;
+  border-bottom: 2px solid #1E293B;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.ruling-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1.5px dashed #94A3B8;
+}
+
+.handwriting-text {
+  font-family: var(--font-handwriting);
+  font-size: 2.25rem;
+  color: #475569;
+  letter-spacing: 2px;
+  position: absolute;
+  bottom: 4px;
+  left: 12px;
+}
+
+/* Printable Worksheet Styles */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-page {
+    page-break-after: always;
+    padding: 20mm;
+    margin: 0;
+    width: 100%;
+    max-width: 100% !important;
+  }
+  .worksheet-card {
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    margin-bottom: 15px;
+    padding: 12px !important;
+  }
+}
