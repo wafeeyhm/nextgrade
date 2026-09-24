@@ -1722,67 +1722,88 @@ for item in storage_k3:
     add_q("ict_storage", "ict", q, q, "en", "multiple_choice", img, None, opts, ans, hint, hint)
 
 
-# --- Topic 3: ict_counting (Counting Computer Peripherals, K3 Friendly) ---
+# --- Topic 3: ict_counting (Counting Computer Peripherals, K3 Friendly - Icons in Picture Area) ---
 counting_peripherals_k3 = [
-    ("Count the computer mice: 🖱️. How many mouse do you see?", "1", ["1", "2", "0"], "images/ict/mouse.jpg", "Count: 1 mouse!"),
-    ("Count the mice: 🖱️ 🖱️. How many mice do you see?", "2", ["2", "3", "1"], "images/ict/mouse.jpg", "Count with your finger: 1, 2!"),
-    ("Count the mice: 🖱️ 🖱️ 🖱️. How many mice do you see?", "3", ["3", "4", "2"], "images/ict/mouse.jpg", "1, 2, 3 mice!"),
-    ("Count the screens: 🖥️. How many screens do you see?", "1", ["1", "2", "3"], "images/ict/monitor.jpg", "Just 1 screen!"),
-    ("Count the screens: 🖥️ 🖥️. How many screens do you see?", "2", ["2", "3", "1"], "images/ict/monitor.jpg", "1, 2 screens!"),
-    ("Count the screens: 🖥️ 🖥️ 🖥️. How many screens do you see?", "3", ["3", "4", "2"], "images/ict/monitor.jpg", "1, 2, 3 screens!"),
-    ("Count the screens: 🖥️ 🖥️ 🖥️ 🖥️. How many screens do you see?", "4", ["4", "5", "3"], "images/ict/monitor.jpg", "1, 2, 3, 4 screens!"),
-    ("Count the keyboards: ⌨️. How many keyboards do you see?", "1", ["1", "2", "0"], "images/ict/keyboard.jpg", "1 keyboard!"),
-    ("Count the keyboards: ⌨️ ⌨️. How many keyboards do you see?", "2", ["2", "3", "1"], "images/ict/keyboard.jpg", "1, 2 keyboards!"),
-    ("Count the keyboards: ⌨️ ⌨️ ⌨️. How many keyboards do you see?", "3", ["3", "4", "2"], "images/ict/keyboard.jpg", "1, 2, 3 keyboards!"),
-    ("Count the keyboards: ⌨️ ⌨️ ⌨️ ⌨️. How many keyboards do you see?", "4", ["4", "5", "3"], "images/ict/keyboard.jpg", "1, 2, 3, 4 keyboards!"),
-    ("Count the keyboards: ⌨️ ⌨️ ⌨️ ⌨️ ⌨️. How many keyboards do you see?", "5", ["5", "6", "4"], "images/ict/keyboard.jpg", "1, 2, 3, 4, 5 keyboards!"),
-    ("Count the headphones: 🎧. How many headphones do you see?", "1", ["1", "2", "3"], "images/ict/headphones.jpg", "1 pair of headphones!"),
-    ("Count the headphones: 🎧 🎧. How many headphones do you see?", "2", ["2", "3", "1"], "images/ict/headphones.jpg", "1, 2 headphones!"),
-    ("Count the headphones: 🎧 🎧 🎧. How many headphones do you see?", "3", ["3", "4", "2"], "images/ict/headphones.jpg", "1, 2, 3 headphones!"),
-    ("Count the CDs: 💿. How many shiny discs do you see?", "1", ["1", "2", "0"], "images/ict/cd_rom.jpg", "1 shiny CD!"),
-    ("Count the CDs: 💿 💿. How many shiny discs do you see?", "2", ["2", "3", "1"], "images/ict/cd_rom.jpg", "1, 2 shiny CDs!"),
-    ("Count the CDs: 💿 💿 💿. How many shiny discs do you see?", "3", ["3", "4", "2"], "images/ict/cd_rom.jpg", "1, 2, 3 shiny CDs!"),
-    ("Count the CDs: 💿 💿 💿 💿. How many shiny discs do you see?", "4", ["4", "5", "3"], "images/ict/cd_rom.jpg", "1, 2, 3, 4 shiny CDs!"),
-    ("Count the CDs: 💿 💿 💿 💿 💿. How many shiny discs do you see?", "5", ["5", "6", "4"], "images/ict/cd_rom.jpg", "1, 2, 3, 4, 5 shiny CDs!"),
-    ("Count the printers: 🖨️. How many printers do you see?", "1", ["1", "2", "0"], "images/ict/printer.jpg", "1 printer!"),
-    ("Count the printers: 🖨️ 🖨️. How many printers do you see?", "2", ["2", "3", "1"], "images/ict/printer.jpg", "1, 2 printers!"),
-    ("Count the printers: 🖨️ 🖨️ 🖨️. How many printers do you see?", "3", ["3", "4", "2"], "images/ict/printer.jpg", "1, 2, 3 printers!"),
-    ("Count the USB pendrives: 💾 💾 💾. How many drives do you see?", "3", ["3", "2", "4"], "images/ict/pendrive.jpg", "1, 2, 3 drives!"),
-    ("Count the USB pendrives: 💾 💾 💾 💾. How many drives do you see?", "4", ["4", "5", "3"], "images/ict/pendrive.jpg", "1, 2, 3, 4 drives!"),
-    ("Count: 🖥️ and 🖱️. How many computer items in total?", "2", ["2", "3", "1"], None, "1 monitor + 1 mouse = 2 items!"),
-    ("Count: 🖥️, ⌨️, and 🖱️. How many computer items in total?", "3", ["3", "4", "2"], None, "1 monitor + 1 keyboard + 1 mouse = 3 items!"),
-    ("Count: 🎧 and 🎧. How many headphones?", "2", ["2", "1", "3"], "images/ict/headphones.jpg", "1 + 1 = 2 headphones!"),
-    ("Count: ⌨️ and ⌨️ and ⌨️. How many keyboards?", "3", ["3", "2", "4"], "images/ict/keyboard.jpg", "1 + 1 + 1 = 3 keyboards!"),
-    ("If teacher brings 2 mice 🖱️🖱️ and adds 1 more 🖱️, how many mice?", "3", ["3", "4", "2"], "images/ict/mouse.jpg", "2 + 1 = 3 mice!"),
-    ("If you have 1 monitor 🖥️ and get 1 more 🖥️, how many monitors?", "2", ["2", "3", "1"], "images/ict/monitor.jpg", "1 + 1 = 2 monitors!"),
-    ("Count the microphones: 🎤. How many microphones?", "1", ["1", "2", "0"], "images/ict/microphone.jpg", "1 microphone!"),
-    ("Count the microphones: 🎤 🎤. How many microphones?", "2", ["2", "3", "1"], "images/ict/microphone.jpg", "1, 2 microphones!"),
-    ("Count the webcams: 📹. How many cameras?", "1", ["1", "2", "0"], "images/ict/webcam.jpg", "1 webcam camera!"),
-    ("Count the webcams: 📹 📹. How many cameras?", "2", ["2", "3", "1"], "images/ict/webcam.jpg", "1, 2 webcams!"),
-    ("Count: 🖱️ 🖱️ 🖱️ 🖱️. How many mice?", "4", ["4", "5", "3"], "images/ict/mouse.jpg", "Count: 1, 2, 3, 4!"),
-    ("Count: 🖱️ 🖱️ 🖱️ 🖱️ 🖱️. How many mice?", "5", ["5", "6", "4"], "images/ict/mouse.jpg", "Count: 1, 2, 3, 4, 5!"),
-    ("Count: 🖥️ 🖥️ 🖥️ 🖥️ 🖥️. How many screens?", "5", ["5", "4", "6"], "images/ict/monitor.jpg", "Five screens!"),
-    ("Count: 🎧 🎧 🎧 🎧. How many headphones?", "4", ["4", "3", "5"], "images/ict/headphones.jpg", "Four headphones!"),
-    ("Count: 💿 💿 💿 💿 💿 💿. How many CDs?", "6", ["6", "5", "7"], "images/ict/cd_rom.jpg", "Six shiny CDs!"),
-    ("Count the buttons on a basic mouse: left and right. How many main buttons?", "2 buttons", ["2 buttons", "10 buttons", "5 buttons"], "images/ict/mouse.jpg", "Two main buttons: left and right!"),
-    ("Count: 🖨️ 🖨️ 🖨️ 🖨️. How many printers?", "4", ["4", "3", "5"], "images/ict/printer.jpg", "Four printers!"),
-    ("Count: ⌨️ ⌨️ ⌨️ ⌨️ ⌨️ ⌨️. How many keyboards?", "6", ["6", "5", "7"], "images/ict/keyboard.jpg", "Six keyboards!"),
-    ("Count: 🎤 🎤 🎤. How many microphones?", "3", ["3", "2", "4"], "images/ict/microphone.jpg", "Three microphones!"),
-    ("Count: 📹 📹 📹. How many webcams?", "3", ["3", "2", "4"], "images/ict/webcam.jpg", "Three webcams!"),
-    ("If you have 4 laptop computers and give 1 to Ben, how many left?", "3", ["3", "4", "2"], None, "4 - 1 = 3 laptops left!"),
-    ("If you have 5 USB pendrives and lose 1, how many left?", "4", ["4", "5", "3"], "images/ict/pendrive.jpg", "5 - 1 = 4 pendrives!"),
-    ("If a computer lab has 3 desks with 1 computer on each, how many computers?", "3 computers", ["3 computers", "5 computers"], "images/ict/monitor.jpg", "3 desks = 3 computers!"),
-    ("Count: 🖱️ and 🎧. How many items?", "2", ["2", "1", "3"], None, "1 mouse + 1 headphone = 2 items!"),
-    ("Count: 🖨️ and 🖥️. How many items?", "2", ["2", "3", "1"], None, "1 printer + 1 screen = 2 items!"),
-    ("Count: 💿 and 💿 and 💿 and 💿. How many CDs?", "4", ["4", "3", "5"], "images/ict/cd_rom.jpg", "1, 2, 3, 4 CDs!"),
-    ("Count the computers in your hand right now: 📱 (1 smartphone). How many?", "1", ["1", "2", "3"], None, "Just 1 device!"),
-    ("Count: 🖱️ 🖱️ 🖱️ and 🖱️ 🖱️ 🖱️. How many mice in total?", "6", ["6", "5", "7"], "images/ict/mouse.jpg", "3 + 3 = 6 mice!"),
-    ("Count: 🖥️ 🖥️ and 🖥️ 🖥️. How many monitors?", "4", ["4", "3", "5"], "images/ict/monitor.jpg", "2 + 2 = 4 monitors!"),
-    ("How many screens does a regular laptop have?", "1 screen", ["1 screen", "4 screens"], None, "Laptops have 1 screen.")
+    # MICE (1 to 6)
+    ("Count the computer mice in the picture area! How many do you see?", "1", ["1", "2", "0"], "🖱️", "Count: 1 mouse!"),
+    ("Count the computer mice in the picture area! How many do you see?", "2", ["2", "3", "1"], "🖱️ 🖱️", "Count with your finger: 1, 2!"),
+    ("Count the computer mice in the picture area! How many do you see?", "3", ["3", "4", "2"], "🖱️ 🖱️ 🖱️", "Count: 1, 2, 3 mice!"),
+    ("Count the computer mice in the picture area! How many do you see?", "4", ["4", "5", "3"], "🖱️ 🖱️ 🖱️ 🖱️", "Count: 1, 2, 3, 4 mice!"),
+    ("Count the computer mice in the picture area! How many do you see?", "5", ["5", "6", "4"], "🖱️ 🖱️ 🖱️ 🖱️ 🖱️", "Count: 1, 2, 3, 4, 5 mice!"),
+    ("Count the computer mice in the picture area! How many do you see?", "6", ["6", "5", "7"], "🖱️ 🖱️ 🖱️ 🖱️ 🖱️ 🖱️", "Count: 1, 2, 3, 4, 5, 6 mice!"),
+
+    # SCREENS / MONITORS (1 to 6)
+    ("Count the computer screens in the picture area! How many do you see?", "1", ["1", "2", "3"], "🖥️", "Just 1 screen!"),
+    ("Count the computer screens in the picture area! How many do you see?", "2", ["2", "3", "1"], "🖥️ 🖥️", "1, 2 screens!"),
+    ("Count the computer screens in the picture area! How many do you see?", "3", ["3", "4", "2"], "🖥️ 🖥️ 🖥️", "1, 2, 3 screens!"),
+    ("Count the computer screens in the picture area! How many do you see?", "4", ["4", "5", "3"], "🖥️ 🖥️ 🖥️ 🖥️", "1, 2, 3, 4 screens!"),
+    ("Count the computer screens in the picture area! How many do you see?", "5", ["5", "6", "4"], "🖥️ 🖥️ 🖥️ 🖥️ 🖥️", "Five screens!"),
+    ("Count the computer screens in the picture area! How many do you see?", "6", ["6", "5", "7"], "🖥️ 🖥️ 🖥️ 🖥️ 🖥️ 🖥️", "Six screens!"),
+
+    # KEYBOARDS (1 to 6)
+    ("Count the keyboards in the picture area! How many do you see?", "1", ["1", "2", "0"], "⌨️", "1 keyboard!"),
+    ("Count the keyboards in the picture area! How many do you see?", "2", ["2", "3", "1"], "⌨️ ⌨️", "1, 2 keyboards!"),
+    ("Count the keyboards in the picture area! How many do you see?", "3", ["3", "4", "2"], "⌨️ ⌨️ ⌨️", "1, 2, 3 keyboards!"),
+    ("Count the keyboards in the picture area! How many do you see?", "4", ["4", "5", "3"], "⌨️ ⌨️ ⌨️ ⌨️", "1, 2, 3, 4 keyboards!"),
+    ("Count the keyboards in the picture area! How many do you see?", "5", ["5", "6", "4"], "⌨️ ⌨️ ⌨️ ⌨️ ⌨️", "1, 2, 3, 4, 5 keyboards!"),
+    ("Count the keyboards in the picture area! How many do you see?", "6", ["6", "5", "7"], "⌨️ ⌨️ ⌨️ ⌨️ ⌨️ ⌨️", "Six keyboards!"),
+
+    # HEADPHONES (1 to 5)
+    ("Count the headphones in the picture area! How many do you see?", "1", ["1", "2", "3"], "🎧", "1 pair of headphones!"),
+    ("Count the headphones in the picture area! How many do you see?", "2", ["2", "3", "1"], "🎧 🎧", "1, 2 headphones!"),
+    ("Count the headphones in the picture area! How many do you see?", "3", ["3", "4", "2"], "🎧 🎧 🎧", "1, 2, 3 headphones!"),
+    ("Count the headphones in the picture area! How many do you see?", "4", ["4", "3", "5"], "🎧 🎧 🎧 🎧", "Four headphones!"),
+    ("Count the headphones in the picture area! How many do you see?", "5", ["5", "4", "6"], "🎧 🎧 🎧 🎧 🎧", "Five headphones!"),
+
+    # CD DISCS (1 to 6)
+    ("Count the shiny CD discs in the picture area! How many do you see?", "1", ["1", "2", "0"], "💿", "1 shiny CD!"),
+    ("Count the shiny CD discs in the picture area! How many do you see?", "2", ["2", "3", "1"], "💿 💿", "1, 2 shiny CDs!"),
+    ("Count the shiny CD discs in the picture area! How many do you see?", "3", ["3", "4", "2"], "💿 💿 💿", "1, 2, 3 shiny CDs!"),
+    ("Count the shiny CD discs in the picture area! How many do you see?", "4", ["4", "5", "3"], "💿 💿 💿 💿", "1, 2, 3, 4 shiny CDs!"),
+    ("Count the shiny CD discs in the picture area! How many do you see?", "5", ["5", "6", "4"], "💿 💿 💿 💿 💿", "1, 2, 3, 4, 5 shiny CDs!"),
+    ("Count the shiny CD discs in the picture area! How many do you see?", "6", ["6", "5", "7"], "💿 💿 💿 💿 💿 💿", "Six shiny CDs!"),
+
+    # PRINTERS (1 to 5)
+    ("Count the printers in the picture area! How many do you see?", "1", ["1", "2", "0"], "🖨️", "1 printer!"),
+    ("Count the printers in the picture area! How many do you see?", "2", ["2", "3", "1"], "🖨️ 🖨️", "1, 2 printers!"),
+    ("Count the printers in the picture area! How many do you see?", "3", ["3", "4", "2"], "🖨️ 🖨️ 🖨️", "1, 2, 3 printers!"),
+    ("Count the printers in the picture area! How many do you see?", "4", ["4", "3", "5"], "🖨️ 🖨️ 🖨️ 🖨️", "Four printers!"),
+    ("Count the printers in the picture area! How many do you see?", "5", ["5", "6", "4"], "🖨️ 🖨️ 🖨️ 🖨️ 🖨️", "Five printers!"),
+
+    # USB PENDRIVES (1 to 5)
+    ("Count the USB pendrives in the picture area! How many do you see?", "1", ["1", "2", "0"], "💾", "1 drive!"),
+    ("Count the USB pendrives in the picture area! How many do you see?", "2", ["2", "3", "1"], "💾 💾", "1, 2 drives!"),
+    ("Count the USB pendrives in the picture area! How many do you see?", "3", ["3", "2", "4"], "💾 💾 💾", "1, 2, 3 drives!"),
+    ("Count the USB pendrives in the picture area! How many do you see?", "4", ["4", "5", "3"], "💾 💾 💾 💾", "1, 2, 3, 4 drives!"),
+    ("Count the USB pendrives in the picture area! How many do you see?", "5", ["5", "4", "6"], "💾 💾 💾 💾 💾", "Five drives!"),
+
+    # MICROPHONES (1 to 4)
+    ("Count the microphones in the picture area! How many do you see?", "1", ["1", "2", "0"], "🎤", "1 microphone!"),
+    ("Count the microphones in the picture area! How many do you see?", "2", ["2", "3", "1"], "🎤 🎤", "1, 2 microphones!"),
+    ("Count the microphones in the picture area! How many do you see?", "3", ["3", "2", "4"], "🎤 🎤 🎤", "Three microphones!"),
+    ("Count the microphones in the picture area! How many do you see?", "4", ["4", "3", "5"], "🎤 🎤 🎤 🎤", "Four microphones!"),
+
+    # WEBCAMS (1 to 4)
+    ("Count the webcams in the picture area! How many do you see?", "1", ["1", "2", "0"], "📹", "1 webcam camera!"),
+    ("Count the webcams in the picture area! How many do you see?", "2", ["2", "3", "1"], "📹 📹", "1, 2 webcams!"),
+    ("Count the webcams in the picture area! How many do you see?", "3", ["3", "2", "4"], "📹 📹 📹", "Three webcams!"),
+    ("Count the webcams in the picture area! How many do you see?", "4", ["4", "3", "5"], "📹 📹 📹 📹", "Four webcams!"),
+
+    # MIXED PERIPHERAL GROUPS (Q47 to Q55)
+    ("Count all computer items in the picture area! How many do you see?", "2", ["2", "3", "1"], "🖥️ 🖱️", "1 monitor + 1 mouse = 2 items!"),
+    ("Count all computer items in the picture area! How many do you see?", "3", ["3", "4", "2"], "🖥️ ⌨️ 🖱️", "1 monitor + 1 keyboard + 1 mouse = 3 items!"),
+    ("Count all headphones in the picture area! How many do you see?", "2", ["2", "1", "3"], "🎧 🎧", "1 + 1 = 2 headphones!"),
+    ("Count all computer items in the picture area! How many do you see?", "4", ["4", "3", "5"], "🖨️ 🖥️ 🖱️ ⌨️", "1 printer + 1 screen + 1 mouse + 1 keyboard = 4 items!"),
+    ("Count all items in the picture area! How many do you see?", "4", ["4", "3", "5"], "💿 💿 💿 🖱️", "3 CDs + 1 mouse = 4 items!"),
+    ("Count all screens and mice in the picture area! How many do you see?", "4", ["4", "3", "5"], "🖥️ 🖥️ 🖱️ 🖱️", "2 screens + 2 mice = 4 items!"),
+    ("Count all computer items in the picture area! How many do you see?", "5", ["5", "4", "6"], "⌨️ ⌨️ 🎧 🎧 🎧", "2 keyboards + 3 headphones = 5 items!"),
+    ("Count the mice in the picture area! How many do you see?", "7", ["7", "6", "8"], "🖱️ 🖱️ 🖱️ 🖱️ 🖱️ 🖱️ 🖱️", "Seven mice!"),
+    ("Count the shiny CDs in the picture area! How many do you see?", "8", ["8", "7", "9"], "💿 💿 💿 💿 💿 💿 💿 💿", "Eight CDs!")
 ]
 for item in counting_peripherals_k3:
-    q, ans, opts, img, hint = item
-    add_q("ict_counting", "ict", q, q, "en", "multiple_choice", img, None, opts, ans, hint, hint)
+    q, ans, opts, icons_str, hint = item
+    meta = {"count_icons": icons_str}
+    add_q("ict_counting", "ict", q, q, "en", "multiple_choice", None, None, opts, ans, hint, hint, meta=meta)
 
 
 # --- Topic 4: ict_spelling (Spelling Computer Peripherals, K3 Friendly) ---

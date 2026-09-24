@@ -155,6 +155,15 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
             </div>
           ` : ''}
 
+          <!-- Counting Icons Display (for ICT counting / math) -->
+          ${q.meta_data && q.meta_data.count_icons ? `
+            <div class="my-2.5 p-3 bg-sky-50/50 border-2 border-dashed border-sky-200 rounded-xl flex flex-wrap justify-center items-center gap-3 text-3xl">
+              ${q.meta_data.count_icons.trim().split(/\s+/).map(icon => `
+                <span class="w-11 h-11 flex items-center justify-center bg-white rounded-lg border border-slate-200 shadow-sm">${icon}</span>
+              `).join('')}
+            </div>
+          ` : ''}
+
           <!-- Options Guide Box -->
           ${q.options && q.options.length > 0 ? `
             <div class="my-2 p-2 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap gap-2 text-xs font-bold text-slate-600">

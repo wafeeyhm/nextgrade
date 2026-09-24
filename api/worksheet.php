@@ -53,7 +53,8 @@ try {
             'passage' => $q['passage'],
             'options' => json_decode($q['options_json'], true) ?? [],
             'correct_answer' => $q['correct_answer'],
-            'hint_text' => $q['hint_text']
+            'hint_text' => $q['hint_text'],
+            'meta_data' => json_decode($q['meta_data_json'] ?? '', true)
         ];
     }
 

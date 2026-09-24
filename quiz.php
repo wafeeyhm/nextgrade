@@ -139,10 +139,11 @@ $mode = $_GET['mode'] ?? null;
         </h2>
       </div>
 
-      <!-- Media Illustration (Image / SVG) -->
+      <!-- Media Illustration (Image / Icons) -->
       <div id="question-media-wrapper" class="flex justify-center my-1">
-        <div class="w-full max-w-sm max-h-56 bg-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden flex items-center justify-center p-2 shadow-inner">
+        <div id="question-media-card" class="w-full max-w-md min-h-[130px] max-h-64 bg-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden flex items-center justify-center p-3 shadow-inner">
           <img id="question-image" src="" alt="Question Illustration" class="max-h-52 w-auto object-contain transition-transform hover:scale-105 duration-200">
+          <div id="question-icons-display" class="hidden flex flex-wrap justify-center items-center gap-3.5 p-2 select-none w-full"></div>
         </div>
       </div>
 
@@ -328,15 +329,34 @@ $mode = $_GET['mode'] ?? null;
       passageBox.classList.add('hidden');
     }
 
-    // Media
+    // Media & Icons Display
     const mediaWrapper = document.getElementById('question-media-wrapper');
     const imgElem = document.getElementById('question-image');
-    if (q.image_url) {
+    const iconsElem = document.getElementById('question-icons-display');
+
+    const countIcons = q.meta_data?.count_icons;
+    if (countIcons) {
       mediaWrapper.classList.remove('hidden');
+      imgElem.classList.add('hidden');
+      iconsElem.classList.remove('hidden');
+      const iconList = countIcons.trim().split(/\s+/);
+      iconsElem.innerHTML = iconList.map((icon, idx) => `
+        <span onclick="this.classList.toggle('scale-125'); this.classList.toggle('ring-4'); this.classList.toggle('ring-emerald-400'); this.classList.toggle('bg-emerald-50'); SoundEffects.playPop();" 
+              class="w-14 h-14 md:w-16 md:h-16 text-3xl md:text-4xl rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center transform active:scale-95 transition-all duration-150 cursor-pointer select-none hover:shadow-md hover:border-amber-300" 
+              title="Tap to count: ${idx + 1}">
+          ${icon}
+        </span>
+      `).join('');
+    } else if (q.image_url) {
+      mediaWrapper.classList.remove('hidden');
+      imgElem.classList.remove('hidden');
+      iconsElem.classList.add('hidden');
       imgElem.src = q.image_url;
       imgElem.alt = q.question_text;
     } else {
       mediaWrapper.classList.add('hidden');
+      imgElem.classList.add('hidden');
+      iconsElem.classList.add('hidden');
     }
 
     // Reset Next Button & Feedback
