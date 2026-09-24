@@ -7,11 +7,11 @@ $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? '';
 $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
 ?>
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lembaran Kerja Menulis - NextGrade</title>
+  <title>Handwriting Worksheet - NextGrade</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/app.css">
   <style>
@@ -32,12 +32,12 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
     class="btn-chunky btn-white py-2 px-4 rounded-xl text-sm font-bold flex items-center gap-1.5"
   >
     <span>⬅️</span>
-    <span>Kembali</span>
+    <span>Back</span>
   </a>
 
   <div class="text-center">
-    <span class="font-extrabold text-slate-700 text-sm md:text-base">Lembaran Kerja Menguji Kemahiran Menulis</span>
-    <span class="block text-xs text-slate-400">Sesuai dicetak di atas kertas saiz A4</span>
+    <span class="font-extrabold text-slate-700 text-sm md:text-base">Handwriting & Writing Practice Worksheet</span>
+    <span class="block text-xs text-slate-400">Optimized for A4 paper printing</span>
   </div>
 
   <button 
@@ -45,7 +45,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
     class="btn-chunky btn-primary py-2.5 px-6 rounded-xl text-base font-black shadow-md flex items-center gap-2"
   >
     <span>🖨️</span>
-    <span>Cetak Sekarang</span>
+    <span>Print Now</span>
   </button>
 </div>
 
@@ -58,17 +58,17 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
       <span class="text-4xl">🌟</span>
       <div>
         <h1 class="text-3xl font-black tracking-tight text-slate-900 uppercase">
-          Next<span class="text-sky-600">Grade</span> Lembaran Kerja
+          Next<span class="text-sky-600">Grade</span> Worksheet
         </h1>
         <p id="ws-subtitle" class="text-sm font-extrabold text-slate-500">
-          Ujian Kemahiran Menulis & Kosa Kata
+          Handwriting Practice & Writing Skills
         </p>
       </div>
     </div>
 
     <!-- Marks Box -->
     <div class="border-2 border-slate-800 px-4 py-2 rounded-xl text-center min-w-[120px]">
-      <span class="block text-[10px] font-black uppercase text-slate-500">Markah</span>
+      <span class="block text-[10px] font-black uppercase text-slate-500">Score</span>
       <span class="text-2xl font-black text-slate-900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 10</span>
     </div>
   </div>
@@ -76,13 +76,13 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
   <!-- Student Name & Date Lines (Requirement 1.12 Writing Skills) -->
   <div class="bg-slate-50 p-4 rounded-2xl border border-slate-300 mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-bold">
     <div class="flex items-center gap-2">
-      <span class="text-slate-600">Nama Murid:</span>
+      <span class="text-slate-600">Student Name:</span>
       <span class="border-b-2 border-slate-800 flex-1 pb-1 font-black text-slate-800 text-base">
         <?= htmlspecialchars($studentName) ?>
       </span>
     </div>
     <div class="flex items-center gap-2">
-      <span class="text-slate-600">Tarikh:</span>
+      <span class="text-slate-600">Date:</span>
       <span class="border-b-2 border-slate-800 flex-1 pb-1 font-mono text-slate-800">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </span>
@@ -92,24 +92,24 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
   <!-- Topic Title Banner -->
   <div class="mb-6">
     <h2 id="ws-topic-title" class="text-2xl font-black text-slate-800 flex items-center gap-2">
-      <span>📝</span> Topik: Memuatkan...
+      <span>📝</span> Topic: Loading...
     </h2>
     <p class="text-sm text-slate-600 font-bold mt-1">
-      Arahan: Baca soalan dengan teliti. Tulis jawapan anda dengan kemas pada garisan tulisan yang disediakan.
+      Instructions: Read each question carefully. Write your answer neatly on the handwriting guidelines provided.
     </p>
   </div>
 
   <!-- Printable Questions List with Handwriting Lines -->
   <div id="ws-questions-container" class="space-y-6">
     <div class="text-center py-10 text-slate-400 font-bold">
-      Memuatkan lembaran kerja...
+      Loading worksheet...
     </div>
   </div>
 
   <!-- Teacher/Parent Remarks Footer -->
   <div class="mt-12 pt-6 border-t-2 border-dashed border-slate-300 flex items-center justify-between text-xs text-slate-500 font-bold">
-    <span>Tandatangan Guru / Ibu Bapa: ________________________</span>
-    <span>Tarikh Semakan: ______________</span>
+    <span>Teacher / Parent Signature: ________________________</span>
+    <span>Date Checked: ______________</span>
   </div>
 
 </div>
@@ -123,18 +123,18 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
       const data = await resp.json();
 
       if (!data.success || !data.topic) {
-        document.getElementById('ws-topic-title').textContent = 'Topik tidak dijumpai.';
+        document.getElementById('ws-topic-title').textContent = 'Topic not found.';
         return;
       }
 
       const t = data.topic;
-      document.getElementById('ws-topic-title').innerHTML = `<span>${t.icon || '📝'}</span> Topik: ${t.name}`;
-      document.getElementById('ws-subtitle').textContent = `${t.subject_name} • Kemahiran Menulis`;
+      document.getElementById('ws-topic-title').innerHTML = `<span>${t.icon || '📝'}</span> Topic: ${t.name}`;
+      document.getElementById('ws-subtitle').textContent = `${t.subject_name} • Writing Practice`;
 
       const container = document.getElementById('ws-questions-container');
 
       if (!data.questions || data.questions.length === 0) {
-        container.innerHTML = '<p class="text-slate-500">Tiada soalan untuk lembaran ini.</p>';
+        container.innerHTML = '<p class="text-slate-500">No questions available for this worksheet.</p>';
         return;
       }
 
@@ -151,21 +151,21 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
 
           ${q.passage ? `
             <div class="bg-slate-50 p-3 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 my-2">
-              <strong>Petikan:</strong> "${q.passage}"
+              <strong>Passage:</strong> "${q.passage}"
             </div>
           ` : ''}
 
           <!-- Options Guide Box -->
           ${q.options && q.options.length > 0 ? `
             <div class="my-2 p-2 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap gap-2 text-xs font-bold text-slate-600">
-              <span class="text-slate-400">Pilihan Jawapan:</span>
+              <span class="text-slate-400">Options:</span>
               ${q.options.map(opt => `<span class="bg-white px-2.5 py-1 rounded-md border border-slate-300 font-extrabold">[ ${opt} ]</span>`).join(' ')}
             </div>
           ` : ''}
 
           <!-- Primary School 3-Line Handwriting Guide for Writing Practice -->
           <div class="mt-4">
-            <span class="text-xs font-bold text-slate-400 block mb-1">Tulis jawapan dengan tulisan kemas:</span>
+            <span class="text-xs font-bold text-slate-400 block mb-1">Write your answer neatly:</span>
             <div class="ruling-line">
               <span class="handwriting-text opacity-25"></span>
             </div>

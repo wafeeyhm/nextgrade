@@ -7,11 +7,11 @@ $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? 'Kawan P
 $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
 ?>
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ulang Kaji 5 Minit - NextGrade</title>
+  <title>5-Minute Revision - NextGrade</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/app.css">
   <script src="js/sounds.js"></script>
@@ -29,7 +29,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
       class="btn-chunky btn-white text-sm py-2 px-4 rounded-2xl flex items-center gap-1.5"
     >
       <span>⬅️</span>
-      <span class="font-extrabold">Kembali</span>
+      <span class="font-extrabold">Back</span>
     </a>
 
     <!-- 5-Minute Countdown Timer Widget -->
@@ -38,7 +38,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
         <span class="text-xl animate-pulse">⏳</span>
       </div>
       <div>
-        <span class="block text-[10px] font-black uppercase tracking-wider text-purple-600">Had Masa 5 Minit</span>
+        <span class="block text-[10px] font-black uppercase tracking-wider text-purple-600">5-Minute Time Limit</span>
         <span id="countdown-timer" class="font-mono text-2xl font-black text-purple-900 leading-none">05:00</span>
       </div>
     </div>
@@ -51,7 +51,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
       class="btn-chunky btn-success text-sm py-2.5 px-5 rounded-2xl flex items-center gap-2 shadow-sm"
     >
       <span>🚀</span>
-      <span class="font-black">Mula Kuiz Sekarang</span>
+      <span class="font-black">Start Quiz Now</span>
     </a>
   </header>
 
@@ -61,13 +61,13 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
     <div id="revision-header" class="mb-6 pb-4 border-b-2 border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div>
         <span class="bg-purple-100 text-purple-700 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-1">
-          Modul Ulang Kaji Pantas
+          Quick Revision Module
         </span>
         <h1 id="revision-title" class="text-2xl md:text-3xl font-black text-slate-800">
-          Memuatkan Ulang Kaji...
+          Loading Revision...
         </h1>
         <p id="revision-summary" class="text-slate-500 font-bold text-sm md:text-base mt-1">
-          Sila tunggu...
+          Please wait...
         </p>
       </div>
 
@@ -78,7 +78,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
         class="btn-chunky btn-primary py-2.5 px-4 rounded-2xl text-sm flex items-center gap-2 shrink-0 shadow-sm"
       >
         <span class="text-xl">🔊</span>
-        <span class="font-black">Dengar Nota Ini</span>
+        <span class="font-black">Listen to Card</span>
       </button>
     </div>
 
@@ -88,10 +88,10 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
         💡
       </div>
       <h2 id="card-title" class="text-2xl md:text-3xl font-black text-slate-800 mb-3">
-        Tajuk Nota
+        Card Title
       </h2>
       <p id="card-text" class="text-lg md:text-xl font-bold text-slate-600 max-w-xl leading-relaxed">
-        Penerangan konsep penting akan dipaparkan di sini untuk membantu anak faham sebelum memulakan soalan latihan.
+        Key concepts will appear here to help the child understand before testing knowledge with questions.
       </p>
     </div>
 
@@ -103,7 +103,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
         class="btn-chunky btn-white py-3 px-5 rounded-2xl text-base font-extrabold flex items-center gap-1.5"
       >
         <span>⬅️</span>
-        <span>Sebelum</span>
+        <span>Previous</span>
       </button>
 
       <!-- Card Dots Indicator -->
@@ -116,7 +116,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
         onclick="nextCard()"
         class="btn-chunky btn-purple py-3 px-5 rounded-2xl text-base font-extrabold flex items-center gap-1.5 shadow-sm"
       >
-        <span>Seterusnya</span>
+        <span>Next</span>
         <span>➔</span>
       </button>
     </div>
@@ -127,16 +127,16 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
   <div id="timeout-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-[2.5rem] p-8 shadow-2xl border-4 border-purple-300 max-w-md w-full text-center">
       <div class="text-6xl mb-3">⏰</div>
-      <h3 class="text-3xl font-black text-slate-800 mb-2">Masa 5 Minit Tamat!</h3>
+      <h3 class="text-3xl font-black text-slate-800 mb-2">5 Minutes Complete!</h3>
       <p class="text-slate-500 font-bold text-base mb-6">
-        Syabas! Ulang kaji 5 minit anda sudah selesai. Jom cuba 10 soalan untuk menguji kepintaran anda!
+        Great job! Your 5-minute revision is complete. Now let's try 10 questions to test your smart skills!
       </p>
       <a 
         href="quiz.php?topic=<?= urlencode($topicId) ?>"
         onclick="SoundEffects.playFanfare();"
         class="btn-chunky btn-success w-full py-4 text-xl font-black rounded-2xl shadow-lg block"
       >
-        Mula Kuiz Sekarang 🚀
+        Start Quiz Now 🚀
       </a>
     </div>
   </div>
@@ -158,7 +158,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
       const data = await resp.json();
 
       if (!data.success || !data.revision) {
-        document.getElementById('revision-title').textContent = 'Gagal memuatkan nota.';
+        document.getElementById('revision-title').textContent = 'Failed to load revision notes.';
         return;
       }
 
@@ -167,7 +167,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
       document.getElementById('revision-summary').textContent = rev.summary;
 
       cards = rev.cards && rev.cards.length > 0 ? rev.cards : [
-        { title: 'Konsep Asas', text: rev.summary, icon: '💡' }
+        { title: 'Core Concepts', text: rev.summary, icon: '💡' }
       ];
 
       renderCard();
@@ -208,9 +208,9 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
 
     const nextBtn = document.getElementById('btn-next-card');
     if (currentCardIndex === cards.length - 1) {
-      nextBtn.innerHTML = `<span>Selesai</span> <span>✅</span>`;
+      nextBtn.innerHTML = `<span>Finish</span> <span>✅</span>`;
     } else {
-      nextBtn.innerHTML = `<span>Seterusnya</span> <span>➔</span>`;
+      nextBtn.innerHTML = `<span>Next</span> <span>➔</span>`;
     }
 
     updateDots();
@@ -267,8 +267,8 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
     const card = cards[currentCardIndex];
     if (!card) return;
     const narration = `${card.title}. ${card.text}`;
-    // Malay speech detection
-    const isMalay = (topicId.startsWith('bm_') || topicId.startsWith('sci_'));
+    // Malay speech detection: ONLY for bm_ (Bahasa Melayu module)
+    const isMalay = topicId.startsWith('bm_');
     NextGradeSpeech.speak(narration, isMalay ? 'ms' : 'en');
   }
 

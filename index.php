@@ -113,7 +113,7 @@ $avatars = [
         const data = await resp.json();
         if (data.success) {
           SoundEffects.playChime();
-          NextGradeSpeech.speak(`Selamat datang, ${name}! Mari kita belajar bersama-sama!`, 'ms');
+          NextGradeSpeech.speak(`Welcome, ${name}! Let's have fun learning together!`, 'en');
           setTimeout(() => { window.location.reload(); }, 600);
         }
       } catch (err) {
@@ -145,7 +145,7 @@ $avatars = [
           <span class="text-2xl"><?= $avatars[$studentAvatar]['emoji'] ?? '⭐' ?></span>
           <span class="font-extrabold text-slate-700 text-base md:text-lg"><?= htmlspecialchars($studentName) ?></span>
           <a href="index.php?reset=1" title="Change Student" class="text-xs text-slate-400 hover:text-red-500 font-bold ml-1 transition-colors">
-            (Tukar)
+            (Switch)
           </a>
         </div>
 
@@ -155,7 +155,7 @@ $avatars = [
           class="btn-chunky btn-white text-sm md:text-base py-2 px-4 rounded-2xl flex items-center gap-2"
         >
           <span>👨‍👩‍👧</span>
-          <span class="hidden md:inline font-bold">Ibu Bapa</span>
+          <span class="hidden md:inline font-bold">Parents</span>
         </a>
       </div>
     </header>
@@ -164,13 +164,13 @@ $avatars = [
     <div class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 rounded-[2.5rem] p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="relative z-10 text-center md:text-left">
         <span class="bg-white/20 backdrop-blur-md text-white text-xs md:text-sm font-black px-4 py-1.5 rounded-full uppercase tracking-widest inline-block mb-3">
-          Hai Kawan Hebat! 👋
+          Hello Superstar! 👋
         </span>
         <h1 class="text-3xl md:text-5xl font-black mb-2 leading-tight">
-          Selamat Datang, <?= htmlspecialchars($studentName) ?>!
+          Welcome, <?= htmlspecialchars($studentName) ?>!
         </h1>
         <p class="text-sky-100 text-base md:text-xl font-bold max-w-xl">
-          Pilih mata pelajaran di bawah untuk mula mengulang kaji, membuat latihan 10 soalan, atau mencetak lembaran kerja!
+          Choose a subject below to start a 5-minute revision, practice 10 questions, or print handwriting worksheets!
         </p>
       </div>
 
@@ -183,8 +183,8 @@ $avatars = [
         >
           <span class="text-2xl md:text-3xl">🎯</span>
           <div class="text-left leading-tight">
-            <span class="block text-xs uppercase tracking-wider text-amber-100 font-bold">Cabaran Pintar</span>
-            <span class="font-black">Campur 10 Soalan!</span>
+            <span class="block text-xs uppercase tracking-wider text-amber-100 font-bold">Smart Challenge</span>
+            <span class="font-black">Mixed 10 Questions!</span>
           </div>
         </a>
       </div>
@@ -197,16 +197,16 @@ $avatars = [
     <div>
       <div class="flex items-center justify-between mb-4 px-2">
         <h2 class="text-2xl md:text-3xl font-black text-slate-800 flex items-center gap-2">
-          <span>📚</span> Pilih Mata Pelajaran
+          <span>📚</span> Choose a Subject
         </h2>
-        <span class="text-sm font-bold text-slate-400">5 Modul Pembelajaran</span>
+        <span class="text-sm font-bold text-slate-400">5 Learning Subjects</span>
       </div>
 
       <div id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Subjects dynamically rendered via API -->
         <div class="col-span-full text-center py-12 text-slate-400 font-bold">
           <div class="text-5xl mb-2 animate-spin">⏳</div>
-          Memuatkan mata pelajaran...
+          Loading subjects...
         </div>
       </div>
     </div>
@@ -221,7 +221,7 @@ $avatars = [
         const container = document.getElementById('subjects-container');
         
         if (!data.success || !data.subjects) {
-          container.innerHTML = '<p class="text-red-500 font-bold col-span-full">Gagal memuatkan data.</p>';
+          container.innerHTML = '<p class="text-red-500 font-bold col-span-full">Failed to load subjects.</p>';
           return;
         }
 
@@ -240,7 +240,7 @@ $avatars = [
                   ${s.icon}
                 </span>
                 <span class="bg-slate-100 text-slate-600 font-black text-xs px-3 py-1.5 rounded-full uppercase tracking-wider">
-                  ${s.topic_count} Topik
+                  ${s.topic_count} Topics
                 </span>
               </div>
               <h3 class="text-2xl font-black text-slate-800 group-hover:text-sky-600 transition-colors mb-1">
@@ -252,9 +252,9 @@ $avatars = [
             </div>
 
             <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-slate-400">
-              <span>${s.total_questions} Soalan Disediakan</span>
+              <span>${s.total_questions} Questions Ready</span>
               <span class="text-sky-500 group-hover:translate-x-1 transition-transform font-extrabold flex items-center gap-1">
-                Buka Topik ➔
+                Explore Topics ➔
               </span>
             </div>
           </a>

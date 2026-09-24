@@ -33,8 +33,8 @@ try {
         [
             'id' => 'maths',
             'name' => 'Mathematics',
-            'title_native' => 'Matematik',
-            'description' => 'Masa & jam analog, turutan menurun, tambah & tolak.',
+            'title_native' => 'Mathematics',
+            'description' => 'Analog clocks & time, descending numbers, addition & subtraction.',
             'icon' => '🔢',
             'theme_gradient' => 'from-amber-400 to-orange-500',
             'accent_color' => '#F59E0B',
@@ -43,8 +43,8 @@ try {
         [
             'id' => 'english',
             'name' => 'English',
-            'title_native' => 'Bahasa Inggeris',
-            'description' => 'Phonics, pronouns, articles, demonstratives & comprehension.',
+            'title_native' => 'English Language',
+            'description' => 'Phonics, pronouns, articles, demonstratives & reading comprehension.',
             'icon' => '🔤',
             'theme_gradient' => 'from-sky-400 to-blue-600',
             'accent_color' => '#0EA5E9',
@@ -53,8 +53,8 @@ try {
         [
             'id' => 'science',
             'name' => 'Science',
-            'title_native' => 'Sains Awal',
-            'description' => 'Habitat haiwan, tenggelam/timbul, bahan, angkasa & tumbuhan.',
+            'title_native' => 'Early Science',
+            'description' => 'Animal habitats, sink or float, materials, astronomy & plants.',
             'icon' => '🔬',
             'theme_gradient' => 'from-purple-400 to-indigo-600',
             'accent_color' => '#8B5CF6',
@@ -63,8 +63,8 @@ try {
         [
             'id' => 'ict',
             'name' => 'ICT & Computer',
-            'title_native' => 'Teknologi Komputer',
-            'description' => 'Peranti komputer, storan, ejaan perkataan & Input/Output.',
+            'title_native' => 'Computer Technology',
+            'description' => 'Computer parts, storage drives, peripheral spelling & Input/Output.',
             'icon' => '💻',
             'theme_gradient' => 'from-rose-400 to-pink-600',
             'accent_color' => '#EC4899',
@@ -80,20 +80,20 @@ try {
 
     // 2. TOPICS
     $topics = [
-        // Bahasa Melayu
+        // Bahasa Melayu (Kept 100% in Malay as requested)
         ['id' => 'bm_bulan', 'subject_id' => 'bahasa_melayu', 'name' => '12 Bulan dalam Setahun', 'name_native' => '12 Bulan dalam Setahun', 'description' => 'Mengecam dan menyusun nama 12 bulan mengikut turutan yang betul.', 'icon' => '📅', 'color_badge' => 'bg-emerald-100 text-emerald-800', 'sort_order' => 1],
         ['id' => 'bm_suku_kata', 'subject_id' => 'bahasa_melayu', 'name' => 'Pecahkan Suku Kata', 'name_native' => 'Pecahkan Perkataan kepada Suku Kata', 'description' => 'Membina perkataan mudah melalui cantuman dua suku kata terbuka.', 'icon' => '🧩', 'color_badge' => 'bg-teal-100 text-teal-800', 'sort_order' => 2],
         ['id' => 'bm_kenderaan', 'subject_id' => 'bahasa_melayu', 'name' => 'Kenderaan Darat, Air & Udara', 'name_native' => 'Kenderaan Darat, Air dan Udara', 'description' => 'Kenal pasti jenis kenderaan dan laluan pergerakannya.', 'icon' => '🚗', 'color_badge' => 'bg-cyan-100 text-cyan-800', 'sort_order' => 3],
         ['id' => 'bm_binatang', 'subject_id' => 'bahasa_melayu', 'name' => 'Haiwan 2 Kaki & 4 Kaki', 'name_native' => 'Haiwan Berkaki 2 dan Berkaki 4', 'description' => 'Mengelaskan pelbagai haiwan mengikut bilangan kakinya.', 'icon' => '🐾', 'color_badge' => 'bg-green-100 text-green-800', 'sort_order' => 4],
         ['id' => 'bm_ini_itu', 'subject_id' => 'bahasa_melayu', 'name' => 'Kata Tunjuk: Ini & Itu', 'name_native' => 'Penggunaan Kata Tunjuk Ini dan Itu', 'description' => 'Memahami perbezaan jarak dekat (Ini) dan jarak jauh (Itu).', 'icon' => '👉', 'color_badge' => 'bg-lime-100 text-lime-800', 'sort_order' => 5],
 
-        // Maths
-        ['id' => 'math_clocks', 'subject_id' => 'maths', 'name' => 'Masa & Jam Analog', 'name_native' => 'Reading Clock Numbers & Hands', 'description' => 'Mengenal jarum pendek (jam), jarum panjang (minit) dan membaca waktu.', 'icon' => '🕒', 'color_badge' => 'bg-amber-100 text-amber-800', 'sort_order' => 1],
-        ['id' => 'math_descending', 'subject_id' => 'maths', 'name' => 'Turutan Menurun (20 ke 1)', 'name_native' => 'Descending Numbers 20 to 1', 'description' => 'Membilang nombor dari nilai terbesar ke terkecil dari 20 hingga 1.', 'icon' => '📉', 'color_badge' => 'bg-orange-100 text-orange-800', 'sort_order' => 2],
-        ['id' => 'math_addition', 'subject_id' => 'maths', 'name' => 'Operasi Tambah (Addition)', 'name_native' => 'Basic Addition with Pictures', 'description' => 'Mengira jumlah gabungan objek dengan konsep tambah yang seronok.', 'icon' => '➕', 'color_badge' => 'bg-yellow-100 text-yellow-800', 'sort_order' => 3],
-        ['id' => 'math_subtraction', 'subject_id' => 'maths', 'name' => 'Operasi Tolak (Subtraction)', 'name_native' => 'Basic Subtraction with Pictures', 'description' => 'Mengira baki apabila sebahagian objek dikeluarkan atau hilang.', 'icon' => '➖', 'color_badge' => 'bg-red-100 text-red-800', 'sort_order' => 4],
+        // Maths (English)
+        ['id' => 'math_clocks', 'subject_id' => 'maths', 'name' => 'Analog Clocks & Time', 'name_native' => 'Reading Clock Numbers & Hands', 'description' => 'Learn the hour hand, minute hand, and how to read the clock.', 'icon' => '🕒', 'color_badge' => 'bg-amber-100 text-amber-800', 'sort_order' => 1],
+        ['id' => 'math_descending', 'subject_id' => 'maths', 'name' => 'Descending Numbers (20 to 1)', 'name_native' => 'Descending Numbers 20 to 1', 'description' => 'Count numbers from largest to smallest, from 20 down to 1.', 'icon' => '📉', 'color_badge' => 'bg-orange-100 text-orange-800', 'sort_order' => 2],
+        ['id' => 'math_addition', 'subject_id' => 'maths', 'name' => 'Addition (Combining Numbers)', 'name_native' => 'Basic Addition with Pictures', 'description' => 'Count and add groups of fun objects together.', 'icon' => '➕', 'color_badge' => 'bg-yellow-100 text-yellow-800', 'sort_order' => 3],
+        ['id' => 'math_subtraction', 'subject_id' => 'maths', 'name' => 'Subtraction (Taking Away)', 'name_native' => 'Basic Subtraction with Pictures', 'description' => 'Count what remains when items are removed or popped.', 'icon' => '➖', 'color_badge' => 'bg-red-100 text-red-800', 'sort_order' => 4],
 
-        // English
+        // English (English)
         ['id' => 'eng_days_months', 'subject_id' => 'english', 'name' => 'Days of Week & Months', 'name_native' => 'Days of the Week and Month Numbers', 'description' => 'Learn the 7 days of the week in sequence and match months to their numbers.', 'icon' => '🗓️', 'color_badge' => 'bg-sky-100 text-sky-800', 'sort_order' => 1],
         ['id' => 'eng_blending', 'subject_id' => 'english', 'name' => 'Beginning Blends (ch- & th-)', 'name_native' => 'Beginning Blending Sound Box', 'description' => 'Recognise and match beginning blend sounds: ch- (chair) and th- (thorn).', 'icon' => '🗣️', 'color_badge' => 'bg-blue-100 text-blue-800', 'sort_order' => 2],
         ['id' => 'eng_pronouns', 'subject_id' => 'english', 'name' => 'Pronouns (He, She, It, They)', 'name_native' => 'Personal Pronouns', 'description' => 'Choose the correct pronoun for boys, girls, objects, and groups.', 'icon' => '👥', 'color_badge' => 'bg-indigo-100 text-indigo-800', 'sort_order' => 3],
@@ -102,20 +102,20 @@ try {
         ['id' => 'eng_demonstratives', 'subject_id' => 'english', 'name' => 'This, That, These, Those', 'name_native' => 'Demonstrative Pronouns', 'description' => 'Master near vs far, singular vs plural pointer words.', 'icon' => '👉', 'color_badge' => 'bg-purple-100 text-purple-800', 'sort_order' => 6],
         ['id' => 'eng_comprehension', 'subject_id' => 'english', 'name' => 'Reading Comprehension', 'name_native' => 'Short Stories: Troy & Andy', 'description' => 'Read sweet passages, understand context, and answer smart questions.', 'icon' => '📖', 'color_badge' => 'bg-sky-100 text-sky-800', 'sort_order' => 7],
 
-        // Science
-        ['id' => 'sci_land_sea', 'subject_id' => 'science', 'name' => 'Haiwan Darat vs Laut', 'name_native' => 'Land and Sea Animals Habitat', 'description' => 'Kenal pasti habitat haiwan sama ada hidup di darat atau di dalam laut.', 'icon' => '🐬', 'color_badge' => 'bg-emerald-100 text-emerald-800', 'sort_order' => 1],
-        ['id' => 'sci_sink_float', 'subject_id' => 'science', 'name' => 'Tenggelam atau Timbul', 'name_native' => 'Objects that Sink or Float', 'description' => 'Eksperimen awal objek yang tenggelam (sink) atau terapung (float) di air.', 'icon' => '⚓', 'color_badge' => 'bg-cyan-100 text-cyan-800', 'sort_order' => 2],
-        ['id' => 'sci_celestial', 'subject_id' => 'science', 'name' => 'Matahari, Bulan, Bintang & Bumi', 'name_native' => 'Sun, Moon, Star, and Earth', 'description' => 'Mengenal objek di langit dan planet Bumi tempat kita tinggal.', 'icon' => '🌍', 'color_badge' => 'bg-amber-100 text-amber-800', 'sort_order' => 3],
-        ['id' => 'sci_materials', 'subject_id' => 'science', 'name' => 'Bahan: Logam, Kaca & Kertas', 'name_native' => 'Objects Made of Metal, Glass & Paper', 'description' => 'Mengecam ciri-ciri bahan objek di sekeliling kita.', 'icon' => '🪨', 'color_badge' => 'bg-stone-100 text-stone-800', 'sort_order' => 4],
-        ['id' => 'sci_pollution', 'subject_id' => 'science', 'name' => 'Jenis-jenis Pencemaran', 'name_native' => 'Types of Pollutions', 'description' => 'Pencemaran udara, pencemaran air/laut, dan pencemaran tanah.', 'icon' => '🏭', 'color_badge' => 'bg-red-100 text-red-800', 'sort_order' => 5],
-        ['id' => 'sci_plants', 'subject_id' => 'science', 'name' => 'Bahagian & Keperluan Tumbuhan', 'name_native' => 'Parts of a Plant & Needs to Grow', 'description' => 'Akar, batang, daun, bunga, buah serta cahaya matahari, air dan udara.', 'icon' => '🌱', 'color_badge' => 'bg-green-100 text-green-800', 'sort_order' => 6],
+        // Science (English)
+        ['id' => 'sci_land_sea', 'subject_id' => 'science', 'name' => 'Land vs Sea Animals', 'name_native' => 'Land and Sea Animals Habitat', 'description' => 'Identify whether animals live on land or in the ocean.', 'icon' => '🐬', 'color_badge' => 'bg-emerald-100 text-emerald-800', 'sort_order' => 1],
+        ['id' => 'sci_sink_float', 'subject_id' => 'science', 'name' => 'Sink or Float', 'name_native' => 'Objects that Sink or Float', 'description' => 'Discover which objects sink to the bottom or float on water.', 'icon' => '⚓', 'color_badge' => 'bg-cyan-100 text-cyan-800', 'sort_order' => 2],
+        ['id' => 'sci_celestial', 'subject_id' => 'science', 'name' => 'Sun, Moon, Star & Earth', 'name_native' => 'Sun, Moon, Star, and Earth', 'description' => 'Learn about the celestial bodies in our sky and our home planet Earth.', 'icon' => '🌍', 'color_badge' => 'bg-amber-100 text-amber-800', 'sort_order' => 3],
+        ['id' => 'sci_materials', 'subject_id' => 'science', 'name' => 'Materials: Metal, Glass & Paper', 'name_native' => 'Objects Made of Metal, Glass & Paper', 'description' => 'Identify everyday objects made of metal, transparent glass, or paper.', 'icon' => '🪨', 'color_badge' => 'bg-stone-100 text-stone-800', 'sort_order' => 4],
+        ['id' => 'sci_pollution', 'subject_id' => 'science', 'name' => 'Types of Pollution', 'name_native' => 'Types of Pollutions', 'description' => 'Learn about air pollution, water/sea pollution, and land pollution.', 'icon' => '🏭', 'color_badge' => 'bg-red-100 text-red-800', 'sort_order' => 5],
+        ['id' => 'sci_plants', 'subject_id' => 'science', 'name' => 'Parts & Needs of a Plant', 'name_native' => 'Parts of a Plant & Needs to Grow', 'description' => 'Identify roots, stem, leaves, flower, fruit and sunlight, air, water.', 'icon' => '🌱', 'color_badge' => 'bg-green-100 text-green-800', 'sort_order' => 6],
 
-        // ICT
-        ['id' => 'ict_storage', 'subject_id' => 'ict', 'name' => 'Pemacu & Storan Komputer', 'name_native' => 'Computer Drives and Storage', 'description' => 'Hard disk drive, floppy disk, CD-ROM, memory card dan pendrive.', 'icon' => '💾', 'color_badge' => 'bg-rose-100 text-rose-800', 'sort_order' => 1],
-        ['id' => 'ict_parts', 'subject_id' => 'ict', 'name' => 'Kenali Perkakasan Komputer', 'name_native' => 'All About Computer Peripherals', 'description' => 'Monitor, keyboard, printer, headphones, scanner dan unit sistem.', 'icon' => '🖥️', 'color_badge' => 'bg-pink-100 text-pink-800', 'sort_order' => 2],
-        ['id' => 'ict_counting', 'subject_id' => 'ict', 'name' => 'Kira Peranti Komputer', 'name_native' => 'Count Computer Peripherals', 'description' => 'Membilang jumlah peranti perkakasan komputer dengan tepat.', 'icon' => '🔢', 'color_badge' => 'bg-indigo-100 text-indigo-800', 'sort_order' => 3],
-        ['id' => 'ict_spelling', 'subject_id' => 'ict', 'name' => 'Lengkapkan Ejaan Perkakasan', 'name_native' => 'Fill in the Missing Letters', 'description' => 'Lengkapkan huruf yang hilang untuk nama perkakasan komputer.', 'icon' => '🔤', 'color_badge' => 'bg-purple-100 text-purple-800', 'sort_order' => 4],
-        ['id' => 'ict_input_output', 'subject_id' => 'ict', 'name' => 'Peranti Input (I) & Output (O)', 'name_native' => 'Input vs Output Devices', 'description' => 'Mengenal peranti yang memasukkan data (Input) atau mengeluarkan hasil (Output).', 'icon' => '🔌', 'color_badge' => 'bg-blue-100 text-blue-800', 'sort_order' => 5],
+        // ICT (English)
+        ['id' => 'ict_storage', 'subject_id' => 'ict', 'name' => 'Computer Drives & Storage', 'name_native' => 'Computer Drives and Storage', 'description' => 'Learn about Hard disk drives, floppy disks, CD-ROMs, memory cards, and USB pendrives.', 'icon' => '💾', 'color_badge' => 'bg-rose-100 text-rose-800', 'sort_order' => 1],
+        ['id' => 'ict_parts', 'subject_id' => 'ict', 'name' => 'All About Computer Parts', 'name_native' => 'All About Computer Peripherals', 'description' => 'Identify monitors, keyboards, printers, headphones, scanners, and system units.', 'icon' => '🖥️', 'color_badge' => 'bg-pink-100 text-pink-800', 'sort_order' => 2],
+        ['id' => 'ict_counting', 'subject_id' => 'ict', 'name' => 'Count Computer Peripherals', 'name_native' => 'Count Computer Peripherals', 'description' => 'Count and determine the correct number of computer devices.', 'icon' => '🔢', 'color_badge' => 'bg-indigo-100 text-indigo-800', 'sort_order' => 3],
+        ['id' => 'ict_spelling', 'subject_id' => 'ict', 'name' => 'Fill in the Missing Letters', 'name_native' => 'Fill in the Missing Letters', 'description' => 'Complete the missing letters for computer peripheral names.', 'icon' => '🔤', 'color_badge' => 'bg-purple-100 text-purple-800', 'sort_order' => 4],
+        ['id' => 'ict_input_output', 'subject_id' => 'ict', 'name' => 'Input (I) vs Output (O) Devices', 'name_native' => 'Input vs Output Devices', 'description' => 'Recognise whether a device feeds data in (Input) or presents results (Output).', 'icon' => '🔌', 'color_badge' => 'bg-blue-100 text-blue-800', 'sort_order' => 5],
     ];
 
     $stmtTopic = $pdo->prepare("INSERT INTO topics (id, subject_id, name, name_native, description, icon, color_badge, revision_time_limit, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 300, ?)");
@@ -264,98 +264,98 @@ try {
             ]
         ],
         'sci_land_sea' => [
-            'title' => 'Ulang Kaji: Habitat Darat & Laut',
-            'summary' => 'Haiwan darat hidup di atas tanah, manakala haiwan laut bernafas dan berenang di dalam air.',
+            'title' => 'Revision: Land vs Sea Habitats',
+            'summary' => 'Land animals live on solid ground, while marine animals swim and breathe underwater in the ocean.',
             'cards' => [
-                ['title' => 'Haiwan Darat', 'text' => 'Lembu, Kucing, Kuda, Monyet dan Singa hidup di padang atau hutan.', 'icon' => '🦁'],
-                ['title' => 'Haiwan Laut', 'text' => 'Ikan, Jerung, Paus, Lumba-lumba, Ketam dan Sotong hidup di lautan.', 'icon' => '🐬']
+                ['title' => 'Land Animals', 'text' => 'Cows, Cats, Horses, Monkeys, and Lions live on farms, grasslands, or in forests.', 'icon' => '🦁'],
+                ['title' => 'Marine / Sea Animals', 'text' => 'Fish, Sharks, Whales, Dolphins, Crabs, and Octopuses thrive in oceans and seas.', 'icon' => '🐬']
             ]
         ],
         'sci_sink_float' => [
-            'title' => 'Ulang Kaji: Tenggelam (Sink) vs Timbul (Float)',
-            'summary' => 'Objek berat dan padat tenggelam ke dasar. Objek ringan dan berisi udara timbul di permukaan.',
+            'title' => 'Revision: Sink vs Float Experiments',
+            'summary' => 'Heavy, dense objects sink down to the bottom. Light objects with trapped air float on top.',
             'cards' => [
-                ['title' => 'Tenggelam (Sink)', 'text' => 'Kunci besi, batu, duit syiling dan sudu logam akan terus tenggelam ke dasar air.', 'icon' => '⚓'],
-                ['title' => 'Terapung/Timbul (Float)', 'text' => 'Bola plastik, ranting kayu kering, itik getah dan daun akan terapung di atas air.', 'icon' => '🪵']
+                ['title' => 'Objects that Sink', 'text' => 'Metal keys, heavy stones, coins, and iron spoons sink straight to the bottom of the water.', 'icon' => '⚓'],
+                ['title' => 'Objects that Float', 'text' => 'Plastic balls, dry wooden twigs, rubber ducks, and leaves float gently on the water surface.', 'icon' => '🪵']
             ]
         ],
         'sci_celestial' => [
-            'title' => 'Ulang Kaji: Objek Angkasa & Bumi',
-            'summary' => 'Matahari, Bulan, Bintang dan planet Bumi adalah sebahagian daripada alam semesta yang menakjubkan.',
+            'title' => 'Revision: Space Objects & Planet Earth',
+            'summary' => 'The Sun, Moon, Stars, and our planet Earth are all part of our incredible universe.',
             'cards' => [
-                ['title' => 'Matahari (Sun)', 'text' => 'Bintang gergasi yang membekalkan cahaya dan haba kepada Bumi pada waktu siang.', 'icon' => '☀️'],
-                ['title' => 'Bulan & Bintang', 'text' => 'Bulan mengelilingi Bumi dan bersinar malam hari bersama bintang-bintang yang berkelip.', 'icon' => '🌙'],
-                ['title' => 'Planet Bumi (Earth)', 'text' => 'Planet biru yang mempunyai daratan, lautan dan udara untuk kita hidup.', 'icon' => '🌍']
+                ['title' => 'The Sun', 'text' => 'A giant glowing star that gives Earth bright light and warm energy during the daytime.', 'icon' => '☀️'],
+                ['title' => 'The Moon & Stars', 'text' => 'The Moon orbits Earth and shines at night alongside millions of twinkling stars.', 'icon' => '🌙'],
+                ['title' => 'Planet Earth', 'text' => 'Our blue planet with oceans, continents, and air where humans and animals live.', 'icon' => '🌍']
             ]
         ],
         'sci_materials' => [
-            'title' => 'Ulang Kaji: Bahan Logam, Kaca & Kertas',
-            'summary' => 'Setiap bahan mempunyai sifat istimewa untuk kegunaan harian kita.',
+            'title' => 'Revision: Metal, Glass & Paper Materials',
+            'summary' => 'Different objects around us are crafted from materials with unique properties.',
             'cards' => [
-                ['title' => 'Logam (Metal)', 'text' => 'Keras, kuat, dan berkilat. Contoh: Kunci, sudu besi, paku, dan duit syiling.', 'icon' => '🥄'],
-                ['title' => 'Kaca (Glass)', 'text' => 'Lut sinar (boleh nampak tembus) dan mudah pecah. Contoh: Cermin mata, cawan kaca, dan tingkap.', 'icon' => '🥛'],
-                ['title' => 'Kertas (Paper)', 'text' => 'Ringan, fleksibel, dan mudah dilipat. Contoh: Buku cerita, surat khabar, dan origami.', 'icon' => '📖']
+                ['title' => 'Metal', 'text' => 'Hard, shiny, and strong. Examples: Keys, spoons, nails, and coins.', 'icon' => '🥄'],
+                ['title' => 'Glass', 'text' => 'Clear and transparent, but fragile. Examples: Drinking glasses, windows, and spectacles.', 'icon' => '🥛'],
+                ['title' => 'Paper', 'text' => 'Lightweight, flexible, and easy to fold. Examples: Storybooks, newspapers, and notebooks.', 'icon' => '📖']
             ]
         ],
         'sci_pollution' => [
-            'title' => 'Ulang Kaji: Jenis Pencemaran Alam',
-            'summary' => 'Pencemaran merosakkan alam sekitar jika kita tidak menjaga kebersihan.',
+            'title' => 'Revision: Types of Environmental Pollution',
+            'summary' => 'Pollution damages our beautiful nature when waste and toxins are not properly handled.',
             'cards' => [
-                ['title' => 'Pencemaran Udara', 'text' => 'Asap hitam dari kilang, kenderaan dan pembakaran terbuka mengotorkan udara.', 'icon' => '🏭'],
-                ['title' => 'Pencemaran Air/Laut', 'text' => 'Sampah plastik, sisa toksik dan minyak tumpah ke sungai dan lautan.', 'icon' => '🌊'],
-                ['title' => 'Pencemaran Tanah', 'text' => 'Timbunan sisa sampah sarap domestik yang tidak terurus di atas tanah.', 'icon' => '🗑️']
+                ['title' => 'Air Pollution', 'text' => 'Black smoke and fumes from factory chimneys and car exhausts contaminate the clean air.', 'icon' => '🏭'],
+                ['title' => 'Water / Sea Pollution', 'text' => 'Plastic trash, toxic runoff, and oil spills pollute rivers and oceans, harming marine life.', 'icon' => '🌊'],
+                ['title' => 'Land Pollution', 'text' => 'Piles of household garbage and litter dumped onto open grounds damage the soil.', 'icon' => '🗑️']
             ]
         ],
         'sci_plants' => [
-            'title' => 'Ulang Kaji: Bahagian & Keperluan Tumbuhan',
-            'summary' => 'Tumbuhan memerlukan penjagaan dan nutrien untuk tumbuh mekar dan sihat.',
+            'title' => 'Revision: Parts & Growth Needs of a Plant',
+            'summary' => 'Plants need proper care, soil nutrients, and environment to blossom and grow.',
             'cards' => [
-                ['title' => 'Bahagian Tumbuhan', 'text' => 'Akar (menyerap air), Batang (menyokong pokok), Daun (membuat makanan), Bunga & Buah.', 'icon' => '🌱'],
-                ['title' => '3 Keperluan Tumbuhan', 'text' => 'Cahaya Matahari (Sunlight), Udara (Air), dan Air (Water).', 'icon' => '💧']
+                ['title' => 'Parts of a Plant', 'text' => 'Roots (absorb water), Stem (supports the plant), Leaves (make food from light), Flower & Fruit.', 'icon' => '🌱'],
+                ['title' => '3 Things Plants Need', 'text' => 'Warm Sunlight, Fresh Air, and Clean Water to stay green and healthy.', 'icon' => '💧']
             ]
         ],
         'ict_storage' => [
-            'title' => 'Ulang Kaji: Pemacu & Storan Komputer',
-            'summary' => 'Peranti storan digunakan untuk menyimpan foto, lagu, video, dan dokumen.',
+            'title' => 'Revision: Computer Storage Drives',
+            'summary' => 'Storage devices keep photos, music, video games, and documents safely stored.',
             'cards' => [
-                ['title' => 'Pendrive (USB Flash)', 'text' => 'Kecil, mudah alih, dan disambungkan ke port USB.', 'icon' => '💾'],
-                ['title' => 'CD-ROM Disc', 'text' => 'Cakera bulat berkilat yang dibaca menggunakan pancaran laser.', 'icon' => '💿'],
-                ['title' => 'Hard Disk Drive', 'text' => 'Storan utama yang bersaiz besar di dalam kotak komputer.', 'icon' => '🗄️'],
-                ['title' => 'Floppy Disk & Memory Card', 'text' => 'Floppy disk peranti storan lama bersegi empat, manakala memory card nipis untuk kamera.', 'icon' => '🃏']
+                ['title' => 'USB Pendrive', 'text' => 'Small, pocket-sized flash stick that plugs into a computer USB port.', 'icon' => '💾'],
+                ['title' => 'CD-ROM Disc', 'text' => 'A round shiny disc read with a laser beam to install games and software.', 'icon' => '💿'],
+                ['title' => 'Hard Disk Drive (HDD)', 'text' => 'Large primary internal drive housed inside the system unit.', 'icon' => '🗄️'],
+                ['title' => 'Memory Card & Floppy Disk', 'text' => 'Memory cards are thin chips for digital cameras; floppy disks are historic magnetic storage.', 'icon' => '🃏']
             ]
         ],
         'ict_parts' => [
-            'title' => 'Ulang Kaji: Perkakasan Komputer Asas',
-            'summary' => 'Komputer terdiri daripada beberapa bahagian penting yang saling bekerjasama.',
+            'title' => 'Revision: Basic Computer Peripherals',
+            'summary' => 'A desktop computer consists of several key parts working seamlessly together.',
             'cards' => [
-                ['title' => 'Monitor', 'text' => 'Skrin yang memaparkan gambar, teks dan video untuk kita lihat.', 'icon' => '🖥️'],
-                ['title' => 'Keyboard & Tetikus (Mouse)', 'text' => 'Papan kekunci untuk menaip, tetikus untuk menggerakkan kursor dan klik.', 'icon' => '⌨️'],
-                ['title' => 'Printer & Scanner', 'text' => 'Pencetak mencetak fail ke atas kertas, pengimbas menyalin gambar fizikal ke dalam komputer.', 'icon' => '🖨️']
+                ['title' => 'Monitor Screen', 'text' => 'The screen displays colorful graphics, text, videos, and games for us to see.', 'icon' => '🖥️'],
+                ['title' => 'Keyboard & Mouse', 'text' => 'The keyboard has keys to type text; the mouse moves the pointer and clicks buttons.', 'icon' => '⌨️'],
+                ['title' => 'Printer & Scanner', 'text' => 'The printer puts digital work onto paper; the scanner copies paper pictures into the computer.', 'icon' => '🖨️']
             ]
         ],
         'ict_counting' => [
-            'title' => 'Ulang Kaji: Mengira Peranti Komputer',
-            'summary' => 'Kira setiap peranti satu demi satu dengan teliti.',
+            'title' => 'Revision: Counting Computer Devices',
+            'summary' => 'Carefully point and count each computer peripheral item one by one.',
             'cards' => [
-                ['title' => 'Tip Mengira', 'text' => 'Tunjuk pada setiap tetikus, monitor atau komputer riba dan sebut nombor turutan: 1, 2, 3, 4!', 'icon' => '🔢']
+                ['title' => 'Counting Strategy', 'text' => 'Point your finger at each mouse, screen, or keyboard: 1, 2, 3, 4! Never count the same item twice.', 'icon' => '🔢']
             ]
         ],
         'ict_spelling' => [
-            'title' => 'Ulang Kaji: Ejaan Perkakasan Komputer',
-            'summary' => 'Ingat huruf vokal (A, E, I, O, U) yang melengkapkan perkataan perkakasan.',
+            'title' => 'Revision: Spelling Computer Peripherals',
+            'summary' => 'Master the vowels (A, E, I, O, U) that complete each peripheral name.',
             'cards' => [
-                ['title' => 'PENDRIVE', 'text' => 'P - E - N - D - R - I - V - E (huruf E dan I)', 'icon' => '💾'],
-                ['title' => 'SCANNER', 'text' => 'S - C - A - N - N - E - R (huruf A dan E)', 'icon' => '📠'],
-                ['title' => 'WEBCAM', 'text' => 'W - E - B - C - A - M (huruf E dan A)', 'icon' => '📹'],
-                ['title' => 'PRINTER', 'text' => 'P - R - I - N - T - E - R (huruf I dan E)', 'icon' => '🖨️']
+                ['title' => 'PENDRIVE', 'text' => 'P - E - N - D - R - I - V - E (vowels E and I)', 'icon' => '💾'],
+                ['title' => 'SCANNER', 'text' => 'S - C - A - N - N - E - R (vowels A and E)', 'icon' => '📠'],
+                ['title' => 'WEBCAM', 'text' => 'W - E - B - C - A - M (vowels E and A)', 'icon' => '📹'],
+                ['title' => 'PRINTER', 'text' => 'P - R - I - N - T - E - R (vowels I and E)', 'icon' => '🖨️']
             ]
         ],
         'ict_input_output' => [
-            'title' => 'Ulang Kaji: Peranti Input (I) vs Output (O)',
-            'summary' => 'Input memasukkan arahan KEDALAM komputer. Output mengeluarkan maklumat KELUAR untuk manusia.',
+            'title' => 'Revision: Input (I) vs Output (O) Devices',
+            'summary' => 'Input puts commands and data INTO the computer. Output sends results OUT to you.',
             'cards' => [
-                ['title' => 'Peranti Input (I)', 'text' => 'Keyboard (menaip masuk), Mouse (klik masuk), Microphone (suara masuk), Scanner (gambar masuk), Webcam.', 'icon' => '📥'],
-                ['title' => 'Peranti Output (O)', 'text' => 'Monitor (papar keluar visual), Printer (cetak keluar atas kertas), Speakers & Headphones (bunyi keluar ke telinga).', 'icon' => '📤']
+                ['title' => 'Input Devices (I)', 'text' => 'Keyboard (types in), Mouse (clicks in), Microphone (voice in), Scanner (photo in), Webcam.', 'icon' => '📥'],
+                ['title' => 'Output Devices (O)', 'text' => 'Monitor (displays out), Printer (prints out on paper), Speakers & Headphones (play sound out).', 'icon' => '📤']
             ]
         ]
     ];
@@ -1428,46 +1428,46 @@ try {
         [
             'topic_id' => 'sci_land_sea',
             'subject_id' => 'science',
-            'question_text' => 'Di manakah ikan lumba-lumba (dolphin) tinggal?',
-            'question_audio' => 'Di manakah ikan lumba-lumba tinggal?',
-            'lang' => 'ms',
+            'question_text' => 'Where does a dolphin live?',
+            'question_audio' => 'Where does a dolphin live?',
+            'lang' => 'en',
             'question_type' => 'multiple_choice',
             'image_url' => 'images/binatang/lumba_lumba.jpg',
             'passage' => null,
-            'options_json' => json_encode(['Sea (Laut)', 'Land (Darat)']),
-            'correct_answer' => 'Sea (Laut)',
-            'hint_text' => 'Lumba-lumba berenang dan bernafas di lautan luas.',
-            'hint_audio' => 'Lumba-lumba tinggal di laut.',
+            'options_json' => json_encode(['Sea', 'Land']),
+            'correct_answer' => 'Sea',
+            'hint_text' => 'Dolphins swim, leap, and breathe in the ocean waters.',
+            'hint_audio' => 'Dolphins live in the sea.',
             'meta_data_json' => null
         ],
         [
             'topic_id' => 'sci_land_sea',
             'subject_id' => 'science',
-            'question_text' => 'Di manakah lembu tinggal?',
-            'question_audio' => 'Di manakah lembu tinggal?',
-            'lang' => 'ms',
+            'question_text' => 'Where does a cow live?',
+            'question_audio' => 'Where does a cow live?',
+            'lang' => 'en',
             'question_type' => 'multiple_choice',
             'image_url' => 'images/binatang/lembu.jpg',
             'passage' => null,
-            'options_json' => json_encode(['Land (Darat)', 'Sea (Laut)']),
-            'correct_answer' => 'Land (Darat)',
-            'hint_text' => 'Lembu meragut rumput di padang rumput di atas daratan.',
-            'hint_audio' => 'Lembu tinggal di darat.',
+            'options_json' => json_encode(['Land', 'Sea']),
+            'correct_answer' => 'Land',
+            'hint_text' => 'Cows graze on green grass in pastures on land.',
+            'hint_audio' => 'Cows live on land.',
             'meta_data_json' => null
         ],
         [
             'topic_id' => 'sci_land_sea',
             'subject_id' => 'science',
-            'question_text' => 'Di manakah ikan jerung tinggal?',
-            'question_audio' => 'Di manakah ikan jerung tinggal?',
-            'lang' => 'ms',
+            'question_text' => 'Where does a shark live?',
+            'question_audio' => 'Where does a shark live?',
+            'lang' => 'en',
             'question_type' => 'multiple_choice',
             'image_url' => 'images/binatang/jerung.jpg',
             'passage' => null,
-            'options_json' => json_encode(['Sea (Laut)', 'Land (Darat)']),
-            'correct_answer' => 'Sea (Laut)',
-            'hint_text' => 'Jerung adalah pemangsa marin di lautan dalam.',
-            'hint_audio' => 'Jerung tinggal di laut.',
+            'options_json' => json_encode(['Sea', 'Land']),
+            'correct_answer' => 'Sea',
+            'hint_text' => 'Sharks are apex marine predators living in deep oceans.',
+            'hint_audio' => 'Sharks live in the sea.',
             'meta_data_json' => null
         ],
 
@@ -1481,8 +1481,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/sink_key.svg',
             'passage' => null,
-            'options_json' => json_encode(['Sink (Tenggelam)', 'Float (Timbul)']),
-            'correct_answer' => 'Sink (Tenggelam)',
+            'options_json' => json_encode(['Sink', 'Float']),
+            'correct_answer' => 'Sink',
             'hint_text' => 'Metal is heavy and dense, so it sinks to the bottom.',
             'hint_audio' => 'A metal key will sink.',
             'meta_data_json' => null
@@ -1496,8 +1496,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/float_ball.svg',
             'passage' => null,
-            'options_json' => json_encode(['Float (Timbul)', 'Sink (Tenggelam)']),
-            'correct_answer' => 'Float (Timbul)',
+            'options_json' => json_encode(['Float', 'Sink']),
+            'correct_answer' => 'Float',
             'hint_text' => 'Plastic is lightweight and holds air, floating on the surface.',
             'hint_audio' => 'A plastic ball will float.',
             'meta_data_json' => null
@@ -1511,8 +1511,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/float_wood.svg',
             'passage' => null,
-            'options_json' => json_encode(['Float (Timbul)', 'Sink (Tenggelam)']),
-            'correct_answer' => 'Float (Timbul)',
+            'options_json' => json_encode(['Float', 'Sink']),
+            'correct_answer' => 'Float',
             'hint_text' => 'Wood is lighter than water, so it floats gently.',
             'hint_audio' => 'A wooden twig will float.',
             'meta_data_json' => null
@@ -1526,8 +1526,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/sink_stone.svg',
             'passage' => null,
-            'options_json' => json_encode(['Sink (Tenggelam)', 'Float (Timbul)']),
-            'correct_answer' => 'Sink (Tenggelam)',
+            'options_json' => json_encode(['Sink', 'Float']),
+            'correct_answer' => 'Sink',
             'hint_text' => 'Stones are solid and heavy, falling down to the bottom.',
             'hint_audio' => 'A stone will sink.',
             'meta_data_json' => null
@@ -1699,8 +1699,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/plant_parts.svg',
             'passage' => null,
-            'options_json' => json_encode(['Roots (Akar)', 'Flower (Bunga)', 'Leaf (Daun)', 'Stem (Batang)']),
-            'correct_answer' => 'Roots (Akar)',
+            'options_json' => json_encode(['Roots', 'Flower', 'Leaf', 'Stem']),
+            'correct_answer' => 'Roots',
             'hint_text' => 'Roots spread underground like little drinking straws.',
             'hint_audio' => 'Roots absorb water.',
             'meta_data_json' => null
@@ -1714,8 +1714,8 @@ try {
             'question_type' => 'multiple_choice',
             'image_url' => 'images/science/plant_parts.svg',
             'passage' => null,
-            'options_json' => json_encode(['Leaf (Daun)', 'Roots (Akar)', 'Fruit (Buah)', 'Stem (Batang)']),
-            'correct_answer' => 'Leaf (Daun)',
+            'options_json' => json_encode(['Leaf', 'Roots', 'Fruit', 'Stem']),
+            'correct_answer' => 'Leaf',
             'hint_text' => 'Green leaves absorb sunlight energy.',
             'hint_audio' => 'Leaves make food from sunlight.',
             'meta_data_json' => null
