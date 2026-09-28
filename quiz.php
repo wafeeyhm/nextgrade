@@ -317,6 +317,21 @@ $mode = $_GET['mode'] ?? null;
     const fillPercent = ((currentIndex) / total) * 100;
     document.getElementById('progress-bar-fill').style.width = `${fillPercent}%`;
 
+    // Question Type Badge
+    const typeBadge = document.getElementById('question-type-badge');
+    if (typeBadge) {
+      if (q.question_type === 'clock_analog') {
+        typeBadge.textContent = 'Draw Clock Hands 🕒';
+        typeBadge.className = 'bg-amber-100 text-amber-800 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider';
+      } else if (q.question_type === 'ordering') {
+        typeBadge.textContent = 'Tap to Order 🔢';
+        typeBadge.className = 'bg-sky-100 text-sky-800 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider';
+      } else {
+        typeBadge.textContent = 'Multiple Choice';
+        typeBadge.className = 'bg-sky-50 text-sky-700 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider';
+      }
+    }
+
     // Prompt
     document.getElementById('question-prompt').textContent = q.question_text;
 
@@ -364,7 +379,9 @@ $mode = $_GET['mode'] ?? null;
     nextBtn.disabled = true;
     nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-    document.getElementById('feedback-badge').innerHTML = `
+    document.getElementById('feedback-badge').innerHTML = (q.question_type === 'clock_analog') ? `
+      <span class="text-slate-400 text-sm font-bold">Draw both hands, then tap Check My Clock! 👆</span>
+    ` : `
       <span class="text-slate-400 text-sm font-bold">Choose the correct answer above 👆</span>
     `;
 
@@ -372,10 +389,14 @@ $mode = $_GET['mode'] ?? null;
     const optContainer = document.getElementById('options-container');
     optContainer.innerHTML = '';
 
-    if (q.question_type === 'ordering') {
+    if (q.question_type === 'clock_analog') {
+      // Interactive Analog Clock Hands Drawing / Setting
+      renderClockAnalog(q, optContainer);
+    } else if (q.question_type === 'ordering') {
       // Interactive Sequence Tap to Order
       renderOrderingOptions(q, optContainer);
     } else {
+      optContainer.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-2';
       // Standard Multiple Choice / Syllable / Comprehension
       q.options.forEach((optText, optIdx) => {
         const btn = document.createElement('div');
@@ -444,6 +465,432 @@ $mode = $_GET['mode'] ?? null;
     if (currentIndex === questions.length - 1) {
       nextBtn.innerHTML = `<span>Finish & Save</span> <span>🏆</span>`;
     }
+  }
+
+  function renderClockAnalog(q, container) {
+    const meta = q.meta_data || {};
+    const scenarioName = meta.scenario || 'Analog Clock Time';
+    const scenarioIcon = meta.icon || '🕒';
+
+    // Target hour and minute
+    let targetHour = meta.target_hour;
+    let targetMinute = meta.target_minute ?? 0;
+    if (targetHour === undefined && typeof q.correct_answer === 'string') {
+      const parts = q.correct_answer.split(':');
+      targetHour = parseInt(parts[0], 10);
+      targetMinute = parseInt(parts[1] || '0', 10);
+    }
+    const targetMinHour = (targetMinute === 0 ? 12 : Math.round(targetMinute / 5));
+    const targetTimeStr = meta.time_str || `${targetHour}:${String(targetMinute).padStart(2, '0')}`;
+
+    // Student state
+    let activeHand = 'short'; // 'short' (hour) or 'long' (minute)
+    let studentHour = null;
+    let studentMinuteHour = null; // 1 to 12 (12 = :00)
+    let isChecked = false;
+
+    container.className = 'flex flex-col items-center gap-4 w-full max-w-xl mx-auto select-none';
+    container.innerHTML = `
+      <!-- Scenario & Target Time Banner -->
+      <div class="w-full bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-200 rounded-2xl p-3 sm:p-4 text-center shadow-sm">
+        <div class="flex items-center justify-center gap-2 mb-1.5">
+          <span class="text-2xl">${scenarioIcon}</span>
+          <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-700">${scenarioName}</span>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <span class="text-slate-600 font-extrabold text-sm sm:text-base">Draw hands to show:</span>
+          <span class="bg-amber-500 text-white font-black text-2xl sm:text-3xl px-4 py-1 rounded-xl shadow tracking-wide">
+            ${targetTimeStr}
+          </span>
+        </div>
+      </div>
+
+      <!-- Hand Selector Buttons -->
+      <div class="grid grid-cols-2 gap-3 w-full">
+        <button type="button" id="btn-select-short" class="flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 ring-4 ring-rose-300 border-rose-500 bg-rose-50 shadow-sm cursor-pointer">
+          <span class="text-xs font-black uppercase text-rose-600 flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block shadow-sm"></span>
+            <span>Short Hand (Hour)</span>
+          </span>
+          <span id="short-hand-status" class="text-sm sm:text-base font-black text-rose-800 mt-1">
+            Tap a number (1-12)
+          </span>
+        </button>
+
+        <button type="button" id="btn-select-long" class="flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 border-slate-200 bg-white shadow-sm cursor-pointer opacity-80">
+          <span class="text-xs font-black uppercase text-sky-600 flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-full bg-sky-500 inline-block shadow-sm"></span>
+            <span>Long Hand (Minute)</span>
+          </span>
+          <span id="long-hand-status" class="text-sm sm:text-base font-black text-sky-800 mt-1">
+            Waiting...
+          </span>
+        </button>
+      </div>
+
+      <!-- Instruction Helper Prompt -->
+      <div id="clock-instruction" class="text-xs sm:text-sm font-bold text-slate-500 text-center">
+        👇 Tap a number or drag on the clock to point the <strong class="text-rose-600">Short Hand</strong>!
+      </div>
+
+      <!-- Interactive SVG Clock Face -->
+      <div class="relative flex items-center justify-center p-1 sm:p-2">
+        <svg id="clock-svg" viewBox="-150 -150 300 300" class="w-64 h-64 sm:w-72 sm:h-72 select-none touch-none filter drop-shadow-md cursor-crosshair">
+          <defs>
+            <radialGradient id="clockDialGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="85%" stop-color="#FFFFFF" />
+              <stop offset="100%" stop-color="#F1F5F9" />
+            </radialGradient>
+          </defs>
+
+          <!-- Outer Ring & Dial -->
+          <circle cx="0" cy="0" r="144" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="8" />
+          <circle cx="0" cy="0" r="136" fill="url(#clockDialGrad)" stroke="#E2E8F0" stroke-width="2" />
+
+          <!-- Hour & Minute Ticks Container -->
+          <g id="clock-ticks"></g>
+
+          <!-- Numbers Hit Target Container -->
+          <g id="clock-numbers"></g>
+
+          <!-- Ghost Hands (Shows correct solution if answered wrong) -->
+          <g id="ghost-hands" class="hidden opacity-60">
+            <g id="ghost-short-group">
+              <line x1="0" y1="0" x2="0" y2="-62" stroke="#10B981" stroke-width="7" stroke-linecap="round" stroke-dasharray="5 4" />
+              <polygon points="0,-72 -7,-58 7,-58" fill="#10B981" />
+            </g>
+            <g id="ghost-long-group">
+              <line x1="0" y1="0" x2="0" y2="-98" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-dasharray="5 4" />
+              <polygon points="0,-108 -6,-94 6,-94" fill="#10B981" />
+            </g>
+          </g>
+
+          <!-- Short Hand (Hour - Red) -->
+          <g id="group-short-hand" class="hidden transition-transform duration-200 pointer-events-none">
+            <line x1="0" y1="10" x2="0" y2="-62" stroke="#EF4444" stroke-width="8" stroke-linecap="round" />
+            <polygon points="0,-72 -7,-58 7,-58" fill="#EF4444" />
+          </g>
+
+          <!-- Long Hand (Minute - Blue) -->
+          <g id="group-long-hand" class="hidden transition-transform duration-200 pointer-events-none">
+            <line x1="0" y1="12" x2="0" y2="-98" stroke="#0284C7" stroke-width="5.5" stroke-linecap="round" />
+            <polygon points="0,-108 -6,-94 6,-94" fill="#0284C7" />
+          </g>
+
+          <!-- Center Pivot Pin -->
+          <circle cx="0" cy="0" r="9" fill="#F59E0B" stroke="#B45309" stroke-width="2.5" />
+          <circle cx="0" cy="0" r="3.5" fill="#FFFFFF" />
+        </svg>
+      </div>
+
+      <!-- Reading Indicator & Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3 w-full">
+        <div class="bg-slate-100 border border-slate-200 px-4 py-2 rounded-xl text-center min-w-[120px]">
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Your Clock Shows</span>
+          <span id="current-clock-display" class="text-xl font-black text-slate-700 tracking-wider">
+            -- : --
+          </span>
+        </div>
+
+        <button type="button" id="btn-reset-clock" class="btn-chunky btn-white py-2 px-3.5 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1">
+          <span>🔄</span> <span>Reset</span>
+        </button>
+
+        <button type="button" id="btn-check-clock" class="btn-chunky btn-success py-2.5 px-6 rounded-xl text-base font-black flex items-center gap-2 shadow-md">
+          <span>✨</span> <span>Check My Clock!</span>
+        </button>
+      </div>
+    `;
+
+    // DOM Elements
+    const svgElem = container.querySelector('#clock-svg');
+    const ticksGroup = container.querySelector('#clock-ticks');
+    const numbersGroup = container.querySelector('#clock-numbers');
+    const shortHandGroup = container.querySelector('#group-short-hand');
+    const longHandGroup = container.querySelector('#group-long-hand');
+    const btnSelectShort = container.querySelector('#btn-select-short');
+    const btnSelectLong = container.querySelector('#btn-select-long');
+    const shortStatus = container.querySelector('#short-hand-status');
+    const longStatus = container.querySelector('#long-hand-status');
+    const instruction = container.querySelector('#clock-instruction');
+    const clockDisplay = container.querySelector('#current-clock-display');
+    const resetBtn = container.querySelector('#btn-reset-clock');
+    const checkBtn = container.querySelector('#btn-check-clock');
+    const ghostHands = container.querySelector('#ghost-hands');
+    const ghostShortGroup = container.querySelector('#ghost-short-group');
+    const ghostLongGroup = container.querySelector('#ghost-long-group');
+
+    // 1. Draw Ticks (Hour & Minute)
+    for (let i = 0; i < 60; i++) {
+      const angleRad = (i * 6 - 90) * (Math.PI / 180);
+      const isHour = (i % 5 === 0);
+      const rInner = isHour ? 122 : 128;
+      const rOuter = 132;
+      const x1 = rInner * Math.cos(angleRad);
+      const y1 = rInner * Math.sin(angleRad);
+      const x2 = rOuter * Math.cos(angleRad);
+      const y2 = rOuter * Math.sin(angleRad);
+
+      const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      tick.setAttribute('x1', x1);
+      tick.setAttribute('y1', y1);
+      tick.setAttribute('x2', x2);
+      tick.setAttribute('y2', y2);
+      tick.setAttribute('stroke', isHour ? '#64748B' : '#CBD5E1');
+      tick.setAttribute('stroke-width', isHour ? '2.5' : '1');
+      tick.setAttribute('stroke-linecap', 'round');
+      ticksGroup.appendChild(tick);
+    }
+
+    // 2. Draw 12 Interactive Numbers
+    for (let num = 1; num <= 12; num++) {
+      const angleRad = (num * 30 - 90) * (Math.PI / 180);
+      const rNum = 104;
+      const cx = rNum * Math.cos(angleRad);
+      const cy = rNum * Math.sin(angleRad);
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'clock-number-hit cursor-pointer');
+      g.dataset.hour = String(num);
+
+      // Hit area circle
+      const hitCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hitCircle.setAttribute('cx', cx);
+      hitCircle.setAttribute('cy', cy);
+      hitCircle.setAttribute('r', '17');
+      hitCircle.setAttribute('fill', 'rgba(255,255,255,0.01)');
+      hitCircle.setAttribute('pointer-events', 'all');
+      hitCircle.setAttribute('class', `num-circle-${num} transition-all duration-150`);
+      g.appendChild(hitCircle);
+
+      // Text label
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', cx);
+      text.setAttribute('y', cy);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'central');
+      text.setAttribute('font-size', '20');
+      text.setAttribute('font-weight', '900');
+      text.setAttribute('fill', '#334155');
+      text.setAttribute('class', `num-text-${num} select-none pointer-events-none font-black`);
+      text.textContent = String(num);
+      g.appendChild(text);
+
+      // Tap event on number
+      g.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isChecked) return;
+        placeHand(activeHand, num);
+      });
+
+      numbersGroup.appendChild(g);
+    }
+
+    // 3. Hand Positioning Function
+    function placeHand(handType, hourNumber) {
+      if (isChecked) return;
+      SoundEffects.playPop();
+
+      if (handType === 'short') {
+        studentHour = hourNumber;
+        shortHandGroup.classList.remove('hidden');
+        shortHandGroup.setAttribute('transform', `rotate(${hourNumber * 30})`);
+        shortStatus.textContent = `Points to: ${hourNumber}`;
+
+        highlightNumber(hourNumber, 'rose');
+
+        if (studentMinuteHour === null) {
+          setActiveHand('long');
+        } else {
+          updateDisplay();
+        }
+      } else {
+        studentMinuteHour = hourNumber;
+        longHandGroup.classList.remove('hidden');
+        longHandGroup.setAttribute('transform', `rotate(${hourNumber * 30})`);
+        const minVal = (hourNumber === 12 ? '00' : String((hourNumber * 5) % 60).padStart(2, '0'));
+        longStatus.textContent = `Points to: ${hourNumber} (:${minVal})`;
+
+        highlightNumber(hourNumber, 'sky');
+        updateDisplay();
+      }
+    }
+
+    function highlightNumber(num, color) {
+      const circle = numbersGroup.querySelector(`.num-circle-${num}`);
+      if (circle) {
+        circle.setAttribute('fill', color === 'rose' ? '#FFE4E6' : '#E0F2FE');
+        circle.setAttribute('stroke', color === 'rose' ? '#F43F5E' : '#0284C7');
+        circle.setAttribute('stroke-width', '2');
+      }
+    }
+
+    function clearHighlights() {
+      for (let n = 1; n <= 12; n++) {
+        const circle = numbersGroup.querySelector(`.num-circle-${n}`);
+        if (circle) {
+          circle.setAttribute('fill', 'rgba(255,255,255,0.01)');
+          circle.setAttribute('stroke', 'none');
+        }
+      }
+    }
+
+    function setActiveHand(hand) {
+      activeHand = hand;
+      if (hand === 'short') {
+        btnSelectShort.className = 'flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 ring-4 ring-rose-300 border-rose-500 bg-rose-50 shadow-sm cursor-pointer';
+        btnSelectLong.className = 'flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 border-slate-200 bg-white shadow-sm cursor-pointer opacity-80';
+        instruction.innerHTML = `👇 Tap a number or drag on the clock to point the <strong class="text-rose-600">Short Hand</strong>!`;
+      } else {
+        btnSelectLong.className = 'flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 ring-4 ring-sky-300 border-sky-500 bg-sky-50 shadow-sm cursor-pointer';
+        btnSelectShort.className = 'flex flex-col items-center p-3 rounded-2xl border-3 transition-all duration-150 border-slate-200 bg-white shadow-sm cursor-pointer opacity-80';
+        instruction.innerHTML = `👇 Now tap a number to point the <strong class="text-sky-600">Long Hand</strong> (for o'clock, tap 12)!`;
+      }
+    }
+
+    btnSelectShort.onclick = () => {
+      if (isChecked) return;
+      SoundEffects.playPop();
+      setActiveHand('short');
+    };
+
+    btnSelectLong.onclick = () => {
+      if (isChecked) return;
+      SoundEffects.playPop();
+      setActiveHand('long');
+    };
+
+    function updateDisplay() {
+      if (studentHour !== null && studentMinuteHour !== null) {
+        const minStr = (studentMinuteHour === 12 ? '00' : String((studentMinuteHour * 5) % 60).padStart(2, '0'));
+        clockDisplay.textContent = `${studentHour} : ${minStr}`;
+        clockDisplay.className = 'text-2xl font-black text-amber-600 tracking-wider';
+      } else if (studentHour !== null) {
+        clockDisplay.textContent = `${studentHour} : --`;
+      } else if (studentMinuteHour !== null) {
+        const minStr = (studentMinuteHour === 12 ? '00' : String((studentMinuteHour * 5) % 60).padStart(2, '0'));
+        clockDisplay.textContent = `-- : ${minStr}`;
+      } else {
+        clockDisplay.textContent = '-- : --';
+        clockDisplay.className = 'text-xl font-black text-slate-700 tracking-wider';
+      }
+    }
+
+    // 4. Drag / Pointer Interaction on SVG Dial
+    let isDragging = false;
+
+    function handlePointerCoord(e) {
+      const rect = svgElem.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 18) {
+        let deg = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        if (deg < 0) deg += 360;
+        let hourNum = Math.round(deg / 30);
+        if (hourNum === 0) hourNum = 12;
+        placeHand(activeHand, hourNum);
+      }
+    }
+
+    svgElem.addEventListener('pointerdown', (e) => {
+      if (isChecked) return;
+      isDragging = true;
+      svgElem.setPointerCapture(e.pointerId);
+      handlePointerCoord(e);
+    });
+
+    svgElem.addEventListener('pointermove', (e) => {
+      if (!isDragging || isChecked) return;
+      handlePointerCoord(e);
+    });
+
+    svgElem.addEventListener('pointerup', (e) => {
+      isDragging = false;
+      try { svgElem.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    // 5. Reset Hands
+    resetBtn.onclick = () => {
+      if (isChecked) return;
+      SoundEffects.playPop();
+      studentHour = null;
+      studentMinuteHour = null;
+      shortHandGroup.classList.add('hidden');
+      longHandGroup.classList.add('hidden');
+      shortStatus.textContent = 'Tap a number (1-12)';
+      longStatus.textContent = 'Waiting...';
+      clockDisplay.textContent = '-- : --';
+      clockDisplay.className = 'text-xl font-black text-slate-700 tracking-wider';
+      clearHighlights();
+      setActiveHand('short');
+    };
+
+    // 6. Check Answer
+    checkBtn.onclick = () => {
+      if (isChecked) return;
+
+      if (studentHour === null || studentMinuteHour === null) {
+        SoundEffects.playBoop();
+        instruction.innerHTML = `<span class="text-rose-600 font-extrabold animate-bounce">⚠️ Please place BOTH the Short Hand and Long Hand!</span>`;
+        return;
+      }
+
+      isChecked = true;
+      const minStr = (studentMinuteHour === 12 ? '00' : String((studentMinuteHour * 5) % 60).padStart(2, '0'));
+      currentSelectedAnswer = `${studentHour}:${minStr}`;
+
+      const isCorrect = (studentHour === targetHour && studentMinuteHour === targetMinHour);
+
+      const feedbackBadge = document.getElementById('feedback-badge');
+      const nextBtn = document.getElementById('btn-next-question');
+
+      checkBtn.disabled = true;
+      checkBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      resetBtn.disabled = true;
+      resetBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      if (isCorrect) {
+        score++;
+        document.getElementById('live-score').textContent = score;
+        SoundEffects.playChime();
+        confetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
+        feedbackBadge.innerHTML = `<span class="text-emerald-600 font-black flex items-center gap-1.5">🎉 Awesome! You drew ${targetTimeStr} correctly!</span>`;
+        instruction.innerHTML = `<span class="text-emerald-600 font-extrabold">🌟 Great job! Tap "Next" below to continue!</span>`;
+
+        shortHandGroup.querySelector('line').setAttribute('stroke', '#10B981');
+        shortHandGroup.querySelector('polygon').setAttribute('fill', '#10B981');
+        longHandGroup.querySelector('line').setAttribute('stroke', '#10B981');
+        longHandGroup.querySelector('polygon').setAttribute('fill', '#10B981');
+      } else {
+        SoundEffects.playBoop();
+        feedbackBadge.innerHTML = `<span class="text-rose-600 font-black flex items-center gap-1">❌ Target was <strong>${targetTimeStr}</strong> (Short hand: ${targetHour}, Long hand: 12)</span>`;
+        instruction.innerHTML = `<span class="text-rose-600 font-extrabold">Notice the green dotted hands showing the correct position!</span>`;
+
+        // Reveal ghost solution hands
+        ghostHands.classList.remove('hidden');
+        ghostShortGroup.setAttribute('transform', `rotate(${targetHour * 30})`);
+        ghostLongGroup.setAttribute('transform', `rotate(${targetMinHour * 30})`);
+      }
+
+      answersRecord.push({
+        question_id: q.id,
+        student_answer: `${studentHour}:${minStr}`,
+        is_correct: isCorrect,
+        used_hint: currentUsedHint
+      });
+
+      nextBtn.disabled = false;
+      nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      if (currentIndex === questions.length - 1) {
+        nextBtn.innerHTML = `<span>Finish & Save</span> <span>🏆</span>`;
+      }
+    };
   }
 
   function renderOrderingOptions(q, container) {
