@@ -157,6 +157,16 @@ $avatars = [
           <span>👨‍👩‍👧</span>
           <span class="hidden md:inline font-bold">Parents</span>
         </a>
+
+        <!-- Content & Git Guide Button -->
+        <a 
+          href="guide.php" 
+          class="btn-chunky btn-white text-sm md:text-base py-2 px-4 rounded-2xl flex items-center gap-2"
+          title="Question & Git Guide"
+        >
+          <span>🛠️</span>
+          <span class="hidden md:inline font-bold">Guide</span>
+        </a>
       </div>
     </header>
 
@@ -270,8 +280,12 @@ $avatars = [
 <?php endif; ?>
 
 <!-- Footer -->
-<footer class="text-center text-xs font-bold text-slate-400 mt-8">
-  NextGrade • Designed with ❤️ for Children's Learning & Writing Skills • 3-Tier Architecture
+<footer class="text-center text-xs font-bold text-slate-400 mt-8 flex flex-col sm:flex-row items-center justify-center gap-2">
+  <span>NextGrade • Designed with ❤️ for Children's Learning & Writing Skills</span>
+  <span>•</span>
+  <a href="guide.php" class="text-sky-500 hover:text-sky-700 underline font-extrabold flex items-center gap-1">
+    <span>🛠️</span> Question & Git Guide
+  </a>
 </footer>
 
 </body>

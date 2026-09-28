@@ -50,7 +50,19 @@ try {
         ];
     }
 
-    $revision['cards'] = json_decode($revision['content_json'], true) ?? [];
+    $cards = json_decode($revision['content_json'], true) ?? [];
+    foreach ($cards as &$card) {
+        if (!empty($card['image_url'])) {
+            $cleanPath = ltrim($card['image_url'], '/');
+            if (str_starts_with($cleanPath, 'nextgrade/')) {
+                $cleanPath = substr($cleanPath, strlen('nextgrade/'));
+            }
+            $card['image_url'] = BASE_URL . $cleanPath;
+        }
+    }
+    unset($card);
+
+    $revision['cards'] = $cards;
     echo json_encode(['success' => true, 'revision' => $revision]);
 
 } catch (Exception $e) {

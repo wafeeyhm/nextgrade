@@ -1,10 +1,29 @@
 <?php
 // NextGrade Comprehensive Database Seeder
-// Seeds Subjects, Topics, 5-Minute Revision Guides, and 60+ Detailed Questions
+// Seeds Subjects, Topics, Core Questions, and 5-Minute Revision Guides from questions_bank.json
 
 require_once __DIR__ . '/db.php';
 
 header('Content-Type: text/plain; charset=utf-8');
+
+// Optional direct truncate action via seed.php?action=truncate
+if (isset($_GET['action']) && $_GET['action'] === 'truncate') {
+    echo "=== NextGrade Truncate Process Started ===\n\n";
+    try {
+        $pdo->exec("SET FOREIGN_KEY_CHECKS = 0;");
+        $tables = ['quiz_session_answers', 'quiz_sessions', 'questions', 'revisions', 'topics', 'subjects', 'students'];
+        foreach ($tables as $t) {
+            $pdo->exec("TRUNCATE TABLE `$t`;");
+            echo "✓ Truncated table: $t\n";
+        }
+        $pdo->exec("SET FOREIGN_KEY_CHECKS = 1;");
+        echo "\n💥 ALL TABLES TRUNCATED SUCCESSFULLY!\n";
+    } catch (Exception $e) {
+        echo "❌ Truncate Failed: " . $e->getMessage() . "\n";
+    }
+    exit;
+}
+
 echo "=== NextGrade Seeding Process Started ===\n\n";
 
 try {
@@ -124,249 +143,7 @@ try {
     }
     echo "✓ Seeded " . count($topics) . " Topics.\n";
 
-    // 3. REVISION GUIDES (5 MINUTES INTERACTIVE FLASHCARDS & SUMMARIES)
-    $revisions = [
-        'bm_bulan' => [
-            'title' => 'Ulang Kaji: 12 Bulan dalam Setahun',
-            'summary' => 'Setiap tahun ada 12 bulan yang tersusun dari Januari hingga Disember.',
-            'cards' => [
-                ['title' => 'Bulan 1 hingga 4', 'text' => '1. Januari, 2. Februari, 3. Mac, 4. April. Bulan pertama ialah Januari.', 'icon' => '🌸'],
-                ['title' => 'Bulan 5 hingga 8', 'text' => '5. Mei, 6. Jun, 7. Julai, 8. Ogos. Bulan Kemerdekaan Malaysia ialah Ogos!', 'icon' => '🇲🇾'],
-                ['title' => 'Bulan 9 hingga 12', 'text' => '9. September, 10. Oktober, 11. November, 12. Disember. Bulan ke-12 dan terakhir ialah Disember.', 'icon' => '❄️'],
-                ['title' => 'Tip Mudah Ingat', 'text' => 'Ingat turutan dari awal: Jan, Feb, Mac, Apr, Mei, Jun, Jul, Ogo, Sep, Okt, Nov, Dis!', 'icon' => '💡']
-            ]
-        ],
-        'bm_suku_kata' => [
-            'title' => 'Ulang Kaji: Gabungan Suku Kata',
-            'summary' => 'Suku kata terbuka dibina daripada gabungan huruf konsonan dan vokal (KV).',
-            'cards' => [
-                ['title' => 'Contoh Ku + Da = Kuda', 'text' => 'Bunyi "Ku" ditambah "Da" menjadi "Kuda", haiwan yang berlari pantas.', 'icon' => '🐎'],
-                ['title' => 'Contoh Ba + Ju = Baju', 'text' => 'Bunyi "Ba" ditambah "Ju" menjadi "Baju" yang kita pakai setiap hari.', 'icon' => '👕'],
-                ['title' => 'Contoh Ka + Tak = Katak', 'text' => 'Bunyi "Ka" ditambah "Tak" menjadi "Katak" yang melompat di kolam.', 'icon' => '🐸'],
-                ['title' => 'Contoh Lo + Ri = Lori', 'text' => 'Bunyi "Lo" ditambah "Ri" menjadi "Lori", kenderaan berat pembawa muatan.', 'icon' => '🚛']
-            ]
-        ],
-        'bm_kenderaan' => [
-            'title' => 'Ulang Kaji: Laluan Kenderaan',
-            'summary' => 'Kenderaan bergerak di 3 laluan utama: Darat (jalan raya/rel), Air (sungai/laut), dan Udara (langit).',
-            'cards' => [
-                ['title' => 'Kenderaan Darat', 'text' => 'Kereta, Lori, Bas, Basikal dan Kereta Api. Semuanya mempunyai roda dan bergerak di atas jalan atau landasan.', 'icon' => '🚗'],
-                ['title' => 'Kenderaan Air', 'text' => 'Bot, Sampan, Feri dan Kapal Persiaran. Semuanya terapung dan bergerak di atas permukaan air.', 'icon' => '🚢'],
-                ['title' => 'Kenderaan Udara', 'text' => 'Kapal Terbang, Helikopter dan Belon Udara Panas. Semuanya terbang meluncur di ruang udara dan langit.', 'icon' => '✈️']
-            ]
-        ],
-        'bm_binatang' => [
-            'title' => 'Ulang Kaji: Kaki Haiwan (2 vs 4 Kaki)',
-            'summary' => 'Perhatikan bilangan kaki haiwan untuk mengelaskannya dengan tepat.',
-            'cards' => [
-                ['title' => 'Haiwan Berkaki 2', 'text' => 'Ayam, Itik, Burung, dan Penguin. Kebanyakan haiwan berkaki 2 juga mempunyai sepasang sayap!', 'icon' => '🦆'],
-                ['title' => 'Haiwan Berkaki 4', 'text' => 'Kucing, Lembu, Kambing, Kuda, Gajah, Singa dan Harimau.', 'icon' => '🐄'],
-                ['title' => 'Tip Pemerhatian', 'text' => 'Kira kaki depan dan kaki belakang. Jika ada 4, ia haiwan berkaki empat!', 'icon' => '🔍']
-            ]
-        ],
-        'bm_ini_itu' => [
-            'title' => 'Ulang Kaji: Kata Tunjuk "Ini" dan "Itu"',
-            'summary' => '"Ini" merujuk objek berhampiran dengan kita. "Itu" merujuk objek yang berada jauh.',
-            'cards' => [
-                ['title' => 'Penggunaan "Ini"', 'text' => 'Gunakan "Ini" apabila objek sangat dekat dengan tangan kita. Contoh: "Ini pensel saya."', 'icon' => '👇'],
-                ['title' => 'Penggunaan "Itu"', 'text' => 'Gunakan "Itu" apabila objek berada jauh atau perlu ditunjuk dengan anak panah panjang. Contoh: "Itu burung di pokok."', 'icon' => '👉']
-            ]
-        ],
-        'math_clocks' => [
-            'title' => 'Revision: Reading Clocks & Hands',
-            'summary' => 'Analog clocks have numbers 1 to 12 with a short hour hand and a long minute hand.',
-            'cards' => [
-                ['title' => 'Short Hand (Jarum Pendek)', 'text' => 'Points to the HOUR (Jam). If it points to 3, it is hour 3.', 'icon' => '🕰️'],
-                ['title' => 'Long Hand (Jarum Panjang)', 'text' => 'Points to the MINUTES (Minit). When it points straight up at 12, it is exactly o\'clock (:00).', 'icon' => '⬆️'],
-                ['title' => 'Half Past (:30)', 'text' => 'When the long hand points straight down at 6, it means 30 minutes (setengah jam).', 'icon' => '⬇️']
-            ]
-        ],
-        'math_descending' => [
-            'title' => 'Revision: Descending Order (20 to 1)',
-            'summary' => 'Descending order means counting backward from the biggest number down to the smallest.',
-            'cards' => [
-                ['title' => 'Start from 20', 'text' => '20, 19, 18, 17, 16, 15, 14, 13, 12, 11...', 'icon' => '2️⃣0️⃣'],
-                ['title' => 'Down to 1', 'text' => '10, 9, 8, 7, 6, 5, 4, 3, 2, 1! Every step goes down by 1.', 'icon' => '1️⃣']
-            ]
-        ],
-        'math_addition' => [
-            'title' => 'Revision: Addition (+) Put Together',
-            'summary' => 'Addition means combining two sets together to get a bigger total number.',
-            'cards' => [
-                ['title' => 'Plus Sign (+)', 'text' => 'The plus symbol means "and more". 4 apples + 3 apples = 7 apples!', 'icon' => '🍎'],
-                ['title' => 'Counting On Strategy', 'text' => 'Start with the bigger number in your head, then count on your fingers for the smaller number.', 'icon' => '🧠']
-            ]
-        ],
-        'math_subtraction' => [
-            'title' => 'Revision: Subtraction (-) Take Away',
-            'summary' => 'Subtraction means taking some items away to find how many are left.',
-            'cards' => [
-                ['title' => 'Minus Sign (-)', 'text' => 'The minus symbol means "take away". 10 balloons - 4 popped = 6 balloons left.', 'icon' => '🎈'],
-                ['title' => 'Counting Back', 'text' => 'Start at the first number and step backward to find the answer.', 'icon' => '👈']
-            ]
-        ],
-        'eng_days_months' => [
-            'title' => 'Revision: Days & Months Sequence',
-            'summary' => 'There are 7 days in a week and 12 months in a full year.',
-            'cards' => [
-                ['title' => '7 Days of the Week', 'text' => 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.', 'icon' => '🗓️'],
-                ['title' => 'Month Numbers', 'text' => 'January = 1st month, February = 2nd, March = 3rd, August = 8th, December = 12th.', 'icon' => '1️⃣']
-            ]
-        ],
-        'eng_blending' => [
-            'title' => 'Revision: Initial Blends (ch- & th-)',
-            'summary' => 'Two letters team up at the start of words to make exciting phonics sounds!',
-            'cards' => [
-                ['title' => 'The "ch-" Blend', 'text' => 'Sounds like "ch-ch-ch" as in Chair, Chick, Chin, Cheese, and Cherry.', 'icon' => '🪑'],
-                ['title' => 'The "th-" Blend', 'text' => 'Sounds like "th-th-th" as in Thorn, Thick, Thin, Thumb, and Three.', 'icon' => '🌹']
-            ]
-        ],
-        'eng_pronouns' => [
-            'title' => 'Revision: Pronouns (He, She, It, They)',
-            'summary' => 'Pronouns take the place of names so we do not have to repeat them.',
-            'cards' => [
-                ['title' => 'He', 'text' => 'Use "He" for one boy, man, or male figure. (e.g. He is a doctor.)', 'icon' => '👦'],
-                ['title' => 'She', 'text' => 'Use "She" for one girl, woman, or female figure. (e.g. She has a red bow.)', 'icon' => '👧'],
-                ['title' => 'It', 'text' => 'Use "It" for ONE single object, plant, animal or vehicle. (e.g. It is a truck.)', 'icon' => '📦'],
-                ['title' => 'They', 'text' => 'Use "They" for MORE THAN ONE person, toys, balls, or pencils. (e.g. They are playing.)', 'icon' => '👫']
-            ]
-        ],
-        'eng_articles' => [
-            'title' => 'Revision: Articles (A vs An)',
-            'summary' => 'Use "An" before vowel sounds (A, E, I, O, U). Use "A" before all consonant sounds.',
-            'cards' => [
-                ['title' => 'When to use "An"', 'text' => 'Use before vowel sounds: an apple, an egg, an ice cream, an octopus, an umbrella.', 'icon' => '🍎'],
-                ['title' => 'When to use "A"', 'text' => 'Use before consonant sounds: a cat, a house, a book, a banana, a bike.', 'icon' => '🐱']
-            ]
-        ],
-        'eng_has_have' => [
-            'title' => 'Revision: Has vs Have Rules',
-            'summary' => 'Singular subjects use "has", while plural subjects and I/You use "have".',
-            'cards' => [
-                ['title' => 'Use "HAS"', 'text' => 'He has, She has, It has, The boy has. (Singular)', 'icon' => '☝️'],
-                ['title' => 'Use "HAVE"', 'text' => 'I have, You have, We have, They have, Amin and Aman have. (Plural + I)', 'icon' => '✌️']
-            ]
-        ],
-        'eng_demonstratives' => [
-            'title' => 'Revision: This, That, These, Those',
-            'summary' => 'Match distance (Near vs Far) with quantity (1 item vs Many items).',
-            'cards' => [
-                ['title' => 'Near to Us', 'text' => 'This (1 item close by) | These (many items close by)', 'icon' => '👇'],
-                ['title' => 'Far Away', 'text' => 'That (1 item far away) | Those (many items far away)', 'icon' => '👉']
-            ]
-        ],
-        'eng_comprehension' => [
-            'title' => 'Revision: Reading Comprehension Secrets',
-            'summary' => 'Look closely at the story details: names, colors, shapes, and actions.',
-            'cards' => [
-                ['title' => 'Read Slowly & Carefully', 'text' => 'Read every sentence and imagine what is happening in the picture.', 'icon' => '👀'],
-                ['title' => 'Find the Clue in the Text', 'text' => 'The answer is always right inside the story! Match keywords with the question.', 'icon' => '🎯']
-            ]
-        ],
-        'sci_land_sea' => [
-            'title' => 'Revision: Land vs Sea Habitats',
-            'summary' => 'Land animals live on solid ground, while marine animals swim and breathe underwater in the ocean.',
-            'cards' => [
-                ['title' => 'Land Animals', 'text' => 'Cows, Cats, Horses, Monkeys, and Lions live on farms, grasslands, or in forests.', 'icon' => '🦁'],
-                ['title' => 'Marine / Sea Animals', 'text' => 'Fish, Sharks, Whales, Dolphins, Crabs, and Octopuses thrive in oceans and seas.', 'icon' => '🐬']
-            ]
-        ],
-        'sci_sink_float' => [
-            'title' => 'Revision: Sink vs Float Experiments',
-            'summary' => 'Heavy, dense objects sink down to the bottom. Light objects with trapped air float on top.',
-            'cards' => [
-                ['title' => 'Objects that Sink', 'text' => 'Metal keys, heavy stones, coins, and iron spoons sink straight to the bottom of the water.', 'icon' => '⚓'],
-                ['title' => 'Objects that Float', 'text' => 'Plastic balls, dry wooden twigs, rubber ducks, and leaves float gently on the water surface.', 'icon' => '🪵']
-            ]
-        ],
-        'sci_celestial' => [
-            'title' => 'Revision: Space Objects & Planet Earth',
-            'summary' => 'The Sun, Moon, Stars, and our planet Earth are all part of our incredible universe.',
-            'cards' => [
-                ['title' => 'The Sun', 'text' => 'A giant glowing star that gives Earth bright light and warm energy during the daytime.', 'icon' => '☀️'],
-                ['title' => 'The Moon & Stars', 'text' => 'The Moon orbits Earth and shines at night alongside millions of twinkling stars.', 'icon' => '🌙'],
-                ['title' => 'Planet Earth', 'text' => 'Our blue planet with oceans, continents, and air where humans and animals live.', 'icon' => '🌍']
-            ]
-        ],
-        'sci_materials' => [
-            'title' => 'Revision: Metal, Glass & Paper Materials',
-            'summary' => 'Different objects around us are crafted from materials with unique properties.',
-            'cards' => [
-                ['title' => 'Metal', 'text' => 'Hard, shiny, and strong. Examples: Keys, spoons, nails, and coins.', 'icon' => '🥄'],
-                ['title' => 'Glass', 'text' => 'Clear and transparent, but fragile. Examples: Drinking glasses, windows, and spectacles.', 'icon' => '🥛'],
-                ['title' => 'Paper', 'text' => 'Lightweight, flexible, and easy to fold. Examples: Storybooks, newspapers, and notebooks.', 'icon' => '📖']
-            ]
-        ],
-        'sci_pollution' => [
-            'title' => 'Revision: Types of Environmental Pollution',
-            'summary' => 'Pollution damages our beautiful nature when waste and toxins are not properly handled.',
-            'cards' => [
-                ['title' => 'Air Pollution', 'text' => 'Black smoke and fumes from factory chimneys and car exhausts contaminate the clean air.', 'icon' => '🏭'],
-                ['title' => 'Water / Sea Pollution', 'text' => 'Plastic trash, toxic runoff, and oil spills pollute rivers and oceans, harming marine life.', 'icon' => '🌊'],
-                ['title' => 'Land Pollution', 'text' => 'Piles of household garbage and litter dumped onto open grounds damage the soil.', 'icon' => '🗑️']
-            ]
-        ],
-        'sci_plants' => [
-            'title' => 'Revision: Parts & Growth Needs of a Plant',
-            'summary' => 'Plants need proper care, soil nutrients, and environment to blossom and grow.',
-            'cards' => [
-                ['title' => 'Parts of a Plant', 'text' => 'Roots (absorb water), Stem (supports the plant), Leaves (make food from light), Flower & Fruit.', 'icon' => '🌱'],
-                ['title' => '3 Things Plants Need', 'text' => 'Warm Sunlight, Fresh Air, and Clean Water to stay green and healthy.', 'icon' => '💧']
-            ]
-        ],
-        'ict_storage' => [
-            'title' => 'Revision: Computer Storage Drives',
-            'summary' => 'Storage devices keep photos, music, video games, and documents safely stored.',
-            'cards' => [
-                ['title' => 'USB Pendrive', 'text' => 'Small, pocket-sized flash stick that plugs into a computer USB port.', 'icon' => '💾'],
-                ['title' => 'CD-ROM Disc', 'text' => 'A round shiny disc read with a laser beam to install games and software.', 'icon' => '💿'],
-                ['title' => 'Hard Disk Drive (HDD)', 'text' => 'Large primary internal drive housed inside the system unit.', 'icon' => '🗄️'],
-                ['title' => 'Memory Card & Floppy Disk', 'text' => 'Memory cards are thin chips for digital cameras; floppy disks are historic magnetic storage.', 'icon' => '🃏']
-            ]
-        ],
-        'ict_parts' => [
-            'title' => 'Revision: Basic Computer Peripherals',
-            'summary' => 'A desktop computer consists of several key parts working seamlessly together.',
-            'cards' => [
-                ['title' => 'Monitor Screen', 'text' => 'The screen displays colorful graphics, text, videos, and games for us to see.', 'icon' => '🖥️'],
-                ['title' => 'Keyboard & Mouse', 'text' => 'The keyboard has keys to type text; the mouse moves the pointer and clicks buttons.', 'icon' => '⌨️'],
-                ['title' => 'Printer & Scanner', 'text' => 'The printer puts digital work onto paper; the scanner copies paper pictures into the computer.', 'icon' => '🖨️']
-            ]
-        ],
-        'ict_counting' => [
-            'title' => 'Revision: Counting Computer Devices',
-            'summary' => 'Carefully point and count each computer peripheral item one by one.',
-            'cards' => [
-                ['title' => 'Counting Strategy', 'text' => 'Point your finger at each mouse, screen, or keyboard: 1, 2, 3, 4! Never count the same item twice.', 'icon' => '🔢']
-            ]
-        ],
-        'ict_spelling' => [
-            'title' => 'Revision: Spelling Computer Peripherals',
-            'summary' => 'Master the vowels (A, E, I, O, U) that complete each peripheral name.',
-            'cards' => [
-                ['title' => 'PENDRIVE', 'text' => 'P - E - N - D - R - I - V - E (vowels E and I)', 'icon' => '💾'],
-                ['title' => 'SCANNER', 'text' => 'S - C - A - N - N - E - R (vowels A and E)', 'icon' => '📠'],
-                ['title' => 'WEBCAM', 'text' => 'W - E - B - C - A - M (vowels E and A)', 'icon' => '📹'],
-                ['title' => 'PRINTER', 'text' => 'P - R - I - N - T - E - R (vowels I and E)', 'icon' => '🖨️']
-            ]
-        ],
-        'ict_input_output' => [
-            'title' => 'Revision: Input (I) vs Output (O) Devices',
-            'summary' => 'Input puts commands and data INTO the computer. Output sends results OUT to you.',
-            'cards' => [
-                ['title' => 'Input Devices (I)', 'text' => 'Keyboard (types in), Mouse (clicks in), Microphone (voice in), Scanner (photo in), Webcam.', 'icon' => '📥'],
-                ['title' => 'Output Devices (O)', 'text' => 'Monitor (displays out), Printer (prints out on paper), Speakers & Headphones (play sound out).', 'icon' => '📤']
-            ]
-        ]
-    ];
-
-    $stmtRev = $pdo->prepare("INSERT INTO revisions (topic_id, title, summary, content_json) VALUES (?, ?, ?, ?)");
-    foreach ($revisions as $tId => $r) {
-        $stmtRev->execute([$tId, $r['title'], $r['summary'], json_encode($r['cards'], JSON_UNESCAPED_UNICODE)]);
-    }
-    echo "✓ Seeded " . count($revisions) . " Revision Modules.\n";
-
-        // 4. QUESTIONS BANK (Loaded from data/questions_bank.json - 50-90 questions per topic, 1499 questions total)
+    // 3. QUESTIONS BANK (Loaded from data/questions_bank.json)
     $bankFile = __DIR__ . '/data/questions_bank.json';
     if (!file_exists($bankFile)) {
         throw new Exception("Questions bank file not found: $bankFile");
@@ -398,15 +175,95 @@ try {
         ]);
     }
     $pdo->commit();
+    echo "✓ Seeded " . count($questions) . " Core Questions across all " . count($topics) . " Topics.\n";
 
-    echo "✓ Seeded " . count($questions) . " Core Questions across all 27 Topics (50-60 per topic).
-";
+    // 4. REVISION GUIDES (Generated dynamically based on questions_bank.json)
+    // Indexes questions by topic to create 5-minute flashcards from actual question bank items
+    $questionsByTopic = [];
+    foreach ($questions as $q) {
+        $questionsByTopic[$q['topic_id']][] = $q;
+    }
 
+    $stmtRev = $pdo->prepare("INSERT INTO revisions (topic_id, title, summary, content_json) VALUES (?, ?, ?, ?)");
+    $revisionCount = 0;
+
+    foreach ($topics as $t) {
+        $tId = $t['id'];
+        $topicQuestions = $questionsByTopic[$tId] ?? [];
+        $totalTQ = count($topicQuestions);
+
+        $isMalay = ($t['subject_id'] === 'bahasa_melayu');
+        $revTitle = $isMalay ? ("Ulang Kaji: " . $t['name']) : ("Revision: " . $t['name']);
+        $revSummary = $t['description'];
+
+        $cards = [];
+        $sampleCount = min(5, $totalTQ);
+
+        if ($sampleCount > 0) {
+            // Select 5 evenly spaced questions across the topic's question bank
+            $indices = [];
+            if ($sampleCount === 1) {
+                $indices = [0];
+            } else {
+                for ($i = 0; $i < $sampleCount; $i++) {
+                    $indices[] = (int)round($i * ($totalTQ - 1) / ($sampleCount - 1));
+                }
+            }
+
+            foreach ($indices as $cardIdx => $qIdx) {
+                $q = $topicQuestions[$qIdx];
+                $rawAns = $q['correct_answer'];
+                $decodedAns = json_decode($rawAns, true);
+                if (is_array($decodedAns)) {
+                    $ansText = implode(' ➔ ', $decodedAns);
+                } else {
+                    $ansText = $rawAns;
+                }
+
+                $hintText = !empty($q['hint_text']) ? trim($q['hint_text']) : '';
+
+                if ($isMalay) {
+                    $explanation = "Jawapan: " . $ansText . ($hintText ? " • Tip: " . $hintText : "");
+                } else {
+                    $explanation = "Answer: " . $ansText . ($hintText ? " • Hint: " . $hintText : "");
+                }
+
+                $cards[] = [
+                    'title' => $q['question_text'],
+                    'text' => $explanation,
+                    'icon' => $t['icon'],
+                    'image_url' => $q['image_url'] ?? null,
+                    'question_text' => $q['question_text'],
+                    'correct_answer' => $ansText,
+                    'hint_text' => $hintText
+                ];
+            }
+        }
+
+        if (empty($cards)) {
+            $cards[] = [
+                'title' => $isMalay ? 'Konsep Asas' : 'Core Concept',
+                'text' => $t['description'],
+                'icon' => $t['icon'],
+                'image_url' => null
+            ];
+        }
+
+        $stmtRev->execute([
+            $tId,
+            $revTitle,
+            $revSummary,
+            json_encode($cards, JSON_UNESCAPED_UNICODE)
+        ]);
+        $revisionCount++;
+    }
+
+    echo "✓ Seeded $revisionCount Revision Modules dynamically based on questions_bank.json.\n";
 
     echo "\n🎉 SEEDING COMPLETED SUCCESSFULLY!\n";
     echo "Total Subjects: " . count($subjects) . "\n";
     echo "Total Topics: " . count($topics) . "\n";
-    echo "Total Revisions: " . count($revisions) . "\n";
+    echo "Total Revisions: $revisionCount\n";
     echo "Total Questions: " . count($questions) . "\n";
 
 } catch (Exception $e) {

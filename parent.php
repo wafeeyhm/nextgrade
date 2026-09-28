@@ -30,6 +30,15 @@ $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? '';
         <span>⬅️</span>
         <span class="font-black">Home</span>
       </a>
+      <a 
+        href="guide.php" 
+        onclick="SoundEffects.playPop();"
+        class="btn-chunky btn-white text-xs md:text-sm py-2 px-3.5 rounded-xl flex items-center gap-1.5"
+        title="Question & Git Guide"
+      >
+        <span>🛠️</span>
+        <span class="font-black">Guide</span>
+      </a>
       <div>
         <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
           <span>👨‍👩‍👧</span> Parent Portal

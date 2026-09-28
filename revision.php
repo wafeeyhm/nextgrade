@@ -87,10 +87,11 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
       <div id="card-icon" class="text-7xl md:text-8xl mb-4 animate-float">
         💡
       </div>
+      <img id="card-image" src="" alt="Question Illustration" class="hidden max-h-48 md:max-h-56 max-w-xs md:max-w-sm w-auto object-contain rounded-2xl border-2 border-purple-200 shadow-md mb-4 bg-white p-2">
       <h2 id="card-title" class="text-2xl md:text-3xl font-black text-slate-800 mb-3">
         Card Title
       </h2>
-      <p id="card-text" class="text-lg md:text-xl font-bold text-slate-600 max-w-xl leading-relaxed">
+      <p id="card-text" class="text-lg md:text-xl font-bold text-slate-600 max-w-xl leading-relaxed whitespace-pre-line">
         Key concepts will appear here to help the child understand before testing knowledge with questions.
       </p>
     </div>
@@ -200,7 +201,20 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_kenderaan';
 
     document.getElementById('card-title').textContent = card.title;
     document.getElementById('card-text').textContent = card.text;
-    document.getElementById('card-icon').textContent = card.icon || '💡';
+    
+    const iconEl = document.getElementById('card-icon');
+    const imgEl = document.getElementById('card-image');
+    if (imgEl && iconEl) {
+      if (card.image_url) {
+        imgEl.src = card.image_url;
+        imgEl.classList.remove('hidden');
+        iconEl.classList.add('hidden');
+      } else {
+        imgEl.classList.add('hidden');
+        iconEl.classList.remove('hidden');
+        iconEl.textContent = card.icon || '💡';
+      }
+    }
 
     // Update buttons
     document.getElementById('btn-prev-card').disabled = (currentCardIndex === 0);
