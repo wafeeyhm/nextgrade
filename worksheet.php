@@ -19,6 +19,8 @@ if ($studentId && !$studentGrade) {
     }
 }
 $isKG3 = empty($studentGrade) || isGradeKG3($studentGrade);
+$isYear6 = isGradeYear6($studentGrade);
+$hasActiveCurriculum = $isKG3 || $isYear6;
 $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
 ?>
 <!DOCTYPE html>
@@ -40,22 +42,22 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
 </head>
 <body class="bg-slate-100 min-h-screen p-4 md:p-8 text-slate-900">
 
-<?php if (!$isKG3): ?>
-<!-- Non-KG3 Notice -->
+<?php if (!$hasActiveCurriculum): ?>
+<!-- Non-Supported Grade Notice -->
 <div class="max-w-xl mx-auto bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl border-4 border-amber-300 text-center my-12">
   <div class="text-7xl mb-4 animate-bounce">🔒</div>
   <span class="inline-block bg-amber-100 text-amber-800 text-xs font-black px-4 py-1 rounded-full uppercase tracking-wider mb-2">
-    Kindergarten 3 (KG3) Exclusive
+    Curriculum Notice
   </span>
   <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-2">
-    Worksheets for Kindergarten 3 (KG3) Only
+    Worksheets for KG3 & Year 6 (PSR)
   </h2>
   <p class="text-slate-500 font-bold text-sm mb-6 leading-relaxed">
-    All current question worksheets in NextGrade are prepared specifically for <strong>Kindergarten 3 (KG3)</strong>. Worksheets for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are coming soon!
+    Worksheets in NextGrade are currently prepared for <strong>Kindergarten 3 (KG3)</strong> and <strong>Year 6 (PSR Brunei)</strong>. Worksheets for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are coming soon!
   </p>
   <div class="flex justify-center gap-3">
     <a href="index.php?reset=1" class="btn-chunky btn-primary text-sm py-2.5 px-5 rounded-xl font-bold">
-      <span>🔄</span> <span>Switch to KG3 Student</span>
+      <span>🔄</span> <span>Switch Student Profile</span>
     </a>
     <a href="index.php" class="btn-chunky btn-white text-sm py-2.5 px-5 rounded-xl font-bold">
       <span>🏠</span> <span>Return Home</span>

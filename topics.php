@@ -21,6 +21,8 @@ if ($studentId && !$studentGrade) {
 }
 
 $isKG3 = empty($studentGrade) || isGradeKG3($studentGrade);
+$isYear6 = isGradeYear6($studentGrade);
+$hasActiveCurriculum = $isKG3 || $isYear6;
 $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
 ?>
 <!DOCTYPE html>
@@ -83,7 +85,7 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
     </div>
 
     <!-- Quick 10 Random Quiz from this Subject -->
-    <?php if ($isKG3): ?>
+    <?php if ($hasActiveCurriculum): ?>
     <a 
       id="subject-random-quiz-btn"
       href="quiz.php?subject=<?= urlencode($subjectId) ?>"
@@ -95,25 +97,25 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
     </a>
     <?php else: ?>
     <div class="bg-white/20 backdrop-blur-md px-4 py-2.5 rounded-2xl text-xs font-black text-white shrink-0 flex items-center gap-1.5 border border-white/30">
-      <span>🔒</span> <span>Questions for KG3 Only</span>
+      <span>🔒</span> <span>Curriculum Coming Soon</span>
     </div>
     <?php endif; ?>
   </div>
 
-  <?php if (!$isKG3): ?>
-  <!-- Non-KG3 Curriculum Notice Banner -->
+  <?php if (!$hasActiveCurriculum): ?>
+  <!-- Non-Supported Grade Curriculum Notice Banner -->
   <div class="bg-amber-50 border-3 border-amber-300 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-3.5 text-center sm:text-left">
       <span class="text-3xl p-2.5 bg-amber-100 rounded-2xl shrink-0">🔒</span>
       <div>
-        <h3 class="text-base font-black text-amber-950">Questions are for Kindergarten 3 (KG3) Only</h3>
+        <h3 class="text-base font-black text-amber-950">Questions are for KG3 & Year 6 (PSR Brunei)</h3>
         <p class="text-xs font-bold text-amber-800 mt-0.5">
-          All current questions in NextGrade are tailored specifically for <strong>Kindergarten 3 (KG3)</strong>. Questions for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are coming soon!
+          All current questions in NextGrade are tailored for <strong>Kindergarten 3 (KG3)</strong> and <strong>Year 6 (PSR Brunei)</strong>. Questions for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are coming soon!
         </p>
       </div>
     </div>
     <a href="index.php?reset=1" onclick="SoundEffects.playPop();" class="btn-chunky btn-primary text-xs py-2.5 px-4 rounded-xl font-black shrink-0 flex items-center gap-1.5">
-      <span>🔄</span> <span>Switch to KG3 Profile</span>
+      <span>🔄</span> <span>Switch Student Profile</span>
     </a>
   </div>
   <?php endif; ?>
@@ -145,6 +147,8 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
 <script>
   const subjectId = "<?= htmlspecialchars($subjectId) ?>";
   const isKG3 = <?= json_encode($isKG3) ?>;
+  const isYear6 = <?= json_encode($isYear6) ?>;
+  const hasActiveCurriculum = <?= json_encode($hasActiveCurriculum) ?>;
 
   async function loadSubjectAndTopics() {
     try {
@@ -205,7 +209,7 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
             </a>
 
             <!-- 2. Start 10-Question Quiz -->
-            ${isKG3 ? `
+            ${hasActiveCurriculum ? `
               <a 
                 href="quiz.php?topic=${t.id}"
                 onclick="SoundEffects.playPop();"
@@ -217,21 +221,21 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
               </a>
             ` : `
               <button 
-                onclick="SoundEffects.playBoop(); alert('Questions are for Kindergarten 3 (KG3) students only. Questions for <?= htmlspecialchars(addslashes($studentGrade)) ?> are coming soon!');"
-                title="Questions for KG3 only"
+                onclick="SoundEffects.playBoop(); alert('Questions are for KG3 and Year 6 (PSR Brunei) students. Content for <?= htmlspecialchars(addslashes($studentGrade)) ?> is coming soon!');"
+                title="Questions coming soon"
                 class="btn-chunky btn-white text-xs md:text-sm py-2.5 px-4 rounded-2xl flex-1 md:flex-none flex items-center justify-center gap-1.5 border-amber-300 text-amber-800 opacity-80"
               >
                 <span>🔒</span>
-                <span class="font-black">KG3 Quiz</span>
+                <span class="font-black">Coming Soon</span>
               </button>
             `}
 
             <!-- 3. Print Worksheet -->
-            ${isKG3 ? `
+            ${hasActiveCurriculum ? `
               <a 
                 href="worksheet.php?topic=${t.id}"
                 onclick="SoundEffects.playPop();"
-                title="Print Handwriting Worksheet"
+                title="Print Practice Worksheet"
                 class="btn-chunky btn-white text-sm md:text-base py-2.5 px-3.5 rounded-2xl flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <span>🖨️</span>
@@ -239,12 +243,12 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
               </a>
             ` : `
               <button 
-                onclick="SoundEffects.playBoop(); alert('Worksheet questions are for Kindergarten 3 (KG3) students only.');"
-                title="Worksheets for KG3 only"
+                onclick="SoundEffects.playBoop(); alert('Worksheet questions are for KG3 and Year 6 (PSR Brunei) students.');"
+                title="Worksheets coming soon"
                 class="btn-chunky btn-white text-xs md:text-sm py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1 border-amber-300 text-amber-800 opacity-80"
               >
                 <span>🔒</span>
-                <span class="font-bold">KG3 Print</span>
+                <span class="font-bold">Print</span>
               </button>
             `}
           </div>

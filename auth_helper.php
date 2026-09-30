@@ -101,8 +101,9 @@ function requireStudent(bool $redirect = true) {
 }
 
 /**
- * Grade Level & KG3 Eligibility Check
- * All current questions in NextGrade are tailored for Kindergarten 3 (KG3).
+ * Grade Level & Curriculum Checks
+ * - Kindergarten 3 (KG3): Early Learning (Ages 5 to 6)
+ * - Year 6 (PSR): Brunei Penilaian Sekolah Rendah Exam Preparation (Ages 11 to 12)
  */
 function isGradeKG3(?string $grade): bool {
     if (!$grade) return false;
@@ -110,10 +111,32 @@ function isGradeKG3(?string $grade): bool {
     return ($g === 'kg3' || str_contains($g, 'kg3') || str_contains($g, 'kindergarten 3') || str_contains($g, 'kindergarden 3'));
 }
 
+function isGradeYear6(?string $grade): bool {
+    if (!$grade) return false;
+    $g = strtolower(trim($grade));
+    return (str_contains($g, 'year 6') || str_contains($g, 'psr') || str_contains($g, 'tahun 6') || $g === 'y6');
+}
+
+function getCurriculumCategory(?string $grade): string {
+    if (isGradeYear6($grade)) {
+        return 'Year 6 (PSR)';
+    }
+    if (isGradeKG3($grade)) {
+        return 'Kindergarten 3 (KG3)';
+    }
+    return 'Other';
+}
+
 function isCurrentStudentKG3(): bool {
     if (!isStudentLoggedIn()) return true;
     $grade = $_SESSION['student_grade'] ?? null;
     return isGradeKG3($grade);
+}
+
+function isCurrentStudentYear6(): bool {
+    if (!isStudentLoggedIn()) return false;
+    $grade = $_SESSION['student_grade'] ?? null;
+    return isGradeYear6($grade);
 }
 
 /**

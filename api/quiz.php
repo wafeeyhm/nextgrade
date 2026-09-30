@@ -3,7 +3,9 @@
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../auth_helper.php';
 
-header('Content-Type: application/json; charset=utf-8');
+if (!headers_sent()) {
+    header('Content-Type: application/json; charset=utf-8');
+}
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -11,10 +13,9 @@ if (session_status() === PHP_SESSION_NONE) {
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // Check student grade level: All current questions are exclusively for Kindergarten 3 (KG3)
-    $studentGrade = $_SESSION['student_grade'] ?? null;
+    // Determine student curriculum: Kindergarten 3 (KG3) vs Year 6 (PSR Brunei)
+    $studentGrade = $_GET['grade'] ?? $_SESSION['student_grade'] ?? null;
     $studentId = $_SESSION['student_id'] ?? null;
-
     if ($studentId && !$studentGrade) {
         $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
         $stmtG->execute([$studentId]);
@@ -24,46 +25,75 @@ if ($method === 'GET') {
         }
     }
 
-    if ($studentGrade && !isGradeKG3($studentGrade)) {
-        http_response_code(403);
-        echo json_encode([
-            'success' => false,
-            'is_kg3_only' => true,
-            'student_grade' => $studentGrade,
-            'error' => "All current questions in NextGrade are prepared exclusively for Kindergarten 3 (KG3). Questions for " . htmlspecialchars($studentGrade) . " are coming soon!"
-        ]);
-        exit;
+    $activeCurriculum = 'Kindergarten 3 (KG3)'; // default
+    if ($studentGrade) {
+        if (isGradeYear6($studentGrade)) {
+            $activeCurriculum = 'Year 6 (PSR)';
+        } elseif (isGradeKG3($studentGrade)) {
+            $activeCurriculum = 'Kindergarten 3 (KG3)';
+        } else {
+            // Student is in an unsupported grade (e.g. Year 2, Year 1)
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'is_unsupported_grade' => true,
+                'student_grade' => $studentGrade,
+                'error' => "Questions in NextGrade are prepared for Kindergarten 3 (KG3) and Year 6 (PSR Brunei). Questions for " . htmlspecialchars($studentGrade) . " are coming soon!"
+            ]);
+            exit;
+        }
     }
 
     $topicId = $_GET['topic_id'] ?? null;
     $subjectId = $_GET['subject_id'] ?? null;
-    $limit = 10; // Requirement 1.10: 10 questions per session
+    $limit = 10; // 10 questions per session
 
     try {
         $questions = [];
 
         if ($topicId) {
-            // First fetch from specific topic
+            // Verify topic exists and matches student's curriculum
+            $stmtTopic = $pdo->prepare("SELECT subject_id, grade_level FROM topics WHERE id = ?");
+            $stmtTopic->execute([$topicId]);
+            $tRow = $stmtTopic->fetch();
+
+            if (!$tRow) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Topic not found']);
+                exit;
+            }
+
+            $topicGrade = $tRow['grade_level'] ?? 'Kindergarten 3 (KG3)';
+            if ($activeCurriculum === 'Year 6 (PSR)' && !isGradeYear6($topicGrade)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'This topic is for Kindergarten 3 (KG3) students.']);
+                exit;
+            } elseif ($activeCurriculum === 'Kindergarten 3 (KG3)' && isGradeYear6($topicGrade)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'This topic is for Year 6 (PSR) students.']);
+                exit;
+            }
+
+            // Fetch from specific topic
             $stmt = $pdo->prepare("SELECT * FROM questions WHERE topic_id = ? ORDER BY RAND() LIMIT ?");
             $stmt->bindValue(1, $topicId, PDO::PARAM_STR);
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
             $questions = $stmt->fetchAll();
 
-            // If topic has fewer than 10 questions, pull complementary questions from same subject
+            // If topic has fewer than 10 questions, pull complementary questions from same subject & grade
             if (count($questions) < $limit) {
                 $needed = $limit - count($questions);
                 $existingIds = array_column($questions, 'id');
                 $placeholders = count($existingIds) > 0 ? implode(',', array_fill(0, count($existingIds), '?')) : '0';
-
-                // Find subject_id of the topic
-                $stmtTopic = $pdo->prepare("SELECT subject_id FROM topics WHERE id = ?");
-                $stmtTopic->execute([$topicId]);
-                $tRow = $stmtTopic->fetch();
                 $sId = $tRow['subject_id'] ?? null;
 
                 if ($sId) {
-                    $sql = "SELECT * FROM questions WHERE subject_id = ? AND id NOT IN ($placeholders) ORDER BY RAND() LIMIT ?";
+                    $gradeCondition = ($activeCurriculum === 'Year 6 (PSR)')
+                        ? " AND (grade_level = 'Year 6 (PSR)') "
+                        : " AND (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ";
+
+                    $sql = "SELECT * FROM questions WHERE subject_id = ? $gradeCondition AND id NOT IN ($placeholders) ORDER BY RAND() LIMIT ?";
                     $stmtExtra = $pdo->prepare($sql);
                     $paramIdx = 1;
                     $stmtExtra->bindValue($paramIdx++, $sId, PDO::PARAM_STR);
@@ -77,15 +107,23 @@ if ($method === 'GET') {
                 }
             }
         } elseif ($subjectId) {
-            // 10 questions across selected subject
-            $stmt = $pdo->prepare("SELECT * FROM questions WHERE subject_id = ? ORDER BY RAND() LIMIT ?");
+            // 10 questions across selected subject (strictly within student's curriculum)
+            $gradeCondition = ($activeCurriculum === 'Year 6 (PSR)')
+                ? " AND (grade_level = 'Year 6 (PSR)') "
+                : " AND (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ";
+
+            $stmt = $pdo->prepare("SELECT * FROM questions WHERE subject_id = ? $gradeCondition ORDER BY RAND() LIMIT ?");
             $stmt->bindValue(1, $subjectId, PDO::PARAM_STR);
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
             $questions = $stmt->fetchAll();
         } else {
-            // 10 mixed questions across all subjects
-            $stmt = $pdo->prepare("SELECT * FROM questions ORDER BY RAND() LIMIT ?");
+            // 10 mixed questions strictly from the student's curriculum grade
+            if ($activeCurriculum === 'Year 6 (PSR)') {
+                $stmt = $pdo->prepare("SELECT * FROM questions WHERE grade_level = 'Year 6 (PSR)' ORDER BY RAND() LIMIT ?");
+            } else {
+                $stmt = $pdo->prepare("SELECT * FROM questions WHERE (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ORDER BY RAND() LIMIT ?");
+            }
             $stmt->bindValue(1, $limit, PDO::PARAM_INT);
             $stmt->execute();
             $questions = $stmt->fetchAll();

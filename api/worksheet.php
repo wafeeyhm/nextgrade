@@ -3,12 +3,14 @@
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../auth_helper.php';
 
-header('Content-Type: application/json; charset=utf-8');
+if (!headers_sent()) {
+    header('Content-Type: application/json; charset=utf-8');
+}
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check student grade level: All current questions are exclusively for Kindergarten 3 (KG3)
+// Check student grade level: KG3 and Year 6 PSR supported
 $studentGrade = $_SESSION['student_grade'] ?? null;
 $studentId = $_SESSION['student_id'] ?? null;
 if ($studentId && !$studentGrade) {
@@ -19,13 +21,13 @@ if ($studentId && !$studentGrade) {
         $_SESSION['student_grade'] = $studentGrade;
     }
 }
-if ($studentGrade && !isGradeKG3($studentGrade)) {
+if ($studentGrade && !isGradeKG3($studentGrade) && !isGradeYear6($studentGrade)) {
     http_response_code(403);
     echo json_encode([
         'success' => false,
-        'is_kg3_only' => true,
+        'is_unsupported_grade' => true,
         'student_grade' => $studentGrade,
-        'error' => "All current questions in NextGrade are prepared exclusively for Kindergarten 3 (KG3). Worksheets for " . htmlspecialchars($studentGrade) . " are coming soon!"
+        'error' => "Worksheets in NextGrade are currently prepared for Kindergarten 3 (KG3) and Year 6 (PSR Brunei). Worksheets for " . htmlspecialchars($studentGrade) . " are coming soon!"
     ]);
     exit;
 }
@@ -53,6 +55,20 @@ try {
         http_response_code(404);
         echo json_encode(['error' => 'Topic not found']);
         exit;
+    }
+
+    // Verify topic belongs to student's curriculum
+    if ($studentGrade) {
+        $curriculum = isGradeYear6($studentGrade) ? 'Year 6 (PSR)' : 'Kindergarten 3 (KG3)';
+        $topicGrade = $topic['grade_level'] ?? 'Kindergarten 3 (KG3)';
+        if ($topicGrade !== $curriculum) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => "This worksheet belongs to {$topicGrade}, which does not match your active grade."
+            ]);
+            exit;
+        }
     }
 
     // Fetch up to 10 questions for this topic

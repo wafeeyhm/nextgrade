@@ -170,6 +170,9 @@ class SystemVerificationEngine {
                 ['table' => 'students', 'col' => 'username', 'desc' => 'Kid simple username'],
                 ['table' => 'students', 'col' => 'pin_code', 'desc' => 'Kid 4-digit PIN access'],
                 ['table' => 'students', 'col' => 'grade_level', 'desc' => 'Curriculum grade level'],
+                ['table' => 'subjects', 'col' => 'grade_level', 'desc' => 'Subject grade level isolation'],
+                ['table' => 'topics', 'col' => 'grade_level', 'desc' => 'Topic grade level isolation'],
+                ['table' => 'questions', 'col' => 'grade_level', 'desc' => 'Question grade segregation level'],
                 ['table' => 'parents', 'col' => 'parent_code', 'desc' => 'Unique parent registration code'],
                 ['table' => 'admins', 'col' => 'password_hash', 'desc' => 'Secure hashed admin credentials'],
                 ['table' => 'questions', 'col' => 'image_url', 'desc' => 'Visual illustration path']
@@ -276,6 +279,70 @@ class SystemVerificationEngine {
                 'name' => 'Question Bank & Curriculum Data Population',
                 'status' => 'fail',
                 'message' => 'Failed counting curriculum data: ' . $e->getMessage(),
+                'details' => null
+            ];
+        }
+
+        // Check 6: Year 6 (PSR Brunei) Curriculum & 30-Question Topic Bank
+        try {
+            $psrTopicRows = $this->pdo->query("
+                SELECT t.id, t.name, s.name as subject_name, COUNT(q.id) as q_count
+                FROM topics t
+                JOIN subjects s ON s.id = t.subject_id
+                LEFT JOIN questions q ON q.topic_id = t.id AND q.grade_level = 'Year 6 (PSR)'
+                WHERE t.grade_level = 'Year 6 (PSR)'
+                GROUP BY t.id, t.name, s.name
+            ")->fetchAll();
+
+            $totalPsrTopics = count($psrTopicRows);
+            $understockedTopics = [];
+            $totalPsrQuestions = 0;
+
+            foreach ($psrTopicRows as $row) {
+                $totalPsrQuestions += (int)$row['q_count'];
+                if ((int)$row['q_count'] < 30) {
+                    $understockedTopics[] = "{$row['name']} ({$row['q_count']}/30)";
+                }
+            }
+
+            // Check grade isolation: ensure zero PSR questions are mislabelled
+            $leakageCount = (int)$this->pdo->query("
+                SELECT COUNT(*) FROM questions 
+                WHERE topic_id LIKE 'psr_%' AND (grade_level != 'Year 6 (PSR)' OR grade_level IS NULL)
+            ")->fetchColumn();
+
+            if ($totalPsrTopics >= 21 && empty($understockedTopics) && $leakageCount === 0) {
+                $checks[] = [
+                    'name' => 'Year 6 (PSR Brunei) Curriculum & 30-Question Threshold',
+                    'status' => 'pass',
+                    'message' => "All $totalPsrTopics Year 6 PSR topics meet or exceed the 30-question requirement ($totalPsrQuestions total PSR questions). Strict grade isolation confirmed (0 leaks).",
+                    'details' => [
+                        'psr_topics_count' => $totalPsrTopics,
+                        'total_psr_questions' => $totalPsrQuestions,
+                        'minimum_per_topic' => '30 questions (Met)',
+                        'grade_isolation' => '100% Verified (0 cross-grade leaks)'
+                    ]
+                ];
+            } elseif (!empty($understockedTopics)) {
+                $checks[] = [
+                    'name' => 'Year 6 (PSR Brunei) Curriculum & 30-Question Threshold',
+                    'status' => 'warning',
+                    'message' => "Some Year 6 PSR topics have fewer than 30 questions: " . implode(', ', $understockedTopics),
+                    'details' => compact('totalPsrTopics', 'totalPsrQuestions', 'understockedTopics')
+                ];
+            } else {
+                $checks[] = [
+                    'name' => 'Year 6 (PSR Brunei) Curriculum & 30-Question Threshold',
+                    'status' => 'fail',
+                    'message' => "Year 6 PSR curriculum not fully seeded ($totalPsrTopics/21 topics found). Run scripts/seed_psr_curriculum.php.",
+                    'details' => compact('totalPsrTopics', 'totalPsrQuestions', 'leakageCount')
+                ];
+            }
+        } catch (Exception $e) {
+            $checks[] = [
+                'name' => 'Year 6 (PSR Brunei) Curriculum & 30-Question Threshold',
+                'status' => 'fail',
+                'message' => 'Error verifying Year 6 PSR curriculum: ' . $e->getMessage(),
                 'details' => null
             ];
         }
@@ -754,6 +821,7 @@ class SystemVerificationEngine {
             $invalidPins = [];
             $unlinkedKids = [];
             $kg3Count = 0;
+            $psrCount = 0;
 
             foreach ($students as $kid) {
                 // Check 4-digit PIN
@@ -764,8 +832,10 @@ class SystemVerificationEngine {
                 if (empty($kid['parent_id'])) {
                     $unlinkedKids[] = $kid['name'];
                 }
-                // Check KG3
-                if (isGradeKG3($kid['grade_level'])) {
+                // Check Curriculum Category
+                if (isGradeYear6($kid['grade_level'])) {
+                    $psrCount++;
+                } elseif (isGradeKG3($kid['grade_level'])) {
                     $kg3Count++;
                 }
             }
@@ -774,10 +844,11 @@ class SystemVerificationEngine {
                 $checks[] = [
                     'name' => 'Student Accounts & Simple 4-Digit PIN Security',
                     'status' => 'pass',
-                    'message' => "All $kidCount student accounts have valid 4-digit numeric PIN codes. $kg3Count student(s) enrolled in Kindergarten 3 (KG3).",
+                    'message' => "All $kidCount student accounts have valid 4-digit numeric PIN codes ($kg3Count KG3, $psrCount Year 6 PSR).",
                     'details' => [
                         'total_students' => $kidCount,
                         'kg3_enrolled' => $kg3Count,
+                        'year6_psr_enrolled' => $psrCount,
                         'unlinked_kids' => count($unlinkedKids)
                     ]
                 ];

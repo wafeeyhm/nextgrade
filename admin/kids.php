@@ -202,11 +202,20 @@ $avatarMap = [
                     <?php else: ?>
                       <span class="text-slate-500 italic">No parent linked</span>
                     <?php endif; ?>
-                  </td>
                   <td class="py-3.5 px-4 text-center text-xs font-bold text-slate-300">
-                    <span class="bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
-                      <?= htmlspecialchars($s['grade_level'] ?? 'Year 1') ?>
-                    </span>
+                    <?php if (isGradeYear6($s['grade_level'] ?? '')): ?>
+                      <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-lg font-black inline-block">
+                        🇧🇳 Year 6 (PSR)
+                      </span>
+                    <?php elseif (isGradeKG3($s['grade_level'] ?? '')): ?>
+                      <span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 px-2.5 py-1 rounded-lg font-black inline-block">
+                        ⭐ KG3
+                      </span>
+                    <?php else: ?>
+                      <span class="bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700 text-slate-400">
+                        <?= htmlspecialchars($s['grade_level'] ?? 'Year 1') ?>
+                      </span>
+                    <?php endif; ?>
                   </td>
                   <td class="py-3.5 px-4 text-center font-black text-indigo-400 font-mono">
                     <?= $s['sessions_count'] ?>

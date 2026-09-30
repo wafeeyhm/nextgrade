@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad2)" />
+
+  <!-- Owl Head/Body -->
+  <path d="M16 22 L22 14 L30 18 L34 18 L42 14 L48 22 C52 30 52 46 44 52 C38 56 26 56 20 52 C12 46 12 30 16 22 Z" fill="#f8fafc" />
+  <ellipse cx="32" cy="42" rx="12" ry="10" fill="#e2e8f0" />
+
+  <!-- Eye Rings / Glasses -->
+  <circle cx="25" cy="30" r="8" fill="#fde047" />
+  <circle cx="39" cy="30" r="8" fill="#fde047" />
+
+  <!-- Big Pupils with Catchlights -->
+  <circle cx="25" cy="30" r="5" fill="#0f172a" />
+  <circle cx="39" cy="30" r="5" fill="#0f172a" />
+  <circle cx="23.5" cy="28.5" r="2" fill="#ffffff" />
+  <circle cx="37.5" cy="28.5" r="2" fill="#ffffff" />
+
+  <!-- Beak -->
+  <polygon points="32,33 29,38 35,38" fill="#f97316" />
+</svg>

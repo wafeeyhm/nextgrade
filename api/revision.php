@@ -2,7 +2,9 @@
 // NextGrade API - 5-Minute Topic Revision Section
 require_once __DIR__ . '/../db.php';
 
-header('Content-Type: application/json; charset=utf-8');
+if (!headers_sent()) {
+    header('Content-Type: application/json; charset=utf-8');
+}
 
 $topicId = $_GET['topic_id'] ?? null;
 

@@ -43,6 +43,15 @@ try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1;");
     echo "✓ Cleaned existing tables.\n";
 
+    // Ensure grade_level column exists on subjects, topics, and questions
+    $tablesToCheck = ['subjects', 'topics', 'questions'];
+    foreach ($tablesToCheck as $t) {
+        $cols = $pdo->query("SHOW COLUMNS FROM `$t` LIKE 'grade_level'")->fetchAll();
+        if (empty($cols)) {
+            $pdo->exec("ALTER TABLE `$t` ADD COLUMN `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)'");
+        }
+    }
+
     // 1. SUBJECTS
     $subjects = [
         [
@@ -97,11 +106,11 @@ try {
         ]
     ];
 
-    $stmtSubject = $pdo->prepare("INSERT INTO subjects (id, name, title_native, description, icon, theme_gradient, accent_color, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtSubject = $pdo->prepare("INSERT INTO subjects (id, name, title_native, description, icon, theme_gradient, accent_color, grade_level, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 'Kindergarten 3 (KG3)', ?)");
     foreach ($subjects as $s) {
         $stmtSubject->execute([$s['id'], $s['name'], $s['title_native'], $s['description'], $s['icon'], $s['theme_gradient'], $s['accent_color'], $s['sort_order']]);
     }
-    echo "✓ Seeded 5 Subjects.\n";
+    echo "✓ Seeded 5 KG3 Subjects.\n";
 
     // 2. TOPICS
     $topics = [
@@ -143,11 +152,11 @@ try {
         ['id' => 'ict_input_output', 'subject_id' => 'ict', 'name' => 'Input (I) vs Output (O) Devices', 'name_native' => 'Input vs Output Devices', 'description' => 'Recognise whether a device feeds data in (Input) or presents results (Output).', 'icon' => '🔌', 'color_badge' => 'bg-blue-100 text-blue-800', 'sort_order' => 5],
     ];
 
-    $stmtTopic = $pdo->prepare("INSERT INTO topics (id, subject_id, name, name_native, description, icon, color_badge, revision_time_limit, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 300, ?)");
+    $stmtTopic = $pdo->prepare("INSERT INTO topics (id, subject_id, name, name_native, description, icon, color_badge, revision_time_limit, grade_level, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 300, 'Kindergarten 3 (KG3)', ?)");
     foreach ($topics as $t) {
         $stmtTopic->execute([$t['id'], $t['subject_id'], $t['name'], $t['name_native'], $t['description'], $t['icon'], $t['color_badge'], $t['sort_order']]);
     }
-    echo "✓ Seeded " . count($topics) . " Topics.\n";
+    echo "✓ Seeded " . count($topics) . " KG3 Topics.\n";
 
     // 3. QUESTIONS BANK (Loaded from data/questions_bank.json)
     $bankFile = __DIR__ . '/data/questions_bank.json';
@@ -161,7 +170,7 @@ try {
     }
 
     $pdo->beginTransaction();
-    $stmtQ = $pdo->prepare("INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, meta_data_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtQ = $pdo->prepare("INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, grade_level, meta_data_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Kindergarten 3 (KG3)', ?)");
     
     foreach ($questions as $q) {
         $stmtQ->execute([
@@ -266,7 +275,11 @@ try {
 
     echo "✓ Seeded $revisionCount Revision Modules dynamically based on questions_bank.json.\n";
 
-    echo "\n🎉 SEEDING COMPLETED SUCCESSFULLY!\n";
+    // 5. SEED YEAR 6 BRUNEI PSR CURRICULUM
+    echo "\n=== Seeding Year 6 PSR Curriculum ===\n";
+    require_once __DIR__ . '/scripts/seed_psr_curriculum.php';
+
+    echo "\n🎉 MASTER SEEDING COMPLETED SUCCESSFULLY!\n";
     echo "Total Subjects: " . count($subjects) . "\n";
     echo "Total Topics: " . count($topics) . "\n";
     echo "Total Revisions: $revisionCount\n";
