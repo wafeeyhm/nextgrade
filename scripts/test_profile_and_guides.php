@@ -146,6 +146,7 @@ $adminFiles = [
     'admin/profile.php' => 'Admin Profile & Credentials',
     'admin/guide.php' => 'System Guide',
     'admin/developer_guide.php' => 'Developer & Question Guide',
+    'admin/verification.php' => 'System Health & Verification Dashboard',
     'admin/login.php' => 'Admin Login'
 ];
 
@@ -157,6 +158,7 @@ foreach ($adminFiles as $file => $name) {
     if ($file !== 'admin/login.php') {
         assertCheck(strpos($content, 'guide.php') !== false, "$name has link to System Guide");
         assertCheck(strpos($content, 'profile.php') !== false, "$name has link to Admin Profile");
+        assertCheck(strpos($content, 'verification.php') !== false, "$name has link to Verification Dashboard");
     }
 }
 
@@ -189,6 +191,53 @@ assertCheck(strpos($truncatePhp, 'requireAdmin()') !== false, "truncate.php requ
 
 $seedPhp = file_get_contents(__DIR__ . '/../seed.php');
 assertCheck(strpos($seedPhp, 'requireAdmin()') !== false, "seed.php requires admin authentication for web requests");
+
+// ---------------------------------------------------------------------
+// TEST 6: System Verification & Online Readiness (Improvement 4)
+// ---------------------------------------------------------------------
+echo "\n--- 6. Testing System Verification Engine & Production Checker ---\n";
+require_once __DIR__ . '/../admin/verification_engine.php';
+
+$verifyEngine = new SystemVerificationEngine($pdo);
+assertCheck(is_object($verifyEngine), "SystemVerificationEngine instantiates cleanly");
+
+$dbReport = $verifyEngine->checkDatabase();
+assertCheck($dbReport['checks'][0]['status'] === 'pass', "Engine: MySQL connection and latency check passes");
+assertCheck($dbReport['checks'][1]['status'] === 'pass', "Engine: 10 core schema tables verification passes");
+assertCheck($dbReport['checks'][2]['status'] === 'pass', "Engine: Critical columns & schema v2 checks pass");
+assertCheck($dbReport['checks'][3]['status'] === 'pass', "Engine: Read/Write transaction rollback test passes");
+
+$pagesReport = $verifyEngine->checkPages();
+assertCheck($pagesReport['checks'][0]['status'] === 'pass', "Engine: All system pages exist with 0 syntax errors");
+assertCheck($pagesReport['checks'][2]['status'] === 'pass', "Engine: Security gating on maintenance scripts passes");
+
+$imagesReport = $verifyEngine->checkImages();
+assertCheck($imagesReport['checks'][0]['status'] === 'pass', "Engine: All 173 referenced question images exist on disk (0 missing)");
+assertCheck($imagesReport['checks'][1]['status'] === 'pass', "Engine: Media folders architecture verified");
+
+$credsReport = $verifyEngine->checkCredentials();
+assertCheck($credsReport['checks'][0]['status'] === 'pass', "Engine: System Admin credentials & password hash verified");
+assertCheck($credsReport['checks'][1]['status'] === 'pass', "Engine: Parent accounts verified");
+assertCheck($credsReport['checks'][2]['status'] === 'pass', "Engine: Kid simple 4-digit PINs & KG3 eligibility verified");
+
+$envReport = $verifyEngine->checkProductionEnvironment();
+assertCheck($envReport['checks'][0]['status'] === 'pass', "Engine: PHP runtime version meets standards");
+assertCheck($envReport['checks'][1]['status'] === 'pass', "Engine: All 7 required extensions are loaded");
+assertCheck($envReport['checks'][2]['status'] === 'pass', "Engine: Session storage directory is writable");
+
+$fullReport = $verifyEngine->runAllChecks();
+assertCheck($fullReport['health_score'] >= 90, "Engine: Overall system health score is >= 90% (Current: {$fullReport['health_score']}%)");
+assertCheck($fullReport['summary']['failed'] === 0, "Engine: Zero critical failures detected in full system audit");
+
+$apiContent = file_get_contents(__DIR__ . '/../api/admin_verification.php');
+assertCheck(strpos($apiContent, 'requireAdmin(false)') !== false, "api/admin_verification.php enforces requireAdmin check");
+
+$cliContent = file_get_contents(__DIR__ . '/verify_production.php');
+assertCheck(strpos($cliContent, 'SystemVerificationEngine') !== false, "scripts/verify_production.php integrates SystemVerificationEngine");
+
+$uiContent = file_get_contents(__DIR__ . '/../admin/verification.php');
+assertCheck(strpos($uiContent, 'runLiveVerification') !== false, "admin/verification.php contains live AJAX audit function");
+assertCheck(strpos($uiContent, 'Online Production Pre-Flight Checklist') !== false, "admin/verification.php contains pre-flight production checklist");
 
 // ---------------------------------------------------------------------
 // Summary

@@ -61,6 +61,9 @@ $admin = getAdminUser();
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
           </a>
+          <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
+          </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
           </a>
@@ -125,6 +128,13 @@ $admin = getAdminUser();
 
       <div class="flex items-center gap-3 shrink-0">
         <a 
+          href="verification.php" 
+          class="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>System Verification</span>
+        </a>
+        <a 
           href="developer_guide.php" 
           class="bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
         >
@@ -149,7 +159,13 @@ $admin = getAdminUser();
     </div>
 
     <!-- Quick Navigation Anchor Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+      <a href="#sec-verification" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 p-4 rounded-2xl text-center transition-all group">
+        <div class="text-2xl mb-1.5 group-hover:scale-110 transition-transform">🔍</div>
+        <span class="block text-xs font-black text-emerald-400">Verification</span>
+        <span class="text-[10px] text-slate-400 font-bold">Online Readiness</span>
+      </a>
+
       <a href="#sec-architecture" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-indigo-500/50 p-4 rounded-2xl text-center transition-all group">
         <div class="text-2xl mb-1.5 group-hover:scale-110 transition-transform">🏛️</div>
         <span class="block text-xs font-black text-white">Architecture</span>
@@ -462,23 +478,79 @@ $admin = getAdminUser();
 
         <div class="space-y-3">
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 flex flex-col gap-1">
-            <span class="text-slate-500"># 1. Full 35-Point Automated Regression Test (Schema, Auth, Inspector, KG3 Gate)</span>
+            <span class="text-slate-500"># 1. Production Readiness & System Verification CLI (20 Deep Audits)</span>
+            <span class="text-emerald-400 font-bold">php scripts/verify_production.php</span>
+          </div>
+
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 flex flex-col gap-1">
+            <span class="text-slate-500"># 2. Full 35-Point Automated Regression Test (Schema, Auth, Inspector, KG3 Gate)</span>
             <span class="text-indigo-400 font-bold">php scripts/test_all_features.php</span>
           </div>
 
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 flex flex-col gap-1">
-            <span class="text-slate-500"># 2. Database Migration & Seed Script (Initializes Admins, Demo Parents, Kids)</span>
+            <span class="text-slate-500"># 3. Database Migration & Seed Script (Initializes Admins, Demo Parents, Kids)</span>
             <span class="text-indigo-400 font-bold">php scripts/migrate_v2.php</span>
           </div>
 
           <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 flex flex-col gap-1">
-            <span class="text-slate-500"># 3. Kindergarten 3 (KG3) Grade Migration & Inspection Tool</span>
+            <span class="text-slate-500"># 4. Kindergarten 3 (KG3) Grade Migration & Inspection Tool</span>
             <span class="text-indigo-400 font-bold">php scripts/update_kg3_grades.php</span>
           </div>
         </div>
 
         <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700/80 text-slate-400 text-xs">
           <strong>Database Schema Reference:</strong> Located in <code class="text-indigo-300">c:/xampp/htdocs/nextgrade/schema.sql</code>. Contains table definitions for <code class="text-slate-200">admins</code>, <code class="text-slate-200">parents</code>, <code class="text-slate-200">students</code>, <code class="text-slate-200">subjects</code>, <code class="text-slate-200">topics</code>, <code class="text-slate-200">questions</code>, <code class="text-slate-200">quiz_sessions</code>, and <code class="text-slate-200">quiz_session_answers</code>.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: System Verification & Production Readiness -->
+    <section id="sec-verification" class="bg-slate-800/80 border border-slate-700 rounded-3xl p-6 md:p-8 shadow-xl space-y-5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-lg font-black">
+          7
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-white tracking-tight">System Health & Verification Dashboard</h2>
+          <p class="text-xs font-bold text-slate-400">Automated pre-flight validation before deploying NextGrade online to a public web server.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-700 space-y-4 text-xs font-semibold">
+        <p class="text-slate-300 leading-relaxed">
+          The <strong class="text-white">System Verification Checker</strong> (<a href="verification.php" class="text-emerald-400 underline font-bold">admin/verification.php</a>) automatically checks 20 deep system parameters across 5 categories to ensure complete operational readiness:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+            <span class="text-cyan-400 font-bold block">1. Database Health</span>
+            <p class="text-slate-400 text-[11px]">Validates MySQL connection, ping latency, all 10 schema tables, columns, foreign keys, read/write transaction rollbacks, and record counts.</p>
+          </div>
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+            <span class="text-indigo-400 font-bold block">2. Pages & Route Integrity</span>
+            <p class="text-slate-400 text-[11px]">Lints all 32 PHP files for 0 syntax errors, tests HTTP status codes on public portals, and confirms security gates on maintenance scripts.</p>
+          </div>
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+            <span class="text-emerald-400 font-bold block">3. Media & Assets</span>
+            <p class="text-slate-400 text-[11px]">Scans all 173 referenced question illustrations on disk, ensuring 0 missing files, valid file sizes, and non-corrupt assets.</p>
+          </div>
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+            <span class="text-amber-400 font-bold block">4. Admin & User Credentials</span>
+            <p class="text-slate-400 text-[11px]">Verifies active System Admin accounts, tests password hashes, checks parent demo accounts, and verifies kid 4-digit PINs.</p>
+          </div>
+          <div class="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+            <span class="text-purple-400 font-bold block">5. Online Server Config</span>
+            <p class="text-slate-400 text-[11px]">Audits PHP version (>= 8.0), required extensions, session directory write permissions, and pre-flight notices (db password, SSL, display_errors).</p>
+          </div>
+          <div class="p-3.5 bg-emerald-950/30 rounded-xl border border-emerald-500/40 space-y-1 flex flex-col justify-between">
+            <div>
+              <span class="text-emerald-400 font-bold block">Launch Verification Audit</span>
+              <p class="text-slate-300 text-[11px]">Run live interactive diagnostic scan with full visual scorecard and report export.</p>
+            </div>
+            <a href="verification.php" class="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-colors w-fit">
+              <span>Open Verification Tool</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+          </div>
         </div>
       </div>
     </section>

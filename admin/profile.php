@@ -66,6 +66,9 @@ $adminData = $stmt->fetch();
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
           </a>
+          <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
+          </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
             <i class="fa-solid fa-user-gear mr-1.5 text-indigo-400"></i> My Profile
           </a>
