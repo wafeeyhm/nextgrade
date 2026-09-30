@@ -2,8 +2,8 @@
 // NextGrade - Authentication Helper & Role Guard
 require_once __DIR__ . '/db.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @session_start();
 }
 
 /**
@@ -101,6 +101,22 @@ function requireStudent(bool $redirect = true) {
 }
 
 /**
+ * Grade Level & KG3 Eligibility Check
+ * All current questions in NextGrade are tailored for Kindergarten 3 (KG3).
+ */
+function isGradeKG3(?string $grade): bool {
+    if (!$grade) return false;
+    $g = strtolower(trim($grade));
+    return ($g === 'kg3' || str_contains($g, 'kg3') || str_contains($g, 'kindergarten 3') || str_contains($g, 'kindergarden 3'));
+}
+
+function isCurrentStudentKG3(): bool {
+    if (!isStudentLoggedIn()) return true;
+    $grade = $_SESSION['student_grade'] ?? null;
+    return isGradeKG3($grade);
+}
+
+/**
  * JSON Response Helper
  */
 function sendJsonResponse(array $data, int $statusCode = 200) {
@@ -109,3 +125,4 @@ function sendJsonResponse(array $data, int $statusCode = 200) {
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
+

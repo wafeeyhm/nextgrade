@@ -5,7 +5,18 @@ require_once __DIR__ . '/auth_helper.php';
 
 $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? '';
 $studentAvatar = $_SESSION['student_avatar'] ?? 'star_kid';
-$studentGrade = $_SESSION['student_grade'] ?? 'Year 1';
+$studentId = $_SESSION['student_id'] ?? null;
+$studentGrade = $_SESSION['student_grade'] ?? null;
+
+if ($studentId && !$studentGrade) {
+    $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
+    $stmtG->execute([$studentId]);
+    $studentGrade = $stmtG->fetchColumn();
+    if ($studentGrade) {
+        $_SESSION['student_grade'] = $studentGrade;
+    }
+}
+$isKG3 = empty($studentGrade) || isGradeKG3($studentGrade);
 
 // Handle student reset / switch
 if (isset($_GET['reset'])) {
@@ -88,7 +99,7 @@ try {
                     <?= htmlspecialchars($k['name']) ?>
                   </span>
                   <span class="text-[10px] font-bold text-slate-400 mt-0.5">
-                    <?= htmlspecialchars($k['grade_level'] ?? 'Year 1') ?>
+                    <?= htmlspecialchars($k['grade_level'] ?? 'Kindergarten 3 (KG3)') ?> <?= !isGradeKG3($k['grade_level']) ? '<span class="text-amber-500 font-extrabold">(Non-KG3)</span>' : '' ?>
                   </span>
                 </button>
               <?php endforeach; ?>
@@ -463,7 +474,7 @@ try {
           <span class="text-2xl"><?= $avatars[$studentAvatar]['emoji'] ?? '⭐' ?></span>
           <div>
             <span class="font-extrabold text-slate-800 text-sm md:text-base block leading-none"><?= htmlspecialchars($studentName) ?></span>
-            <span class="text-[10px] text-slate-400 font-bold"><?= htmlspecialchars($studentGrade) ?></span>
+            <span class="text-[10px] font-black <?= $isKG3 ? 'text-sky-600' : 'text-amber-700' ?>"><?= htmlspecialchars($studentGrade ?? 'Kindergarten 3 (KG3)') ?> <?= $isKG3 ? '⭐' : '(Non-KG3)' ?></span>
           </div>
           <a 
             href="index.php?reset=1" 
@@ -515,6 +526,7 @@ try {
 
       <!-- Quick Play Mixed 10 Questions -->
       <div class="relative z-10 shrink-0">
+        <?php if ($isKG3): ?>
         <a 
           href="quiz.php?mode=mixed" 
           onclick="SoundEffects.playPop();"
@@ -526,10 +538,46 @@ try {
             <span class="font-black">Mixed 10 Questions!</span>
           </div>
         </a>
+        <?php else: ?>
+        <button 
+          type="button"
+          onclick="SoundEffects.playBoop(); alert('Questions in NextGrade are currently prepared for Kindergarten 3 (KG3) only. Questions for <?= htmlspecialchars(addslashes($studentGrade)) ?> are coming soon!');"
+          class="bg-white/20 hover:bg-white/25 border-2 border-white/30 rounded-2xl p-4 text-center text-white cursor-pointer transition-all active:scale-95"
+        >
+          <span class="text-2xl md:text-3xl block mb-1">🔒</span>
+          <span class="text-xs font-black uppercase tracking-wider block">KG3 Questions Only</span>
+          <span class="text-[11px] opacity-85"><?= htmlspecialchars($studentGrade) ?> Content Coming Soon</span>
+        </button>
+        <?php endif; ?>
       </div>
 
       <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
     </div>
+
+    <?php if (!$isKG3): ?>
+    <!-- Non-KG3 Curriculum Notice Banner -->
+    <div class="bg-amber-50 border-3 border-amber-300 rounded-[2rem] p-5 md:p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 text-center sm:text-left">
+        <span class="text-4xl p-2.5 bg-amber-100 rounded-2xl shrink-0">🔒</span>
+        <div>
+          <div class="flex items-center gap-2 justify-center sm:justify-start">
+            <span class="bg-amber-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">Curriculum Notice</span>
+            <h3 class="text-lg font-black text-amber-950">Questions are for Kindergarten 3 (KG3) Only</h3>
+          </div>
+          <p class="text-xs font-bold text-amber-800 mt-1 leading-relaxed">
+            Hello <strong><?= htmlspecialchars($studentName) ?></strong>! All current quiz questions in NextGrade are prepared specifically for <strong>Kindergarten 3 (KG3)</strong>. Questions for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are in development and will be released soon!
+          </p>
+        </div>
+      </div>
+      <a 
+        href="index.php?reset=1" 
+        onclick="SoundEffects.playPop();"
+        class="btn-chunky btn-primary text-xs py-2.5 px-4 rounded-xl font-black shrink-0 flex items-center gap-1.5 shadow-sm"
+      >
+        <span>🔄</span> <span>Switch to KG3 Profile</span>
+      </a>
+    </div>
+    <?php endif; ?>
 
     <!-- Subjects Grid -->
     <div>
@@ -551,6 +599,8 @@ try {
   </div>
 
   <script>
+    const isKG3 = <?= json_encode($isKG3) ?>;
+
     async function loadSubjects() {
       try {
         const resp = await fetch('api/subjects.php');
@@ -588,9 +638,9 @@ try {
             </div>
 
             <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-slate-400">
-              <span>${s.total_questions} Questions Ready</span>
+              <span>${isKG3 ? `${s.total_questions} Questions Ready` : '<span class="text-amber-500 font-extrabold">🔒 Kindergarten 3 (KG3) Only</span>'}</span>
               <span class="text-sky-500 group-hover:translate-x-1 transition-transform font-extrabold flex items-center gap-1">
-                Explore Topics ➔
+                ${isKG3 ? 'Explore Topics ➔' : 'View (KG3) ➔'}
               </span>
             </div>
           </a>

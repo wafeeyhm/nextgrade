@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `students` (
   `username` VARCHAR(50) UNIQUE DEFAULT NULL,
   `pin_code` VARCHAR(20) DEFAULT '1234',
   `avatar` VARCHAR(50) DEFAULT 'star_kid',
-  `grade_level` VARCHAR(50) DEFAULT 'Year 1',
+  `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)',
   `status` ENUM('active', 'inactive') DEFAULT 'active',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `last_active` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

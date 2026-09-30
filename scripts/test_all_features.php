@@ -80,15 +80,15 @@ $stmtIns = $pdo->prepare("
     INSERT INTO students (parent_id, name, username, pin_code, avatar, grade_level, status)
     VALUES (?, ?, ?, ?, ?, ?, 'active')
 ");
-$stmtIns->execute([$sarah['id'], 'Maya Test', 'mayatest99', '5678', 'kitten', 'Kindergarten']);
+$stmtIns->execute([$sarah['id'], 'Maya Test', 'mayatest99', '5678', 'kitten', 'Kindergarten 3 (KG3)']);
 $testKidId = (int)$pdo->lastInsertId();
 assertTest($testKidId > 0, "Parent CREATE Kid: Created child 'Maya Test' with ID $testKidId");
 
 // Update kid
-$stmtUpd = $pdo->prepare("UPDATE students SET name = 'Maya Marissa', grade_level = 'Preschool' WHERE id = ? AND parent_id = ?");
+$stmtUpd = $pdo->prepare("UPDATE students SET name = 'Maya Marissa', grade_level = 'Kindergarten 3 (KG3)' WHERE id = ? AND parent_id = ?");
 $stmtUpd->execute([$testKidId, $sarah['id']]);
 $updatedKid = $pdo->query("SELECT * FROM students WHERE id = $testKidId")->fetch();
-assertTest($updatedKid['name'] === 'Maya Marissa', "Parent UPDATE Kid: Name updated to 'Maya Marissa'");
+assertTest($updatedKid['name'] === 'Maya Marissa' && $updatedKid['grade_level'] === 'Kindergarten 3 (KG3)', "Parent UPDATE Kid: Name & grade updated to 'Kindergarten 3 (KG3)'");
 
 // Delete kid
 $stmtDel = $pdo->prepare("DELETE FROM students WHERE id = ? AND parent_id = ?");
@@ -151,6 +151,26 @@ foreach ($answers as $a) {
 }
 assertTest($hasCorrect, "Inspector identifies CORRECT answers (marked is_correct = 1)");
 assertTest($hasIncorrect, "Inspector identifies INCORRECT answers (marked is_correct = 0)");
+
+// ---------------------------------------------------------------------
+// TEST 8: Kindergarten 3 (KG3) Grade Restrictions (Requirement 4)
+// ---------------------------------------------------------------------
+echo "\n--- 8. Testing Kindergarten 3 (KG3) Question Access Restrictions ---\n";
+require_once __DIR__ . '/../auth_helper.php';
+
+assertTest(isGradeKG3('Kindergarten 3 (KG3)') === true, "isGradeKG3 recognizes 'Kindergarten 3 (KG3)'");
+assertTest(isGradeKG3('KG3') === true, "isGradeKG3 recognizes 'KG3'");
+assertTest(isGradeKG3('Kindergarden 3 (KG3)') === true, "isGradeKG3 recognizes spelling 'Kindergarden 3'");
+assertTest(isGradeKG3('Year 1') === false, "isGradeKG3 blocks 'Year 1'");
+assertTest(isGradeKG3('Year 2') === false, "isGradeKG3 blocks 'Year 2'");
+assertTest(isGradeKG3(null) === false, "isGradeKG3 blocks null/empty");
+
+// Verify active students in DB
+$lanaStudent = $pdo->query("SELECT * FROM students WHERE username = 'lana'")->fetch();
+assertTest(isGradeKG3($lanaStudent['grade_level']), "Active student 'lana' is KG3 and can access questions ({$lanaStudent['grade_level']})");
+
+$danishStudent = $pdo->query("SELECT * FROM students WHERE username = 'danish'")->fetch();
+assertTest(!isGradeKG3($danishStudent['grade_level']), "Active student 'danish' is '{$danishStudent['grade_level']}' and is BLOCKED from questions");
 
 // ---------------------------------------------------------------------
 // Summary

@@ -1,11 +1,26 @@
 <?php
 // NextGrade - Interactive 10-Question Tablet Quiz Runner
 require_once __DIR__ . '/db.php';
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? 'Kawan Pintar';
 $studentAvatar = $_SESSION['student_avatar'] ?? 'star_kid';
 $studentId = $_SESSION['student_id'] ?? null;
+$studentGrade = $_SESSION['student_grade'] ?? null;
+
+if ($studentId && !$studentGrade) {
+    $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
+    $stmtG->execute([$studentId]);
+    $studentGrade = $stmtG->fetchColumn();
+    if ($studentGrade) {
+        $_SESSION['student_grade'] = $studentGrade;
+    }
+}
+
+$isKG3 = empty($studentGrade) || isGradeKG3($studentGrade);
 
 $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? null;
 $subjectId = $_GET['subject'] ?? $_GET['subject_id'] ?? null;
@@ -57,6 +72,39 @@ $mode = $_GET['mode'] ?? null;
     </div>
   </header>
 
+  <?php if (!$isKG3): ?>
+  <!-- 2. Non-KG3 Lockdown Screen: Current questions are for Kindergarten 3 (KG3) only -->
+  <main class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border-4 border-amber-300 text-center max-w-xl mx-auto my-6 relative overflow-hidden">
+    <div class="text-7xl md:text-8xl mb-4 animate-bounce">🔒</div>
+    <span class="inline-block bg-amber-100 text-amber-800 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider mb-3">
+      Kindergarten 3 (KG3) Exclusive
+    </span>
+    <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-3 tracking-tight">
+      Questions for Kindergarten 3 (KG3) Only
+    </h2>
+    <p class="text-slate-500 font-bold text-sm md:text-base mb-6 leading-relaxed">
+      Hello <strong class="text-slate-800"><?= htmlspecialchars($studentName) ?></strong>! All current quiz questions in NextGrade are prepared specifically for <strong>Kindergarten 3 (KG3)</strong>.
+      <br><br>
+      Since your profile is set to <span class="bg-amber-50 text-amber-900 border border-amber-200 px-2.5 py-1 rounded-xl font-mono font-black"><?= htmlspecialchars($studentGrade) ?></span>, questions for your grade level are not available yet and will be released in an upcoming update!
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a 
+        href="index.php?reset=1" 
+        onclick="SoundEffects.playPop();"
+        class="btn-chunky btn-primary text-sm py-3 px-6 rounded-2xl font-black flex items-center justify-center gap-2"
+      >
+        <span>🔄</span> <span>Switch to KG3 Student</span>
+      </a>
+      <a 
+        href="index.php" 
+        onclick="SoundEffects.playPop();"
+        class="btn-chunky btn-white text-sm py-3 px-6 rounded-2xl font-bold flex items-center justify-center gap-2"
+      >
+        <span>🏠</span> <span>Return Home</span>
+      </a>
+    </div>
+  </main>
+  <?php else: ?>
   <!-- 2. Main Question Card -->
   <main id="quiz-card" class="bg-white rounded-[2rem] p-6 md:p-8 shadow-xl border-3 border-slate-200 relative overflow-hidden flex flex-col min-h-[500px] justify-between">
 
@@ -173,6 +221,7 @@ $mode = $_GET['mode'] ?? null;
     </div>
 
   </main>
+  <?php endif; ?>
 
   <!-- 4. Celebration Modal / End Session Result (Requirement 1.13) -->
   <div id="result-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -272,6 +321,21 @@ $mode = $_GET['mode'] ?? null;
       const data = await resp.json();
 
       if (!data.success || !data.questions || data.questions.length === 0) {
+        if (data.is_kg3_only) {
+          document.getElementById('quiz-loading').innerHTML = `
+            <div class="text-6xl mb-3 animate-bounce">🔒</div>
+            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider mb-2">
+              Kindergarten 3 (KG3) Exclusive
+            </span>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Questions for Kindergarten 3 (KG3) Only</h3>
+            <p class="text-slate-500 font-bold text-sm max-w-md mx-auto mb-4">${data.error || 'Questions are currently for Kindergarten 3 (KG3) students only.'}</p>
+            <div class="flex gap-2 justify-center">
+              <a href="index.php?reset=1" class="btn-chunky btn-primary py-2 px-4 rounded-xl text-xs font-bold">Switch Student</a>
+              <a href="index.php" class="btn-chunky btn-white py-2 px-4 rounded-xl text-xs font-bold">Return Home</a>
+            </div>
+          `;
+          return;
+        }
         document.getElementById('quiz-loading').innerHTML = `
           <div class="text-4xl mb-3">⚠️</div>
           <h3 class="text-xl font-bold text-red-500">Questions could not be loaded.</h3>
@@ -1089,7 +1153,7 @@ $mode = $_GET['mode'] ?? null;
     }
   }
 
-  document.addEventListener('DOMContentLoaded', initQuiz);
+  document.addEventListener('DOMContentLoaded', <?= $isKG3 ? 'initQuiz' : '() => {}' ?>);
 </script>
 
 </body>

@@ -1,10 +1,26 @@
 <?php
 // NextGrade - Subject Topics Hub
 require_once __DIR__ . '/db.php';
-session_start();
+require_once __DIR__ . '/auth_helper.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? 'Kawan Pintar';
 $studentAvatar = $_SESSION['student_avatar'] ?? 'star_kid';
+$studentId = $_SESSION['student_id'] ?? null;
+$studentGrade = $_SESSION['student_grade'] ?? null;
+
+if ($studentId && !$studentGrade) {
+    $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
+    $stmtG->execute([$studentId]);
+    $studentGrade = $stmtG->fetchColumn();
+    if ($studentGrade) {
+        $_SESSION['student_grade'] = $studentGrade;
+    }
+}
+
+$isKG3 = empty($studentGrade) || isGradeKG3($studentGrade);
 $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
 ?>
 <!DOCTYPE html>
@@ -67,6 +83,7 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
     </div>
 
     <!-- Quick 10 Random Quiz from this Subject -->
+    <?php if ($isKG3): ?>
     <a 
       id="subject-random-quiz-btn"
       href="quiz.php?subject=<?= urlencode($subjectId) ?>"
@@ -76,7 +93,30 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
       <span>🚀</span>
       <span>Mixed 10-Question Quiz</span>
     </a>
+    <?php else: ?>
+    <div class="bg-white/20 backdrop-blur-md px-4 py-2.5 rounded-2xl text-xs font-black text-white shrink-0 flex items-center gap-1.5 border border-white/30">
+      <span>🔒</span> <span>Questions for KG3 Only</span>
+    </div>
+    <?php endif; ?>
   </div>
+
+  <?php if (!$isKG3): ?>
+  <!-- Non-KG3 Curriculum Notice Banner -->
+  <div class="bg-amber-50 border-3 border-amber-300 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3.5 text-center sm:text-left">
+      <span class="text-3xl p-2.5 bg-amber-100 rounded-2xl shrink-0">🔒</span>
+      <div>
+        <h3 class="text-base font-black text-amber-950">Questions are for Kindergarten 3 (KG3) Only</h3>
+        <p class="text-xs font-bold text-amber-800 mt-0.5">
+          All current questions in NextGrade are tailored specifically for <strong>Kindergarten 3 (KG3)</strong>. Questions for your grade level (<strong><?= htmlspecialchars($studentGrade) ?></strong>) are coming soon!
+        </p>
+      </div>
+    </div>
+    <a href="index.php?reset=1" onclick="SoundEffects.playPop();" class="btn-chunky btn-primary text-xs py-2.5 px-4 rounded-xl font-black shrink-0 flex items-center gap-1.5">
+      <span>🔄</span> <span>Switch to KG3 Profile</span>
+    </a>
+  </div>
+  <?php endif; ?>
 
   <!-- Topics Section -->
   <div>
@@ -104,6 +144,7 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
 
 <script>
   const subjectId = "<?= htmlspecialchars($subjectId) ?>";
+  const isKG3 = <?= json_encode($isKG3) ?>;
 
   async function loadSubjectAndTopics() {
     try {
@@ -164,26 +205,48 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
             </a>
 
             <!-- 2. Start 10-Question Quiz -->
-            <a 
-              href="quiz.php?topic=${t.id}"
-              onclick="SoundEffects.playPop();"
-              title="Start 10-Question Quiz"
-              class="btn-chunky btn-success text-sm md:text-base py-2.5 px-5 rounded-2xl flex-1 md:flex-none flex items-center justify-center gap-1.5 shadow-sm"
-            >
-              <span>🚀</span>
-              <span class="font-black">Quiz (10)</span>
-            </a>
+            ${isKG3 ? `
+              <a 
+                href="quiz.php?topic=${t.id}"
+                onclick="SoundEffects.playPop();"
+                title="Start 10-Question Quiz"
+                class="btn-chunky btn-success text-sm md:text-base py-2.5 px-5 rounded-2xl flex-1 md:flex-none flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <span>🚀</span>
+                <span class="font-black">Quiz (10)</span>
+              </a>
+            ` : `
+              <button 
+                onclick="SoundEffects.playBoop(); alert('Questions are for Kindergarten 3 (KG3) students only. Questions for <?= htmlspecialchars(addslashes($studentGrade)) ?> are coming soon!');"
+                title="Questions for KG3 only"
+                class="btn-chunky btn-white text-xs md:text-sm py-2.5 px-4 rounded-2xl flex-1 md:flex-none flex items-center justify-center gap-1.5 border-amber-300 text-amber-800 opacity-80"
+              >
+                <span>🔒</span>
+                <span class="font-black">KG3 Quiz</span>
+              </button>
+            `}
 
             <!-- 3. Print Worksheet -->
-            <a 
-              href="worksheet.php?topic=${t.id}"
-              onclick="SoundEffects.playPop();"
-              title="Print Handwriting Worksheet"
-              class="btn-chunky btn-white text-sm md:text-base py-2.5 px-3.5 rounded-2xl flex items-center justify-center gap-1.5 shadow-sm"
-            >
-              <span>🖨️</span>
-              <span class="font-bold">Print</span>
-            </a>
+            ${isKG3 ? `
+              <a 
+                href="worksheet.php?topic=${t.id}"
+                onclick="SoundEffects.playPop();"
+                title="Print Handwriting Worksheet"
+                class="btn-chunky btn-white text-sm md:text-base py-2.5 px-3.5 rounded-2xl flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <span>🖨️</span>
+                <span class="font-bold">Print</span>
+              </a>
+            ` : `
+              <button 
+                onclick="SoundEffects.playBoop(); alert('Worksheet questions are for Kindergarten 3 (KG3) students only.');"
+                title="Worksheets for KG3 only"
+                class="btn-chunky btn-white text-xs md:text-sm py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1 border-amber-300 text-amber-800 opacity-80"
+              >
+                <span>🔒</span>
+                <span class="font-bold">KG3 Print</span>
+              </button>
+            `}
           </div>
         </div>
       `).join('');

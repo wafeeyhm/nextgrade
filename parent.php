@@ -406,11 +406,14 @@ $parent = getParentUser();
           id="form-kid-grade"
           class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
         >
-          <option value="Preschool / Tadika">Preschool / Tadika (Ages 4-6)</option>
-          <option value="Year 1" selected>Year 1 (Standard 1 / 7 Years Old)</option>
-          <option value="Year 2">Year 2 (Standard 2 / 8 Years Old)</option>
-          <option value="Year 3">Year 3 (Standard 3 / 9 Years Old)</option>
+          <option value="Kindergarten 3 (KG3)" selected>Kindergarten 3 (KG3) - Active Question Bank</option>
+          <option value="Year 1">Year 1 (Standard 1)</option>
+          <option value="Year 2">Year 2 (Standard 2)</option>
+          <option value="Year 3">Year 3 (Standard 3)</option>
         </select>
+        <span class="text-[10px] text-amber-700 font-bold block mt-1">
+          💡 Note: All current questions in NextGrade are tailored exclusively for Kindergarten 3 (KG3). Kids not in KG3 will not see questions.
+        </span>
       </div>
 
       <!-- Avatar Picker -->
@@ -471,7 +474,11 @@ $parent = getParentUser();
     'unicorn': '🦄'
   };
 
-  // Switch between Tabs
+  function isKG3(grade) {
+    if (!grade) return false;
+    const g = String(grade).toLowerCase();
+    return g.includes('kg3') || g.includes('kindergarten 3') || g.includes('kindergarden 3');
+  }
   function switchTab(tab) {
     SoundEffects.playPop();
     const insightsTab = document.getElementById('tab-content-insights');
@@ -712,9 +719,12 @@ $parent = getParentUser();
                 </span>
                 <div>
                   <h3 class="text-xl font-black text-slate-800">${k.name}</h3>
-                  <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md inline-block mt-0.5">
-                    ${k.grade_level || 'Year 1'}
-                  </span>
+                  <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
+                    <span class="text-xs font-black ${isKG3(k.grade_level) ? 'text-sky-700 bg-sky-50 border border-sky-200' : 'text-amber-800 bg-amber-50 border border-amber-200'} px-2 py-0.5 rounded-md inline-block">
+                      ${k.grade_level || 'Kindergarten 3 (KG3)'}
+                    </span>
+                    ${!isKG3(k.grade_level) ? '<span class="text-[10px] text-amber-700 font-extrabold bg-amber-100 px-1.5 py-0.5 rounded" title="All current questions are for KG3 only">🔒 No Questions</span>' : '<span class="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✓ Questions Ready</span>'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -798,7 +808,7 @@ $parent = getParentUser();
     document.getElementById('form-kid-name').value = '';
     document.getElementById('form-kid-username').value = '';
     document.getElementById('form-kid-pin').value = '1234';
-    document.getElementById('form-kid-grade').value = 'Year 1';
+    document.getElementById('form-kid-grade').value = 'Kindergarten 3 (KG3)';
     document.querySelector('input[name="kid_avatar"][value="star_kid"]').checked = true;
 
     document.getElementById('kid-modal-alert').className = 'hidden';
@@ -815,7 +825,7 @@ $parent = getParentUser();
     document.getElementById('form-kid-name').value = k.name;
     document.getElementById('form-kid-username').value = k.username || '';
     document.getElementById('form-kid-pin').value = k.pin_code || '1234';
-    document.getElementById('form-kid-grade').value = k.grade_level || 'Year 1';
+    document.getElementById('form-kid-grade').value = k.grade_level || 'Kindergarten 3 (KG3)';
 
     const avRadio = document.querySelector(`input[name="kid_avatar"][value="${k.avatar}"]`);
     if (avRadio) avRadio.checked = true;

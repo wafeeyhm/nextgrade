@@ -123,7 +123,7 @@ try {
         echo "✓ Seeded demo parents: parent / parent123 (Sarah), azman / parent123 (Azman)\n";
 
         // Link existing student 1 to Sarah
-        $pdo->prepare("UPDATE students SET parent_id = ?, username = 'lana', pin_code = '1234', grade_level = 'Year 1' WHERE id = 1")->execute([$sarahId]);
+        $pdo->prepare("UPDATE students SET parent_id = ?, username = 'lana', pin_code = '1234', grade_level = 'Kindergarten 3 (KG3)' WHERE id = 1")->execute([$sarahId]);
         echo "✓ Linked student Lana marissa to parent Sarah.\n";
 
         // Add second child for Sarah
@@ -131,7 +131,7 @@ try {
             INSERT INTO students (parent_id, name, username, pin_code, avatar, grade_level, status)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmtK->execute([$sarahId, 'Adam Rayyan', 'adam', '1234', 'astronaut', 'Preschool', 'active']);
+        $stmtK->execute([$sarahId, 'Adam Rayyan', 'adam', '1234', 'astronaut', 'Kindergarten 3 (KG3)', 'active']);
         $adamId = $pdo->lastInsertId();
         echo "✓ Added child Adam Rayyan for parent Sarah.\n";
 

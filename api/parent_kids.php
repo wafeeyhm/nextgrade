@@ -49,7 +49,7 @@ if ($method === 'POST') {
         $username = strtolower(trim($payload['username'] ?? ''));
         $pinCode = trim($payload['pin_code'] ?? '1234');
         $avatar = trim($payload['avatar'] ?? 'star_kid');
-        $gradeLevel = trim($payload['grade_level'] ?? 'Year 1');
+        $gradeLevel = trim($payload['grade_level'] ?? 'Kindergarten 3 (KG3)');
 
         if (empty($name)) {
             sendJsonResponse(['success' => false, 'error' => 'Please provide child\'s name.'], 400);
@@ -112,7 +112,7 @@ if ($method === 'POST') {
         $username = strtolower(trim($payload['username'] ?? ''));
         $pinCode = trim($payload['pin_code'] ?? '1234');
         $avatar = trim($payload['avatar'] ?? 'star_kid');
-        $gradeLevel = trim($payload['grade_level'] ?? 'Year 1');
+        $gradeLevel = trim($payload['grade_level'] ?? 'Kindergarten 3 (KG3)');
         $status = in_array($payload['status'] ?? '', ['active', 'inactive']) ? $payload['status'] : 'active';
 
         if (empty($name)) {

@@ -1,8 +1,34 @@
 <?php
 // NextGrade API - Worksheet Generator for Handwriting and Writing Skills
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../auth_helper.php';
 
 header('Content-Type: application/json; charset=utf-8');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check student grade level: All current questions are exclusively for Kindergarten 3 (KG3)
+$studentGrade = $_SESSION['student_grade'] ?? null;
+$studentId = $_SESSION['student_id'] ?? null;
+if ($studentId && !$studentGrade) {
+    $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
+    $stmtG->execute([$studentId]);
+    $studentGrade = $stmtG->fetchColumn();
+    if ($studentGrade) {
+        $_SESSION['student_grade'] = $studentGrade;
+    }
+}
+if ($studentGrade && !isGradeKG3($studentGrade)) {
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'is_kg3_only' => true,
+        'student_grade' => $studentGrade,
+        'error' => "All current questions in NextGrade are prepared exclusively for Kindergarten 3 (KG3). Worksheets for " . htmlspecialchars($studentGrade) . " are coming soon!"
+    ]);
+    exit;
+}
 
 $topicId = $_GET['topic_id'] ?? null;
 
