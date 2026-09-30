@@ -38,10 +38,19 @@ $avatarMap = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Students & Kids Overview - System Admin | NextGrade</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../css/app.css">
+  <link rel="stylesheet" href="../css/app.css?v=2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body, html {
+      background-color: #0b0f19 !important;
+      background-image: 
+        radial-gradient(rgba(51, 65, 85, 0.4) 1.5px, transparent 1.5px), 
+        radial-gradient(rgba(51, 65, 85, 0.4) 1.5px, #0b0f19 1.5px) !important;
+      color: #f1f5f9 !important;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
+<body class="admin-dark min-h-screen bg-slate-900 text-slate-100 flex flex-col">
 
   <!-- Top Navigation Bar -->
   <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 sticky top-0 z-30 px-4 md:px-8 py-3.5">
@@ -71,17 +80,50 @@ $avatarMap = [
           <a href="kids.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
             <i class="fa-solid fa-graduation-cap mr-1.5 text-indigo-400"></i> Students & Kids
           </a>
+          <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> System Guide
+          </a>
+          <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
+          </a>
         </div>
       </div>
 
       <!-- Admin Status & Actions -->
       <div class="flex items-center gap-3">
         <a 
+          href="profile.php"
+          class="hidden sm:flex flex-col text-right hover:opacity-80 transition-opacity"
+          title="Click to edit admin profile"
+        >
+          <span class="text-xs font-black text-white"><?= htmlspecialchars($admin['full_name']) ?></span>
+          <span class="text-[10px] font-bold text-indigo-400 font-mono">@<?= htmlspecialchars($admin['username']) ?></span>
+        </a>
+
+        <a 
+          href="guide.php" 
+          title="System Admin Guide"
+          class="bg-slate-700/70 hover:bg-slate-700 text-indigo-300 hover:text-white text-xs font-bold py-2 px-3 rounded-xl border border-slate-600 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-book text-xs"></i>
+          <span class="hidden sm:inline">Guide</span>
+        </a>
+
+        <a 
+          href="../index.php" 
+          target="_blank" 
+          title="Open Student App"
+          class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold py-2 px-3 rounded-xl border border-slate-600 transition-colors flex items-center gap-1.5"
+        >
+          <span>🌟</span> <span class="hidden lg:inline">Student App</span>
+        </a>
+
+        <a 
           href="logout.php" 
           class="bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 text-xs font-bold py-2 px-3 rounded-xl transition-colors flex items-center gap-1.5"
         >
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span>Logout</span>
+          <span class="hidden sm:inline">Logout</span>
         </a>
       </div>
 

@@ -38,6 +38,16 @@ body {
   touch-action: manipulation;
 }
 
+/* System Admin Dark Mode Theme Override */
+body.admin-dark,
+body.bg-slate-900 {
+  background-color: #0b0f19 !important;
+  background-image: 
+    radial-gradient(rgba(51, 65, 85, 0.4) 1.5px, transparent 1.5px), 
+    radial-gradient(rgba(51, 65, 85, 0.4) 1.5px, #0b0f19 1.5px) !important;
+  color: #f1f5f9 !important;
+}
+
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-heading);
 }

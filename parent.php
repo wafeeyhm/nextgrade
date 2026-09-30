@@ -37,13 +37,13 @@ $parent = getParentUser();
           <span>👨‍👩‍👧</span> Parent Portal
         </h1>
         <p class="text-xs font-bold text-slate-400">
-          Family Account: <span class="text-sky-600 font-mono"><?= htmlspecialchars($parent['parent_code']) ?></span> • <?= htmlspecialchars($parent['full_name']) ?>
+          Family Account: <span class="text-sky-600 font-mono"><?= htmlspecialchars($parent['parent_code']) ?></span> • <span id="header-parent-name"><?= htmlspecialchars($parent['full_name']) ?></span>
         </p>
       </div>
     </div>
 
-    <!-- Right Controls: Child Selector & Logout -->
-    <div class="flex items-center gap-3">
+    <!-- Right Controls: Child Selector, Profile, Guide & Logout -->
+    <div class="flex items-center gap-2 sm:gap-3">
       <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-2xl border border-slate-200">
         <label for="filter-kid-select" class="text-[11px] font-black text-slate-500 uppercase">Child:</label>
         <select 
@@ -54,6 +54,24 @@ $parent = getParentUser();
           <option value="">All My Kids</option>
         </select>
       </div>
+
+      <button 
+        onclick="switchTab('profile')"
+        title="Edit Profile & Password"
+        class="bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-sky-700 border border-slate-200 hover:border-sky-200 text-xs font-bold py-2 px-3 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+      >
+        <i class="fa-solid fa-user-gear text-sky-500"></i>
+        <span class="hidden sm:inline">Profile</span>
+      </button>
+
+      <button 
+        onclick="switchTab('guide')"
+        title="Open Parent User Guide"
+        class="bg-slate-100 hover:bg-amber-50 text-slate-700 hover:text-amber-700 border border-slate-200 hover:border-amber-200 text-xs font-bold py-2 px-3 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+      >
+        <i class="fa-solid fa-book-open text-amber-500"></i>
+        <span class="hidden sm:inline">Guide</span>
+      </button>
 
       <a 
         href="parent_logout.php" 
@@ -67,12 +85,12 @@ $parent = getParentUser();
     </div>
   </header>
 
-  <!-- Navigation Tabs (My Kids CRUD vs Learning Insights & Attempts) -->
-  <div class="flex items-center gap-2 border-b-2 border-slate-200 pb-2">
+  <!-- Navigation Tabs -->
+  <div class="flex items-center gap-2 border-b-2 border-slate-200 pb-2 overflow-x-auto">
     <button 
       id="tab-btn-insights" 
       onclick="switchTab('insights')"
-      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-sky-500 text-white shadow-md transition-all cursor-pointer"
+      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-sky-500 text-white shadow-md transition-all cursor-pointer shrink-0"
     >
       <span>📊</span>
       <span>Learning Progress & GAP Analysis</span>
@@ -81,10 +99,28 @@ $parent = getParentUser();
     <button 
       id="tab-btn-kids" 
       onclick="switchTab('kids')"
-      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer"
+      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer shrink-0"
     >
       <span>🧒</span>
       <span>My Kids & Access Control (<span id="tab-kids-badge">0</span>)</span>
+    </button>
+
+    <button 
+      id="tab-btn-profile" 
+      onclick="switchTab('profile')"
+      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer shrink-0"
+    >
+      <span>⚙️</span>
+      <span>My Profile & Credentials</span>
+    </button>
+
+    <button 
+      id="tab-btn-guide" 
+      onclick="switchTab('guide')"
+      class="px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer shrink-0"
+    >
+      <span>📖</span>
+      <span>Parent User Guide</span>
     </button>
   </div>
 
@@ -260,6 +296,423 @@ $parent = getParentUser();
       <div class="col-span-full text-center py-10 text-slate-400 font-bold">
         Loading children profiles...
       </div>
+    </div>
+
+  </div>
+
+  <!-- ================= TAB 3: MY PROFILE & CREDENTIALS (Requirement 1: Parent Profile Update) ================= -->
+  <div id="tab-content-profile" class="hidden space-y-6">
+
+    <!-- Top Action Banner -->
+    <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center gap-1.5 bg-sky-100 text-sky-800 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+          <span>⚙️</span> Account Settings
+        </span>
+        <h2 class="text-2xl font-black text-slate-800">My Profile & Security Credentials</h2>
+        <p class="text-xs font-bold text-slate-400 mt-1">
+          Update your contact details, login username, and account password anytime.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button 
+          onclick="switchTab('guide')" 
+          class="btn-chunky btn-white text-xs py-2.5 px-4 rounded-xl font-bold flex items-center gap-1.5"
+        >
+          <span>📖</span> <span>Need Help? View Guide</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Alert Container -->
+    <div id="profile-status-alert" class="hidden p-4 rounded-2xl text-xs font-bold border transition-all"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Left Column: Parent Identity Card -->
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-[2rem] border-2 border-slate-200 p-6 shadow-sm text-center flex flex-col items-center">
+          <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-sky-400 to-indigo-500 text-white text-4xl flex items-center justify-center shadow-lg shadow-sky-400/20 mb-4 border-2 border-white">
+            👨‍👩‍👧
+          </div>
+
+          <h3 id="profile-card-name" class="text-lg font-black text-slate-800"><?= htmlspecialchars($parent['full_name']) ?></h3>
+          <span id="profile-card-user" class="inline-block mt-0.5 text-xs font-bold text-sky-600 font-mono">
+            @<?= htmlspecialchars($parent['username']) ?>
+          </span>
+
+          <!-- Family Code Badge with Copy -->
+          <div class="w-full mt-4 p-3 bg-sky-50 rounded-2xl border-2 border-dashed border-sky-200 flex items-center justify-between">
+            <div class="text-left">
+              <span class="block text-[10px] font-black uppercase tracking-wider text-sky-700">Family Code</span>
+              <span id="profile-card-code" class="text-sm font-black font-mono text-slate-800"><?= htmlspecialchars($parent['parent_code']) ?></span>
+            </div>
+            <button 
+              onclick="copyParentCode()"
+              id="btn-copy-code"
+              class="btn-chunky btn-white text-[11px] py-1.5 px-2.5 rounded-xl font-black text-sky-700 hover:text-sky-800"
+              title="Copy Family Code"
+            >
+              <i class="fa-regular fa-copy"></i> Copy
+            </button>
+          </div>
+
+          <div class="w-full mt-5 pt-4 border-t border-slate-100 text-left space-y-2.5 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-bold">Email:</span>
+              <span id="profile-card-email" class="font-bold text-slate-700 truncate max-w-[170px]"><?= htmlspecialchars($parent['email']) ?></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-bold">Phone:</span>
+              <span id="profile-card-phone" class="font-bold text-slate-700"><?= htmlspecialchars($parent['phone'] ?: 'Not provided') ?></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-400 font-bold">Account Type:</span>
+              <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Verified Parent</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safe Family Tip -->
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-[2rem] border-2 border-amber-200 p-5 text-xs text-amber-900 space-y-2">
+          <h4 class="font-black text-amber-950 flex items-center gap-1.5 text-sm">
+            <span>🛡️</span> Family Security Notice
+          </h4>
+          <p class="font-semibold text-amber-800 leading-relaxed">
+            Your parent credentials allow you to create or delete your children's profiles and view their test records. Keep your password safe. Your children do not need your password to take quizzes.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Column: Profile Edit Form -->
+      <div class="lg:col-span-2">
+        <form id="parent-profile-form" onsubmit="handleSaveParentProfile(event)" class="bg-white rounded-[2rem] border-2 border-slate-200 p-6 md:p-8 shadow-sm space-y-6">
+          
+          <!-- Section 1: Contact Information -->
+          <div>
+            <h3 class="text-base font-black text-slate-800 flex items-center gap-2 mb-1">
+              <span>👤</span> Personal & Contact Details
+            </h3>
+            <p class="text-xs font-bold text-slate-400 mb-4">
+              Your name and contact details are used for family reports and recovery.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Full Name *</label>
+                <input 
+                  type="text" 
+                  id="profile-name" 
+                  required 
+                  value="<?= htmlspecialchars($parent['full_name']) ?>"
+                  class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                >
+              </div>
+
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Login Username *</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-mono text-sm">@</span>
+                  <input 
+                    type="text" 
+                    id="profile-username" 
+                    required 
+                    value="<?= htmlspecialchars($parent['username']) ?>"
+                    class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl pl-8 pr-4 py-3 text-sm font-bold font-mono text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                  >
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Email Address *</label>
+                <input 
+                  type="email" 
+                  id="profile-email" 
+                  required 
+                  value="<?= htmlspecialchars($parent['email']) ?>"
+                  class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                >
+              </div>
+
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
+                <input 
+                  type="text" 
+                  id="profile-phone" 
+                  value="<?= htmlspecialchars($parent['phone']) ?>"
+                  placeholder="e.g. +6012-3456789"
+                  class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Change Password -->
+          <div class="pt-6 border-t-2 border-slate-100">
+            <h3 class="text-base font-black text-slate-800 flex items-center gap-2 mb-1">
+              <span>🔒</span> Change Parent Password
+            </h3>
+            <p class="text-xs font-bold text-slate-400 mb-4">
+              Leave blank if you do not want to change your password.
+            </p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Current Password</label>
+                <input 
+                  type="password" 
+                  id="profile-cur-pass" 
+                  placeholder="Required only when setting a new password"
+                  class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                >
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">New Password</label>
+                  <input 
+                    type="password" 
+                    id="profile-new-pass" 
+                    placeholder="Min. 6 characters"
+                    class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                  >
+                </div>
+
+                <div>
+                  <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Confirm New Password</label>
+                  <input 
+                    type="password" 
+                    id="profile-conf-pass" 
+                    placeholder="Re-type new password"
+                    class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="pt-6 border-t-2 border-slate-100 flex items-center justify-end gap-3">
+            <button 
+              type="submit" 
+              id="btn-save-profile"
+              class="btn-chunky btn-primary py-3 px-6 rounded-2xl text-sm font-black shadow-md flex items-center gap-2 cursor-pointer"
+            >
+              <i class="fa-solid fa-floppy-disk text-xs"></i>
+              <span>Save Profile Changes</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================= TAB 4: PARENT USER GUIDE (Requirement 4: Parent User Guide) ================= -->
+  <div id="tab-content-guide" class="hidden space-y-6">
+
+    <!-- Top Action Banner -->
+    <div class="bg-gradient-to-r from-sky-500 to-indigo-600 p-6 md:p-8 rounded-[2rem] text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center gap-1.5 bg-white/20 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+          <span>📖</span> Parent Academy & Help Center
+        </span>
+        <h2 class="text-2xl md:text-3xl font-black">NextGrade Parent User Guide</h2>
+        <p class="text-xs md:text-sm font-bold text-sky-100 mt-1 max-w-2xl">
+          Everything you need to know about setting up your children's profiles, understanding Kindergarten 3 (KG3) questions, tracking quiz attempts, and closing learning gaps.
+        </p>
+      </div>
+
+      <button 
+        onclick="switchTab('kids')"
+        class="bg-white hover:bg-slate-50 text-sky-700 font-black text-xs py-3 px-5 rounded-2xl shadow-md transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+      >
+        <span>🧒</span> <span>Go to My Kids</span>
+      </button>
+    </div>
+
+    <!-- Guide Cards Grid -->
+    <div class="space-y-6">
+      
+      <!-- Guide Step 1: Setting Up Kid Accounts -->
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-sky-100 text-sky-700 font-black flex items-center justify-center text-lg shrink-0">
+            1
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800">Setting Up Your Children's Profiles (CRUD)</h3>
+            <p class="text-xs font-bold text-slate-400">Add, edit, or customize accounts for each child in your family.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 font-semibold space-y-2">
+            <div class="text-2xl">🏷️</div>
+            <strong class="text-slate-800 font-black block">Simple Lowercase Username</strong>
+            <p>Choose an easy-to-remember username like <code class="text-sky-600 font-mono font-bold">lana</code> or <code class="text-sky-600 font-mono font-bold">adam</code> that your child can easily type if prompted.</p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 font-semibold space-y-2">
+            <div class="text-2xl">🔢</div>
+            <strong class="text-slate-800 font-black block">Memorable 4-Digit PIN</strong>
+            <p>Assign a simple 4-digit PIN (default <code class="text-amber-600 font-mono font-bold">1234</code>) so young children can log in independently without complex passwords.</p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 font-semibold space-y-2">
+            <div class="text-2xl">🎨</div>
+            <strong class="text-slate-800 font-black block">Fun Cartoon Avatar</strong>
+            <p>Pick a fun profile character: Star Kid ⭐, Bunny 🐰, Astronaut 🚀, Dino 🦖, Kitten 🐱, or Unicorn 🦄 so your child can spot their account immediately.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guide Step 2: Child Login Experience -->
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-lg shrink-0">
+            2
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800">Child Login Experience on Tablets & Phones</h3>
+            <p class="text-xs font-bold text-slate-400">Zero complicated passwords or email logins for children.</p>
+          </div>
+        </div>
+
+        <div class="bg-emerald-50/70 border-2 border-emerald-200 rounded-2xl p-5 text-xs text-emerald-900 font-semibold space-y-3 leading-relaxed">
+          <p>
+            When your child visits the NextGrade home page, they are greeted by the friendly <strong>Child Login Gate</strong>. All family children appear on screen as colorful cards.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div class="bg-white p-3.5 rounded-xl border border-emerald-200">
+              <span class="font-black text-emerald-800 block mb-1">Step 1: Tap Avatar</span>
+              <span>Your child taps on their friendly avatar photo.</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-emerald-200">
+              <span class="font-black text-emerald-800 block mb-1">Step 2: Enter PIN</span>
+              <span>They tap in their 4-digit PIN code (<code class="font-mono text-emerald-700">1234</code>).</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-emerald-200">
+              <span class="font-black text-emerald-800 block mb-1">Step 3: Start Quizzing!</span>
+              <span>Instant access to interactive quizzes with speech audio!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guide Step 3: Kindergarten 3 (KG3) Notice -->
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 font-black flex items-center justify-center text-lg shrink-0">
+            3
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800">Understanding Kindergarten 3 (KG3) Question Access</h3>
+            <p class="text-xs font-bold text-slate-400">Why current questions are tailored exclusively for KG3 learners.</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-600 font-semibold leading-relaxed">
+          <p>
+            All <strong>~1,350+ interactive questions</strong> currently built into NextGrade are carefully calibrated for <strong>Kindergarten 3 (KG3)</strong> students (ages 5 to 6).
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">✅</span>
+                <strong class="text-sky-950 font-black text-sm">For KG3 Students:</strong>
+              </div>
+              <p class="text-sky-900">
+                Children enrolled under <strong>Kindergarten 3 (KG3)</strong> have full access to all 5 subjects: Bahasa Melayu, English, Mathematics, Science, and ICT. They can take interactive quizzes and generate handwriting worksheets.
+              </p>
+            </div>
+
+            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🔒</span>
+                <strong class="text-amber-950 font-black text-sm">For Non-KG3 Students (Year 1, 2, 3):</strong>
+              </div>
+              <p class="text-amber-900">
+                If your child is registered in Year 1, 2, or 3, their dashboard will show a friendly lock screen explaining that syllabus questions for primary grades are coming soon. You can switch their grade to KG3 anytime under <strong class="text-amber-950">My Kids</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guide Step 4: Progress Tracking & GAP Inspector -->
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 font-black flex items-center justify-center text-lg shrink-0">
+            4
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800">Tracking Progress & Using the GAP Analysis Inspector</h3>
+            <p class="text-xs font-bold text-slate-400">Discover where your child excels and where they need a helping hand.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs text-slate-600 font-semibold leading-relaxed">
+          <div class="space-y-3">
+            <h4 class="font-black text-slate-800 text-sm flex items-center gap-2">
+              <span class="text-amber-500">🎯</span>
+              <span>Identified Learning Gaps (Accuracy &lt; 70%)</span>
+            </h4>
+            <p>
+              NextGrade monitors your child's accuracy across every topic. If their average accuracy on any topic drops below <strong>70%</strong>, the system marks it as an <strong>Identified GAP</strong>.
+            </p>
+            <p>
+              Each gap comes with practical <strong>Parent Guidance Tips</strong> (e.g. how to teach letter blending or telling time) and a link to a bite-sized <strong>5-minute interactive revision</strong> module.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <h4 class="font-black text-slate-800 text-sm flex items-center gap-2">
+              <span class="text-sky-500">🔍</span>
+              <span>The Question Inspector Tool</span>
+            </h4>
+            <p>
+              In the <strong>Recent Quiz Attempts</strong> table on the dashboard, click the <strong class="text-sky-600">"Inspect Answers"</strong> button next to any quiz attempt.
+            </p>
+            <p>
+              The Inspector modal opens to reveal:
+            </p>
+            <ul class="list-disc pl-4 space-y-1 text-slate-500">
+              <li>Every single question prompt and image.</li>
+              <li>Your child's chosen answer vs. the correct answer.</li>
+              <li>Whether your child clicked the audio hint.</li>
+              <li>Color-coded green (correct) and red (incorrect) badges.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guide Step 5: Handwriting Worksheets -->
+      <div class="bg-white p-6 md:p-8 rounded-[2rem] border-2 border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 font-black flex items-center justify-center text-lg shrink-0">
+            5
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-slate-800">Printable 3-Line Handwriting Worksheets</h3>
+            <p class="text-xs font-bold text-slate-400">Encouraging offline penmanship and fine motor skills.</p>
+          </div>
+        </div>
+
+        <div class="bg-indigo-50/60 border border-indigo-200 rounded-2xl p-5 text-xs text-indigo-950 font-semibold space-y-2 leading-relaxed">
+          <p>
+            NextGrade isn't just about screens! Every topic includes a printable worksheet feature formatted for standard A4 paper with traditional primary school 3-line ruling guides.
+          </p>
+          <p>
+            To print: Go to the student topic list or quiz screen, tap <strong>"Print Worksheet"</strong>, and press <strong>Print Now</strong>. Your child can practice neat pencil writing away from screens!
+          </p>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -481,23 +934,165 @@ $parent = getParentUser();
   }
   function switchTab(tab) {
     SoundEffects.playPop();
-    const insightsTab = document.getElementById('tab-content-insights');
-    const kidsTab = document.getElementById('tab-content-kids');
-    const btnInsights = document.getElementById('tab-btn-insights');
-    const btnKids = document.getElementById('tab-btn-kids');
+    const tabs = {
+      insights: { content: document.getElementById('tab-content-insights'), btn: document.getElementById('tab-btn-insights') },
+      kids: { content: document.getElementById('tab-content-kids'), btn: document.getElementById('tab-btn-kids') },
+      profile: { content: document.getElementById('tab-content-profile'), btn: document.getElementById('tab-btn-profile') },
+      guide: { content: document.getElementById('tab-content-guide'), btn: document.getElementById('tab-btn-guide') }
+    };
+
+    const activeBtnClass = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-sky-500 text-white shadow-md transition-all cursor-pointer shrink-0';
+    const inactiveBtnClass = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer shrink-0';
+
+    Object.keys(tabs).forEach(k => {
+      const item = tabs[k];
+      if (!item.content || !item.btn) return;
+      if (k === tab) {
+        item.content.classList.remove('hidden');
+        item.btn.className = activeBtnClass;
+      } else {
+        item.content.classList.add('hidden');
+        item.btn.className = inactiveBtnClass;
+      }
+    });
 
     if (tab === 'insights') {
-      insightsTab.classList.remove('hidden');
-      kidsTab.classList.add('hidden');
-      btnInsights.className = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-sky-500 text-white shadow-md transition-all cursor-pointer';
-      btnKids.className = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer';
       loadAttemptsData(activeKidFilter);
-    } else {
-      insightsTab.classList.add('hidden');
-      kidsTab.classList.remove('hidden');
-      btnKids.className = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-sky-500 text-white shadow-md transition-all cursor-pointer';
-      btnInsights.className = 'px-5 py-2.5 rounded-2xl font-black text-sm flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer';
+    } else if (tab === 'kids') {
       loadKidsProfiles();
+    } else if (tab === 'profile') {
+      loadParentProfile();
+    } else if (tab === 'guide') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Parent Profile & Credentials Handlers (Requirement 1)
+  async function loadParentProfile() {
+    try {
+      const resp = await fetch('api/parent_profile.php');
+      const data = await resp.json();
+      if (data.success && data.parent) {
+        const p = data.parent;
+        document.getElementById('profile-name').value = p.full_name || '';
+        document.getElementById('profile-username').value = p.username || '';
+        document.getElementById('profile-email').value = p.email || '';
+        document.getElementById('profile-phone').value = p.phone || '';
+
+        document.getElementById('profile-card-name').textContent = p.full_name || '';
+        document.getElementById('profile-card-user').textContent = `@${p.username || ''}`;
+        document.getElementById('profile-card-code').textContent = p.parent_code || '';
+        document.getElementById('profile-card-email').textContent = p.email || '';
+        document.getElementById('profile-card-phone').textContent = p.phone || 'Not provided';
+        document.getElementById('header-parent-name').textContent = p.full_name || '';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleSaveParentProfile(e) {
+    e.preventDefault();
+    SoundEffects.playPop();
+
+    const alertBox = document.getElementById('profile-status-alert');
+    const btnSave = document.getElementById('btn-save-profile');
+    alertBox.className = 'hidden';
+
+    const fullName = document.getElementById('profile-name').value.trim();
+    const username = document.getElementById('profile-username').value.trim();
+    const email = document.getElementById('profile-email').value.trim();
+    const phone = document.getElementById('profile-phone').value.trim();
+    const currentPassword = document.getElementById('profile-cur-pass').value;
+    const newPassword = document.getElementById('profile-new-pass').value;
+    const confirmPassword = document.getElementById('profile-conf-pass').value;
+
+    if (!fullName || !username || !email) {
+      showProfileAlert('Please fill in all required fields (Full Name, Username, Email).', 'error');
+      return;
+    }
+
+    if (newPassword) {
+      if (!currentPassword) {
+        showProfileAlert('Please enter your current password to set a new password.', 'error');
+        return;
+      }
+      if (newPassword.length < 6) {
+        showProfileAlert('New password must be at least 6 characters long.', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showProfileAlert('New password and confirmation do not match.', 'error');
+        return;
+      }
+    }
+
+    btnSave.disabled = true;
+    btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>Saving...</span>';
+
+    try {
+      const resp = await fetch('api/parent_profile.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: fullName,
+          username: username,
+          email: email,
+          phone: phone,
+          current_password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword
+        })
+      });
+
+      const data = await resp.json();
+
+      if (data.success) {
+        showProfileAlert(data.message || 'Profile updated successfully!', 'success');
+        document.getElementById('profile-card-name').textContent = fullName;
+        document.getElementById('profile-card-user').textContent = `@${username}`;
+        document.getElementById('profile-card-email').textContent = email;
+        document.getElementById('profile-card-phone').textContent = phone || 'Not provided';
+        document.getElementById('header-parent-name').textContent = fullName;
+        document.getElementById('profile-cur-pass').value = '';
+        document.getElementById('profile-new-pass').value = '';
+        document.getElementById('profile-conf-pass').value = '';
+      } else {
+        showProfileAlert(data.error || 'Failed to update profile.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showProfileAlert('Network error occurred. Please try again.', 'error');
+    } finally {
+      btnSave.disabled = false;
+      btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk text-xs"></i> <span>Save Profile Changes</span>';
+    }
+  }
+
+  function showProfileAlert(msg, type) {
+    const alertBox = document.getElementById('profile-status-alert');
+    alertBox.classList.remove('hidden');
+    if (type === 'success') {
+      alertBox.className = 'p-4 rounded-2xl text-xs font-bold border bg-emerald-50 border-emerald-300 text-emerald-800';
+      alertBox.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ${msg}`;
+    } else {
+      alertBox.className = 'p-4 rounded-2xl text-xs font-bold border bg-rose-50 border-rose-300 text-rose-800';
+      alertBox.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-2"></i> ${msg}`;
+    }
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function copyParentCode() {
+    SoundEffects.playPop();
+    const code = document.getElementById('profile-card-code').textContent.trim();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('btn-copy-code');
+        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> Copied!';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+        }, 2000);
+      });
     }
   }
 
