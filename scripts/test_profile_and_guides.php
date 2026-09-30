@@ -145,6 +145,7 @@ $adminFiles = [
     'admin/kids.php' => 'Kids Overview',
     'admin/profile.php' => 'Admin Profile & Credentials',
     'admin/guide.php' => 'System Guide',
+    'admin/developer_guide.php' => 'Developer & Question Guide',
     'admin/login.php' => 'Admin Login'
 ];
 
@@ -170,6 +171,24 @@ assertCheck(strpos($parentPhp, 'id="tab-btn-guide"') !== false, "parent.php cont
 assertCheck(strpos($parentPhp, 'id="tab-content-guide"') !== false, "parent.php contains Parent User Guide content container");
 assertCheck(strpos($parentPhp, 'api/parent_profile.php') !== false, "parent.php integrates with api/parent_profile.php");
 assertCheck(strpos($parentPhp, 'Kindergarten 3 (KG3)') !== false, "parent.php explains Kindergarten 3 (KG3) curriculum in guide");
+
+// ---------------------------------------------------------------------
+// TEST 5: Guide Relocation & Student/Parent Protection (Requirement 6)
+// ---------------------------------------------------------------------
+echo "\n--- 5. Testing Guide Relocation & Access Gating ---\n";
+$indexPhp = file_get_contents(__DIR__ . '/../index.php');
+assertCheck(strpos($indexPhp, 'href="guide.php"') === false, "Student dashboard (index.php) has NO link to developer guide.php");
+assertCheck(strpos($indexPhp, 'Question & Git Guide') === false, "Student dashboard (index.php) has NO developer guide text in footer");
+
+$rootGuide = file_get_contents(__DIR__ . '/../guide.php');
+assertCheck(strpos($rootGuide, 'isAdminLoggedIn()') !== false, "Root guide.php enforces isAdminLoggedIn() check");
+assertCheck(strpos($rootGuide, 'admin/developer_guide.php') !== false, "Root guide.php redirects authorized admins to admin/developer_guide.php");
+
+$truncatePhp = file_get_contents(__DIR__ . '/../truncate.php');
+assertCheck(strpos($truncatePhp, 'requireAdmin()') !== false, "truncate.php requires admin authentication for web requests");
+
+$seedPhp = file_get_contents(__DIR__ . '/../seed.php');
+assertCheck(strpos($seedPhp, 'requireAdmin()') !== false, "seed.php requires admin authentication for web requests");
 
 // ---------------------------------------------------------------------
 // Summary

@@ -3,6 +3,12 @@
 // Safely empties all tables in nextgrade_db
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_helper.php';
+
+// Strict Access Guard: Only CLI or authenticated System Administrator
+if (php_sapi_name() !== 'cli') {
+    requireAdmin();
+}
 
 header('Content-Type: text/plain; charset=utf-8');
 echo "=== NextGrade Truncate Process Started ===\n\n";

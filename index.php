@@ -496,17 +496,6 @@ try {
           <span>👨‍👩‍👧</span>
           <span class="hidden md:inline font-bold">Parents</span>
         </a>
-
-        <!-- Content & Git Guide Button -->
-        <a 
-          href="guide.php" 
-          onclick="SoundEffects.playPop();"
-          class="btn-chunky btn-white text-xs md:text-sm py-2 px-3.5 rounded-2xl flex items-center gap-1.5"
-          title="Question & Git Guide"
-        >
-          <span>🛠️</span>
-          <span class="hidden md:inline font-bold">Guide</span>
-        </a>
       </div>
     </header>
 
@@ -658,10 +647,6 @@ try {
 <!-- Footer -->
 <footer class="text-center text-xs font-bold text-slate-400 mt-8 flex flex-col sm:flex-row items-center justify-center gap-2">
   <span>NextGrade • Designed with ❤️ for Children's Learning & Writing Skills</span>
-  <span>•</span>
-  <a href="guide.php" class="text-sky-500 hover:text-sky-700 underline font-extrabold flex items-center gap-1">
-    <span>🛠️</span> Question & Git Guide
-  </a>
   <span>•</span>
   <a href="admin/login.php" class="text-indigo-500 hover:text-indigo-700 font-extrabold flex items-center gap-1">
     <i class="fa-solid fa-shield-halved text-[10px]"></i> System Admin

@@ -3,6 +3,12 @@
 // Seeds Subjects, Topics, Core Questions, and 5-Minute Revision Guides from questions_bank.json
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_helper.php';
+
+// Strict Access Guard: Only CLI or authenticated System Administrator
+if (php_sapi_name() !== 'cli') {
+    requireAdmin();
+}
 
 header('Content-Type: text/plain; charset=utf-8');
 

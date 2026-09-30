@@ -58,6 +58,9 @@ $admin = getAdminUser();
           <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
             <i class="fa-solid fa-book-open mr-1.5 text-indigo-400"></i> System Guide
           </a>
+          <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
+          </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
           </a>
@@ -66,6 +69,15 @@ $admin = getAdminUser();
 
       <!-- Admin Status & Actions -->
       <div class="flex items-center gap-3">
+        <a 
+          href="developer_guide.php" 
+          title="Question Builder & Developer Guide"
+          class="bg-slate-700/70 hover:bg-slate-700 text-indigo-300 hover:text-white text-xs font-bold py-2 px-3 rounded-xl border border-slate-600 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-code text-xs"></i>
+          <span class="hidden sm:inline">Dev Tools</span>
+        </a>
+
         <a 
           href="profile.php" 
           title="Edit Admin Profile"
@@ -113,8 +125,15 @@ $admin = getAdminUser();
 
       <div class="flex items-center gap-3 shrink-0">
         <a 
-          href="parents.php" 
+          href="developer_guide.php" 
           class="bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-code"></i>
+          <span>Question & Dev Guide</span>
+        </a>
+        <a 
+          href="parents.php" 
+          class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold text-xs py-2.5 px-4 rounded-xl transition-colors flex items-center gap-2"
         >
           <i class="fa-solid fa-users"></i>
           <span>Manage Parents</span>
