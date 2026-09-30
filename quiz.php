@@ -5,6 +5,7 @@ session_start();
 
 $studentName = $_SESSION['student_name'] ?? $_COOKIE['student_name'] ?? 'Kawan Pintar';
 $studentAvatar = $_SESSION['student_avatar'] ?? 'star_kid';
+$studentId = $_SESSION['student_id'] ?? null;
 
 $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? null;
 $subjectId = $_GET['subject'] ?? $_GET['subject_id'] ?? null;
@@ -1046,6 +1047,7 @@ $mode = $_GET['mode'] ?? null;
 
     // Submit results to API (Requirement 1.13)
     const payload = {
+      student_id: <?= json_encode($studentId) ?>,
       student_name: studentName,
       subject_id: subjectId || (questions[0] ? questions[0].subject_id : null),
       topic_id: topicId || null,

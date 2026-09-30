@@ -69,3 +69,29 @@ try {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rawInput = file_get_contents('php://input');
+    $payload = json_decode($rawInput, true);
+
+    if ($payload) {
+        $studentId = (int)($payload['student_id'] ?? $_SESSION['student_id'] ?? 0);
+        $studentName = trim($payload['student_name'] ?? $_SESSION['student_name'] ?? 'Friend');
+        $topicId = trim($payload['topic_id'] ?? '');
+        $subjectId = trim($payload['subject_id'] ?? '');
+        $timeSpent = (int)($payload['time_spent_seconds'] ?? 0);
+
+        if ($studentId > 0 && !empty($topicId)) {
+            $stmt = $pdo->prepare("
+                INSERT INTO revision_sessions (student_id, student_name, topic_id, subject_id, time_spent_seconds, completed_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->execute([$studentId, $studentName, $topicId, $subjectId, $timeSpent]);
+            echo json_encode(['success' => true, 'message' => 'Revision attempt logged.']);
+            exit;
+        }
+    }
+    echo json_encode(['success' => false]);
+    exit;
+}
+
