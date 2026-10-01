@@ -12,6 +12,8 @@ $totalStudents = (int)$pdo->query("SELECT COUNT(*) FROM students")->fetchColumn(
 $totalSessions = (int)$pdo->query("SELECT COUNT(*) FROM quiz_sessions")->fetchColumn();
 $avgAccuracy = (float)$pdo->query("SELECT COALESCE(AVG(percentage), 0) FROM quiz_sessions")->fetchColumn();
 $totalQuestionsAns = (int)$pdo->query("SELECT COALESCE(SUM(total_questions), 0) FROM quiz_sessions")->fetchColumn();
+$totalQuestionsCount = (int)$pdo->query("SELECT COUNT(*) FROM questions")->fetchColumn();
+$totalTopicsCount = (int)$pdo->query("SELECT COUNT(*) FROM topics")->fetchColumn();
 
 // Recent 10 quiz sessions across the platform
 $recentSessions = $pdo->query("
@@ -79,22 +81,28 @@ $recentParents = $pdo->query("
             <i class="fa-solid fa-chart-pie mr-1.5 text-indigo-400"></i> Dashboard
           </a>
           <a href="parents.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents Accounts (CRUD)
+            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents
           </a>
           <a href="kids.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students & Kids
+            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students
+          </a>
+          <a href="topics.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-layer-group mr-1.5 text-slate-400"></i> Topics (CRUD)
+          </a>
+          <a href="questions.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-circle-question mr-1.5 text-slate-400"></i> Questions (CRUD)
           </a>
           <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> System Guide
+            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> Guide
           </a>
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
+            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Dev
           </a>
           <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
           </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
+            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> Profile
           </a>
         </div>
       </div>
@@ -108,6 +116,15 @@ $recentParents = $pdo->query("
         >
           <span class="text-xs font-black text-white"><?= htmlspecialchars($admin['full_name']) ?></span>
           <span class="text-[10px] font-bold text-indigo-400 font-mono">@<?= htmlspecialchars($admin['username']) ?></span>
+        </a>
+
+        <a 
+          href="../seed.php" 
+          title="Curriculum Seeder"
+          class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-bold py-2 px-3 rounded-xl border border-amber-500/40 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-database text-xs"></i>
+          <span class="hidden sm:inline">Seeder</span>
         </a>
 
         <a 
@@ -154,17 +171,31 @@ $recentParents = $pdo->query("
           Welcome back, <?= htmlspecialchars($admin['full_name']) ?>! 👋
         </h1>
         <p class="text-sm font-semibold text-slate-300 mt-1 max-w-xl">
-          System Admin Overview for NextGrade early learning platform. Manage parents, monitor platform-wide student performance, and view quiz analytics.
+          System Admin Overview for NextGrade learning platform. Manage parents & students, organize topics, perform CRUD on questions, and seed curriculum datasets.
         </p>
       </div>
 
-      <div class="relative z-10 flex flex-wrap gap-3">
+      <div class="relative z-10 flex flex-wrap gap-2.5">
+        <a 
+          href="topics.php" 
+          class="bg-slate-700/80 hover:bg-slate-700 text-amber-300 hover:text-white font-bold text-xs py-2.5 px-4 rounded-xl border border-slate-600 transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Topics CRUD</span>
+        </a>
+        <a 
+          href="questions.php" 
+          class="bg-slate-700/80 hover:bg-slate-700 text-cyan-300 hover:text-white font-bold text-xs py-2.5 px-4 rounded-xl border border-slate-600 transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Questions CRUD</span>
+        </a>
         <a 
           href="parents.php" 
-          class="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white font-black text-sm py-3 px-5 rounded-2xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2"
+          class="bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white font-black text-xs py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2"
         >
           <i class="fa-solid fa-users"></i>
-          <span>Manage Parents Accounts</span>
+          <span>Manage Parents</span>
         </a>
       </div>
 
@@ -203,11 +234,11 @@ $recentParents = $pdo->query("
         <span class="text-[10px] text-slate-400 block mt-1">Child responses</span>
       </div>
 
-      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4">
-        <span class="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1">Question Bank</span>
-        <span class="text-2xl md:text-3xl font-black text-rose-400">1,350+</span>
-        <span class="text-[10px] text-slate-400 block mt-1">Curated KSSR/Pre-K</span>
-      </div>
+      <a href="questions.php" class="bg-slate-800/80 hover:bg-slate-750 border border-slate-700/80 hover:border-indigo-500/50 rounded-2xl p-4 transition-all block group">
+        <span class="text-[11px] font-black uppercase tracking-wider text-slate-400 block mb-1 group-hover:text-indigo-400">Question Bank ➔</span>
+        <span class="text-2xl md:text-3xl font-black text-rose-400"><?= number_format($totalQuestionsCount) ?></span>
+        <span class="text-[10px] text-slate-400 block mt-1"><?= $totalTopicsCount ?> topics available</span>
+      </a>
     </div>
 
     <!-- 2. Two-Column Dashboard Layout -->

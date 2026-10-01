@@ -94,28 +94,42 @@ $admin = getAdminUser();
             <i class="fa-solid fa-chart-pie mr-1.5 text-slate-400"></i> Dashboard
           </a>
           <a href="parents.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents Accounts
+            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents
           </a>
           <a href="kids.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students & Kids
+            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students
+          </a>
+          <a href="topics.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-layer-group mr-1.5 text-slate-400"></i> Topics (CRUD)
+          </a>
+          <a href="questions.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-circle-question mr-1.5 text-slate-400"></i> Questions (CRUD)
           </a>
           <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> System Guide
+            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> Guide
           </a>
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
-            <i class="fa-solid fa-code mr-1.5 text-indigo-400"></i> Question & Dev Guide
+            <i class="fa-solid fa-code mr-1.5 text-indigo-400"></i> Dev
           </a>
           <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
           </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
+            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> Profile
           </a>
         </div>
       </div>
 
       <!-- Admin Status & Actions -->
       <div class="flex items-center gap-3">
+        <a 
+          href="../seed.php" 
+          title="Curriculum Seeder"
+          class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-bold py-2 px-3 rounded-xl border border-amber-500/40 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-database text-xs"></i>
+          <span class="hidden sm:inline">Seeder</span>
+        </a>
         <a 
           href="guide.php" 
           title="System Admin Handbook"
@@ -254,6 +268,8 @@ $admin = getAdminUser();
           <li><span class="text-indigo-400 font-bold">📁 admin/</span> <span class="text-slate-500">— System Admin Portal (Dark Mode)</span>
             <ul>
               <li><span class="text-emerald-400">📄 index.php</span> <span class="text-slate-500">— Admin Dashboard</span></li>
+              <li><span class="text-emerald-400">📄 topics.php</span> <span class="text-indigo-400 font-bold">— Topics Management (CRUD Module)</span></li>
+              <li><span class="text-emerald-400">📄 questions.php</span> <span class="text-indigo-400 font-bold">— Questions Bank (CRUD Module)</span></li>
               <li><span class="text-emerald-400">📄 parents.php</span> <span class="text-slate-500">— Parents CRUD Management</span></li>
               <li><span class="text-emerald-400">📄 kids.php</span> <span class="text-slate-500">— Student & Kid Profiles</span></li>
               <li><span class="text-emerald-400">📄 guide.php</span> <span class="text-slate-500">— System Operations Handbook</span></li>
@@ -261,20 +277,21 @@ $admin = getAdminUser();
               <li><span class="text-emerald-400">📄 profile.php</span> <span class="text-slate-500">— Admin Profile & Password Settings</span></li>
             </ul>
           </li>
-          <li><span class="text-indigo-400 font-bold">📁 api/</span> <span class="text-slate-500">— JSON APIs for Quizzes, Parents, & Admins</span></li>
+          <li><span class="text-indigo-400 font-bold">📁 api/</span> <span class="text-slate-500">— JSON APIs: admin_topics.php, admin_questions.php, admin_parents.php, quiz.php</span></li>
           <li><span class="text-indigo-400 font-bold">📁 data/</span>
             <ul>
-              <li><span class="text-amber-400 font-bold">📄 questions_bank.json</span> <span class="text-slate-400">— Master repository of ~1,350+ KG3 questions</span></li>
+              <li><span class="text-amber-400 font-bold">📄 questions_bank.json</span> <span class="text-slate-400">— Kindergarten 3 (KG3) question dataset (919+ items)</span></li>
+              <li><span class="text-emerald-400 font-bold">📄 questions_bank_psr.json</span> <span class="text-slate-400">— Year 6 (PSR Brunei) question dataset (630+ items)</span></li>
             </ul>
           </li>
           <li><span class="text-indigo-400 font-bold">📁 images/questions/</span> <span class="text-slate-500">— Educational photos organized by subject</span></li>
           <li><span class="text-emerald-400 font-bold">📄 parent.php</span> <span class="text-slate-500">— Parent Portal (Progress, GAP Analysis, Kids CRUD)</span></li>
           <li><span class="text-emerald-400 font-bold">📄 index.php</span> <span class="text-slate-500">— Student Child Login Gate & Dashboard</span></li>
-          <li><span class="text-emerald-400 font-bold">📄 quiz.php</span> <span class="text-slate-500">— Interactive Quiz Runner (KG3 exclusive)</span></li>
+          <li><span class="text-emerald-400 font-bold">📄 quiz.php</span> <span class="text-slate-500">— Interactive Quiz Runner (KG3 & PSR Brunei support)</span></li>
           <li><span class="text-emerald-400 font-bold">📄 worksheet.php</span> <span class="text-slate-500">— Printable 3-Line Handwriting Worksheets</span></li>
-          <li><span class="text-emerald-400 font-bold">📄 seed.php</span> <span class="text-slate-500">— Syncs questions_bank.json into MySQL</span></li>
-          <li><span class="text-amber-400 font-bold">📄 nextgrade_complete.sql</span> <span class="text-slate-400">— Complete database import for web hosting (1,549+ questions)</span></li>
-          <li><span class="text-indigo-400 font-bold">📄 schema.sql</span> <span class="text-slate-500">— Database schema definition (tables & keys)</span></li>
+          <li><span class="text-emerald-400 font-bold">📄 seed.php</span> <span class="text-slate-500">— Selective Seeder GUI & CLI (KG3, PSR, or All datasets)</span></li>
+          <li><span class="text-indigo-400 font-bold">📄 schema.sql</span> <span class="text-slate-400">— Lean Web Hosting Initial Setup (Tables + Admin Account, ~50KB)</span></li>
+          <li><span class="text-amber-400 font-bold">📄 nextgrade_complete.sql</span> <span class="text-slate-400">— Full pre-compiled database dump (1,549+ questions, ~1.5MB)</span></li>
         </ul>
       </div>
     </section>

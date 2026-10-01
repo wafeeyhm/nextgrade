@@ -160,3 +160,29 @@ CREATE TABLE IF NOT EXISTS `revision_sessions` (
   INDEX `idx_rev_student` (`student_id`),
   INDEX `idx_rev_topic` (`topic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================================================================
+-- INITIAL ESSENTIAL SEED DATA
+-- Imports System Admin and Demo Family accounts immediately.
+-- Once imported, log in as '@admin' / 'admin123' and open `seed.php`
+-- to seed Kindergarten 3 (KG3) and/or Year 6 (PSR Brunei) on-demand!
+-- ====================================================================
+
+-- 1. Default System Administrator (Username: admin | Password: admin123)
+INSERT INTO `admins` (`id`, `username`, `password_hash`, `full_name`, `email`, `created_at`) VALUES
+(1, 'admin', '$2y$10$ws51JTINa3SlRHBsQfImbujwQeXqYzuK88VzoWrBNRZFEB5rav4F6', 'System Administrator', 'admin@nextgrade.edu.my', NOW())
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
+
+-- 2. Initial Demo Parents (Password: parent123)
+INSERT INTO `parents` (`id`, `parent_code`, `username`, `password_hash`, `full_name`, `email`, `phone`, `status`, `created_at`) VALUES
+(1, 'PAR-1001', 'parent', '$2y$10$FcRaWqWvkB4fz9KiRoC2rO2oBS9IH1ZNbCcntXWz9DcDmYHUrERFu', 'Puan Sarah Ahmad', 'sarah.ahmad@example.com', '+60123456789', 'active', NOW()),
+(2, 'PAR-1002', 'azman', '$2y$10$E.RBvgudI8MnWJvUmixacOwZ/MN8FUEo84h1v8uto3xr4eKiPXXI2', 'Encik Azman Ismail', 'azman.ismail@example.com', '+60198765432', 'active', NOW())
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
+
+-- 3. Initial Demo Students (Default PIN: 1234)
+INSERT INTO `students` (`id`, `parent_id`, `name`, `username`, `pin_code`, `avatar`, `grade_level`, `status`, `created_at`) VALUES
+(1, 1, 'Lana marissa', 'lana', '1234', 'unicorn', 'Kindergarten 3 (KG3)', 'active', NOW()),
+(2, 1, 'Adam Rayyan', 'adam', '1234', 'astronaut', 'Kindergarten 3 (KG3)', 'active', NOW()),
+(3, 2, 'Danish Hakimi', 'danish', '1234', 'dino', 'Year 6 (PSR Brunei)', 'active', NOW())
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
+

@@ -56,28 +56,42 @@ $adminData = $stmt->fetch();
             <i class="fa-solid fa-chart-pie mr-1.5 text-slate-400"></i> Dashboard
           </a>
           <a href="parents.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents Accounts (CRUD)
+            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents
           </a>
           <a href="kids.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students & Kids
+            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students
+          </a>
+          <a href="topics.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-layer-group mr-1.5 text-slate-400"></i> Topics (CRUD)
+          </a>
+          <a href="questions.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-circle-question mr-1.5 text-slate-400"></i> Questions (CRUD)
           </a>
           <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> System Guide
+            <i class="fa-solid fa-book-open mr-1.5 text-slate-400"></i> Guide
           </a>
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
+            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Dev
           </a>
           <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
           </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
-            <i class="fa-solid fa-user-gear mr-1.5 text-indigo-400"></i> My Profile
+            <i class="fa-solid fa-user-gear mr-1.5 text-indigo-400"></i> Profile
           </a>
         </div>
       </div>
 
       <!-- Admin Status & Actions -->
       <div class="flex items-center gap-3">
+        <a 
+          href="../seed.php" 
+          title="Curriculum Seeder"
+          class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-bold py-2 px-3 rounded-xl border border-amber-500/40 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-database text-xs"></i>
+          <span class="hidden sm:inline">Seeder</span>
+        </a>
         <a 
           href="guide.php" 
           title="System Admin Guide"

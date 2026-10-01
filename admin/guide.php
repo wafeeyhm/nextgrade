@@ -51,28 +51,42 @@ $admin = getAdminUser();
             <i class="fa-solid fa-chart-pie mr-1.5 text-slate-400"></i> Dashboard
           </a>
           <a href="parents.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents Accounts (CRUD)
+            <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Parents
           </a>
           <a href="kids.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students & Kids
+            <i class="fa-solid fa-graduation-cap mr-1.5 text-slate-400"></i> Students
+          </a>
+          <a href="topics.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-layer-group mr-1.5 text-slate-400"></i> Topics (CRUD)
+          </a>
+          <a href="questions.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+            <i class="fa-solid fa-circle-question mr-1.5 text-slate-400"></i> Questions (CRUD)
           </a>
           <a href="guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600/30 border border-indigo-500/40 transition-colors">
-            <i class="fa-solid fa-book-open mr-1.5 text-indigo-400"></i> System Guide
+            <i class="fa-solid fa-book-open mr-1.5 text-indigo-400"></i> Guide
           </a>
           <a href="developer_guide.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Question & Dev Guide
+            <i class="fa-solid fa-code mr-1.5 text-slate-400"></i> Dev
           </a>
           <a href="verification.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <i class="fa-solid fa-clipboard-check mr-1.5 text-emerald-400"></i> Verification
           </a>
           <a href="profile.php" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
-            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> My Profile
+            <i class="fa-solid fa-user-gear mr-1.5 text-slate-400"></i> Profile
           </a>
         </div>
       </div>
 
       <!-- Admin Status & Actions -->
       <div class="flex items-center gap-3">
+        <a 
+          href="../seed.php" 
+          title="Curriculum Seeder"
+          class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-bold py-2 px-3 rounded-xl border border-amber-500/40 transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-database text-xs"></i>
+          <span class="hidden sm:inline">Seeder</span>
+        </a>
         <a 
           href="developer_guide.php" 
           title="Question Builder & Developer Guide"
@@ -669,14 +683,28 @@ $admin = getAdminUser();
           </div>
           <h3 class="text-white font-black text-sm">Import SQL via phpMyAdmin</h3>
           <p class="text-slate-400">
-            Import the all-in-one database file into your newly created database:
+            Choose your preferred import method based on your hosting bandwidth and needs:
           </p>
-          <ol class="list-decimal pl-4 space-y-1 text-slate-300 text-[11px]">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <div class="bg-slate-950/80 p-3 rounded-xl border border-indigo-500/30 space-y-1.5">
+              <span class="text-indigo-400 font-bold text-xs">Option A (Recommended & Lean):</span>
+              <p class="text-[11px] text-slate-300">
+                Import <code class="text-amber-300 font-mono">schema.sql</code> (only ~50KB). It sets up all tables with default Admin (<code class="text-indigo-300">@admin</code> / <code class="text-indigo-300">admin123</code>). Then open <code class="text-indigo-300">seed.php</code> in your browser to selectively seed KG3, PSR Brunei, or both!
+              </p>
+            </div>
+            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-700/80 space-y-1.5">
+              <span class="text-slate-300 font-bold text-xs">Option B (All-in-One Precompiled):</span>
+              <p class="text-[11px] text-slate-300">
+                Import <code class="text-amber-300 font-mono">nextgrade_complete.sql</code> (~1.5MB). Contains all 1,549+ questions and topics pre-loaded in a single file ready to run.
+              </p>
+            </div>
+          </div>
+          <ol class="list-decimal pl-4 space-y-1 text-slate-300 text-[11px] pt-1">
             <li>Open <strong class="text-white">phpMyAdmin</strong> from your hosting dashboard.</li>
             <li>Click on your new database name in the left navigation sidebar.</li>
             <li>Click the <strong class="text-indigo-300">Import</strong> tab at the top.</li>
-            <li>Click <em>Choose File</em> and select <code class="text-amber-300 font-mono">nextgrade_complete.sql</code> from your local files.</li>
-            <li>Click <strong class="text-emerald-400">Import / Go</strong> at the bottom. The entire database (all 1,549+ questions) will import in seconds.</li>
+            <li>Click <em>Choose File</em> and select <code class="text-amber-300 font-mono">schema.sql</code> (or <code class="text-amber-300 font-mono">nextgrade_complete.sql</code>).</li>
+            <li>Click <strong class="text-emerald-400">Import / Go</strong> at the bottom. Success will show within seconds.</li>
           </ol>
         </div>
 
