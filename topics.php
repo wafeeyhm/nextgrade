@@ -35,6 +35,7 @@ $subjectId = $_GET['subject'] ?? 'bahasa_melayu';
   <link rel="stylesheet" href="css/app.css">
   <script src="js/sounds.js"></script>
   <script src="js/speech.js"></script>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8 select-none">
 

@@ -59,7 +59,7 @@ try {
             'name' => 'Bahasa Melayu',
             'title_native' => 'Bahasa Melayu',
             'description' => 'Suku kata, kenderaan, haiwan, bulan & tatabahasa asas.',
-            'icon' => '🇲🇾',
+            'icon' => '📚',
             'theme_gradient' => 'from-emerald-400 to-teal-600',
             'accent_color' => '#10B981',
             'sort_order' => 1

@@ -31,6 +31,7 @@ $topicId = $_GET['topic'] ?? $_GET['topic_id'] ?? 'bm_suku_kata';
   <title>Handwriting Worksheet - NextGrade</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/app.css">
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
   <style>
     @media print {
       .no-print { display: none !important; }

@@ -1,5 +1,14 @@
 -- NextGrade Complete Database Schema v2
 -- Compatible with MySQL 5.7+ / MariaDB / MySQL 8.0+
+--
+-- [WEB HOSTING / CPANEL NOTE]:
+-- When importing via phpMyAdmin into an existing hosting database (e.g. your_cpanel_db),
+-- you can skip the 'CREATE DATABASE' and 'USE' statements below.
+-- Simply click on your database in phpMyAdmin, then click "Import".
+--
+-- [COMPLETE DATABASE WITH 1,549+ QUESTIONS]:
+-- To import the complete database with all questions, subjects, topics, and revisions,
+-- use the all-in-one file: `nextgrade_complete.sql`.
 
 CREATE DATABASE IF NOT EXISTS `nextgrade_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `nextgrade_db`;
@@ -55,7 +64,8 @@ CREATE TABLE IF NOT EXISTS `subjects` (
   `icon` VARCHAR(50) NOT NULL,
   `theme_gradient` VARCHAR(100) NOT NULL,
   `accent_color` VARCHAR(50) NOT NULL,
-  `sort_order` INT DEFAULT 0
+  `sort_order` INT DEFAULT 0,
+  `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 5. Topics Table
@@ -69,6 +79,7 @@ CREATE TABLE IF NOT EXISTS `topics` (
   `color_badge` VARCHAR(50) NOT NULL,
   `revision_time_limit` INT DEFAULT 300, -- 5 minutes in seconds
   `sort_order` INT DEFAULT 0,
+  `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)',
   INDEX `idx_topic_subject` (`subject_id`),
   CONSTRAINT `fk_topic_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -101,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `hint_audio` TEXT NOT NULL,
   `meta_data_json` LONGTEXT DEFAULT NULL,
   `sort_order` INT DEFAULT 0,
+  `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)',
   INDEX `idx_q_topic` (`topic_id`),
   INDEX `idx_q_subject` (`subject_id`),
   CONSTRAINT `fk_q_topic` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -34,6 +34,7 @@ unset($q);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bahasa Melayu - NextGrade</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col items-center p-6 select-none font-sans">
 

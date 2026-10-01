@@ -43,6 +43,7 @@ $recentParents = $pdo->query("
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/app.css?v=2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
   <style>
     body, html {
       background-color: #0b0f19 !important;

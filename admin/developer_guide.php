@@ -14,6 +14,7 @@ $admin = getAdminUser();
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/app.css?v=2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
   <style>
     body, html {
       background-color: #0b0f19 !important;
@@ -272,6 +273,8 @@ $admin = getAdminUser();
           <li><span class="text-emerald-400 font-bold">📄 quiz.php</span> <span class="text-slate-500">— Interactive Quiz Runner (KG3 exclusive)</span></li>
           <li><span class="text-emerald-400 font-bold">📄 worksheet.php</span> <span class="text-slate-500">— Printable 3-Line Handwriting Worksheets</span></li>
           <li><span class="text-emerald-400 font-bold">📄 seed.php</span> <span class="text-slate-500">— Syncs questions_bank.json into MySQL</span></li>
+          <li><span class="text-amber-400 font-bold">📄 nextgrade_complete.sql</span> <span class="text-slate-400">— Complete database import for web hosting (1,549+ questions)</span></li>
+          <li><span class="text-indigo-400 font-bold">📄 schema.sql</span> <span class="text-slate-500">— Database schema definition (tables & keys)</span></li>
         </ul>
       </div>
     </section>
