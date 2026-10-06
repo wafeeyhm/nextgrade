@@ -165,15 +165,85 @@ if ($method === 'POST') {
         ]);
     }
 
-    // 4. SWITCH TO KID SESSION (Launch Child Learning Hub as this kid)
+    // 4. TOGGLE KID STATUS (Enable / Disable Child Account)
+    if ($action === 'toggle_status') {
+        $kidId = (int)($payload['id'] ?? 0);
+        if ($kidId <= 0) {
+            sendJsonResponse(['success' => false, 'error' => 'Invalid child ID.'], 400);
+        }
+
+        $stmt = $pdo->prepare("SELECT id, name, status FROM students WHERE id = ? AND parent_id = ?");
+        $stmt->execute([$kidId, $parentId]);
+        $kid = $stmt->fetch();
+
+        if (!$kid) {
+            sendJsonResponse(['success' => false, 'error' => 'Child profile not found or permission denied.'], 403);
+        }
+
+        $newStatus = ($kid['status'] === 'active') ? 'inactive' : 'active';
+        $pdo->prepare("UPDATE students SET status = ? WHERE id = ? AND parent_id = ?")->execute([$newStatus, $kidId, $parentId]);
+
+        sendJsonResponse([
+            'success' => true,
+            'id' => $kidId,
+            'new_status' => $newStatus,
+            'message' => "Child profile for {$kid['name']} is now " . ($newStatus === 'active' ? 'enabled (can log in)' : 'disabled (login locked)') . "."
+        ]);
+    }
+
+    // 5. QUICK UPDATE PIN CODE
+    if ($action === 'update_pin') {
+        $kidId = (int)($payload['id'] ?? 0);
+        $pinCode = trim((string)($payload['pin_code'] ?? ''));
+
+        if ($kidId <= 0) {
+            sendJsonResponse(['success' => false, 'error' => 'Invalid child ID.'], 400);
+        }
+
+        if (empty($pinCode) || strlen($pinCode) < 3) {
+            sendJsonResponse(['success' => false, 'error' => 'PIN code must be at least 3 digits/characters.'], 400);
+        }
+
+        $stmt = $pdo->prepare("SELECT id, name FROM students WHERE id = ? AND parent_id = ?");
+        $stmt->execute([$kidId, $parentId]);
+        $kid = $stmt->fetch();
+
+        if (!$kid) {
+            sendJsonResponse(['success' => false, 'error' => 'Child profile not found or permission denied.'], 403);
+        }
+
+        $pdo->prepare("UPDATE students SET pin_code = ? WHERE id = ? AND parent_id = ?")->execute([$pinCode, $kidId, $parentId]);
+
+        sendJsonResponse([
+            'success' => true,
+            'id' => $kidId,
+            'pin_code' => $pinCode,
+            'message' => "PIN code for {$kid['name']} updated to '{$pinCode}'."
+        ]);
+    }
+
+    // 6. SWITCH TO KID SESSION (Launch Child Learning Hub as this kid)
     if ($action === 'launch_kid_session') {
         $kidId = (int)($payload['id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ? AND parent_id = ?");
+        $stmt = $pdo->prepare("
+            SELECT s.*, p.status as parent_status 
+            FROM students s 
+            JOIN parents p ON p.id = s.parent_id 
+            WHERE s.id = ? AND s.parent_id = ?
+        ");
         $stmt->execute([$kidId, $parentId]);
         $kid = $stmt->fetch();
 
         if (!$kid) {
             sendJsonResponse(['success' => false, 'error' => 'Child profile not found.'], 404);
+        }
+
+        if ($kid['parent_status'] !== 'active') {
+            sendJsonResponse(['success' => false, 'error' => 'Parent account is deactivated. Children cannot access the system.'], 403);
+        }
+
+        if ($kid['status'] !== 'active') {
+            sendJsonResponse(['success' => false, 'error' => "Akaun {$kid['name']} telah dinyahaktifkan. Sila aktifkan profil anak dahulu. (Account is disabled. Please enable it first.)"], 403);
         }
 
         // Set student session

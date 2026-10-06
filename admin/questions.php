@@ -221,6 +221,17 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
           <option value="fill_blank">Fill in the Blank</option>
         </select>
 
+        <!-- Status Filter (Enable / Disable) -->
+        <select 
+          id="filter-status" 
+          onchange="loadQuestions(1)"
+          class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-semibold"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active (Enabled Only)</option>
+          <option value="inactive">Disabled Only</option>
+        </select>
+
       </div>
 
       <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 text-xs">
@@ -268,6 +279,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
               <th class="py-3.5 px-4 w-16">ID</th>
               <th class="py-3.5 px-4 min-w-[240px]">Question Prompt</th>
               <th class="py-3.5 px-4">Subject & Topic</th>
+              <th class="py-3.5 px-4 text-center">Status</th>
               <th class="py-3.5 px-4">Type</th>
               <th class="py-3.5 px-4 min-w-[180px]">Options & Answer</th>
               <th class="py-3.5 px-4 text-right">Actions</th>
@@ -275,7 +287,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
           </thead>
           <tbody id="questions-tbody" class="divide-y divide-slate-700/60 font-semibold text-slate-300">
             <tr>
-              <td colspan="6" class="text-center py-12 text-slate-400">
+              <td colspan="7" class="text-center py-12 text-slate-400">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2 block"></i>
                 Loading questions bank...
               </td>
@@ -313,8 +325,8 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         <input type="hidden" id="q-action" value="create" />
         <input type="hidden" id="q-id" value="0" />
 
-        <!-- Row 1: Grade, Subject, Topic -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Row 1: Grade, Subject, Topic, Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div>
             <label class="block text-[11px] font-bold text-slate-400 mb-1">Grade Level *</label>
             <select 
@@ -348,6 +360,18 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
             >
               <option value="">Select Topic</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">Status *</label>
+            <select 
+              id="q-status" 
+              required
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+            >
+              <option value="active">Active (Enabled)</option>
+              <option value="inactive">Disabled</option>
             </select>
           </div>
         </div>
@@ -595,6 +619,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
       document.getElementById('filter-subject').value = '';
       document.getElementById('filter-topic').value = '';
       document.getElementById('filter-type').value = '';
+      document.getElementById('filter-status').value = '';
       document.getElementById('filter-image').value = '';
       onSubjectFilterChange();
       loadQuestions(1);
@@ -775,6 +800,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
       const subject = document.getElementById('filter-subject').value;
       const topic = document.getElementById('filter-topic').value;
       const type = document.getElementById('filter-type').value;
+      const status = document.getElementById('filter-status').value;
       const hasImage = document.getElementById('filter-image').value;
       const limit = document.getElementById('filter-limit').value;
 
@@ -787,13 +813,14 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         subject_id: subject,
         topic_id: topic,
         question_type: type,
+        status: status,
         has_image: hasImage
       });
 
       const tbody = document.getElementById('questions-tbody');
       tbody.innerHTML = `
         <tr>
-          <td colspan="6" class="text-center py-10 text-slate-400">
+          <td colspan="7" class="text-center py-10 text-slate-400">
             <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2 block"></i>
             Loading questions page ${page}...
           </td>
@@ -824,7 +851,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
       if (!questions || questions.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="text-center py-12 text-slate-500 font-bold">
+            <td colspan="7" class="text-center py-12 text-slate-500 font-bold">
               No questions matched your search or filters.
             </td>
           </tr>
@@ -837,6 +864,11 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         const gradeBadge = isKG3 
           ? `<span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">KG3</span>`
           : `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">PSR</span>`;
+
+        const isActive = (q.status === 'active');
+        const statusBadge = isActive
+          ? `<button type="button" onclick="toggleQuestionStatus(${q.id})" title="Status: Active. Click to disable" class="inline-flex items-center gap-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Active</button>`
+          : `<button type="button" onclick="toggleQuestionStatus(${q.id})" title="Status: Disabled. Click to enable" class="inline-flex items-center gap-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Disabled</button>`;
 
         let typeBadge = `<span class="bg-slate-700/60 text-slate-300 px-2 py-0.5 rounded-md text-[10px] font-mono">${q.question_type}</span>`;
         if (q.question_type === 'multiple_choice') typeBadge = `<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md text-[10px] font-mono">Multiple Choice</span>`;
@@ -859,7 +891,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         }).slice(0, 4).join(' ');
 
         return `
-          <tr class="hover:bg-slate-800/50 transition-colors group">
+          <tr class="hover:bg-slate-800/50 transition-colors group ${isActive ? '' : 'opacity-70 bg-slate-950/30'}">
             <td class="py-3 px-4 font-mono text-slate-400 text-xs">
               #${q.id}
             </td>
@@ -868,12 +900,13 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
               <div class="flex items-start gap-2.5">
                 ${imgThumb}
                 <div class="space-y-1">
-                  <div class="font-black text-white text-xs leading-snug line-clamp-2">
+                  <div class="font-black ${isActive ? 'text-white' : 'text-slate-300'} text-xs leading-snug line-clamp-2">
                     ${escapeHtml(q.question_text)}
                   </div>
                   <div class="flex items-center gap-2 text-[10px] text-slate-500">
                     ${q.question_audio ? '<span title="TTS audio available">🔊 Audio</span>' : ''}
                     <span>• Lang: <strong class="uppercase text-slate-400">${q.lang}</strong></span>
+                    ${!isActive ? '<span class="text-rose-400 font-bold">• Inactive</span>' : ''}
                   </div>
                 </div>
               </div>
@@ -889,6 +922,10 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
                 </span>
                 ${gradeBadge}
               </div>
+            </td>
+
+            <td class="py-3 px-4 text-center">
+              ${statusBadge}
             </td>
 
             <td class="py-3 px-4">
@@ -909,6 +946,15 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
 
             <td class="py-3 px-4 text-right">
               <div class="flex items-center justify-end gap-1">
+                <!-- Quick Toggle Status Button -->
+                <button 
+                  type="button" 
+                  onclick="toggleQuestionStatus(${q.id})"
+                  title="${isActive ? 'Quick Disable Question' : 'Quick Enable Question'}" 
+                  class="p-1.5 rounded-lg ${isActive ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30' : 'bg-slate-700/60 hover:bg-slate-700 text-slate-400 hover:text-white'} transition-colors cursor-pointer"
+                >
+                  <i class="fa-solid ${isActive ? 'fa-toggle-on text-xs' : 'fa-toggle-off text-xs'}"></i>
+                </button>
                 <button 
                   type="button" 
                   onclick="previewQuestion(${q.id})"
@@ -1001,6 +1047,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
       document.getElementById('q-audio').dataset.manualEdited = '';
       document.getElementById('q-lang').value = 'en';
       document.getElementById('q-type').value = 'multiple_choice';
+      document.getElementById('q-status').value = 'active';
       document.getElementById('q-image-url').value = '';
       document.getElementById('q-passage').value = '';
       document.getElementById('q-correct-answer').value = '';
@@ -1045,6 +1092,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         document.getElementById('q-audio').dataset.manualEdited = 'true';
         document.getElementById('q-lang').value = q.lang || 'en';
         document.getElementById('q-type').value = q.question_type || 'multiple_choice';
+        document.getElementById('q-status').value = q.status || 'active';
         document.getElementById('q-image-url').value = q.image_url || '';
         document.getElementById('q-passage').value = q.passage || '';
         document.getElementById('q-correct-answer').value = q.correct_answer;
@@ -1074,6 +1122,26 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
       document.getElementById('question-modal').classList.add('hidden');
     }
 
+    async function toggleQuestionStatus(qId) {
+      try {
+        const resp = await fetch('../api/admin_questions.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'toggle_status', id: qId })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          showToast(data.message || 'Status updated');
+          loadQuestions(currentPage);
+          loadMeta();
+        } else {
+          showToast(data.error || 'Failed to toggle status', false);
+        }
+      } catch (err) {
+        showToast('Network error toggling status', false);
+      }
+    }
+
     async function handleSaveQuestion(e) {
       e.preventDefault();
       const action = document.getElementById('q-action').value;
@@ -1095,6 +1163,7 @@ $initialSubjectFilter = $_GET['subject_id'] ?? '';
         grade_level: document.getElementById('q-grade-level').value,
         subject_id: document.getElementById('q-subject-id').value,
         topic_id: document.getElementById('q-topic-id').value,
+        status: document.getElementById('q-status').value,
         question_text: document.getElementById('q-text').value.trim(),
         question_audio: document.getElementById('q-audio').value.trim(),
         lang: document.getElementById('q-lang').value,

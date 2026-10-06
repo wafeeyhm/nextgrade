@@ -113,8 +113,10 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `meta_data_json` LONGTEXT DEFAULT NULL,
   `sort_order` INT DEFAULT 0,
   `grade_level` VARCHAR(50) DEFAULT 'Kindergarten 3 (KG3)',
+  `status` ENUM('active', 'inactive') DEFAULT 'active',
   INDEX `idx_q_topic` (`topic_id`),
   INDEX `idx_q_subject` (`subject_id`),
+  INDEX `idx_q_status` (`status`),
   CONSTRAINT `fk_q_topic` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_q_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

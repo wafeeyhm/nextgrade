@@ -8,11 +8,31 @@ $studentAvatar = $_SESSION['student_avatar'] ?? 'star_kid';
 $studentId = $_SESSION['student_id'] ?? null;
 $studentGrade = $_SESSION['student_grade'] ?? null;
 
-if ($studentId && !$studentGrade) {
-  $stmtG = $pdo->prepare("SELECT grade_level FROM students WHERE id = ?");
-  $stmtG->execute([$studentId]);
-  $studentGrade = $stmtG->fetchColumn();
-  if ($studentGrade) {
+if ($studentId || $studentName) {
+  $stmtChk = $pdo->prepare("
+    SELECT s.*, p.status as parent_status 
+    FROM students s 
+    LEFT JOIN parents p ON p.id = s.parent_id 
+    WHERE s.id = ? OR s.name = ? 
+    LIMIT 1
+  ");
+  $stmtChk->execute([$studentId ?? 0, $studentName ?? '']);
+  $sRow = $stmtChk->fetch();
+
+  if (!$sRow || $sRow['status'] !== 'active' || (!empty($sRow['parent_id']) && $sRow['parent_status'] !== 'active')) {
+    unset(
+      $_SESSION['student_name'],
+      $_SESSION['student_id'],
+      $_SESSION['student_avatar'],
+      $_SESSION['student_username'],
+      $_SESSION['student_parent_id'],
+      $_SESSION['student_grade']
+    );
+    setcookie('student_name', '', time() - 3600, '/');
+    $studentName = '';
+    $studentId = null;
+  } else {
+    $studentGrade = $sRow['grade_level'];
     $_SESSION['student_grade'] = $studentGrade;
   }
 }
@@ -45,10 +65,16 @@ $avatars = [
   'unicorn' => ['label' => 'Magic Unicorn', 'emoji' => '🦄']
 ];
 
-// Fetch active kids for simple one-tap profile selection
+// Fetch active kids (only if student AND parent are active)
 $activeKids = [];
 try {
-  $activeKids = $pdo->query("SELECT id, name, username, avatar, grade_level, pin_code FROM students WHERE status = 'active' ORDER BY id ASC LIMIT 12")->fetchAll();
+  $activeKids = $pdo->query("
+    SELECT s.id, s.name, s.username, s.avatar, s.grade_level, s.pin_code 
+    FROM students s 
+    LEFT JOIN parents p ON p.id = s.parent_id 
+    WHERE s.status = 'active' AND (p.id IS NULL OR p.status = 'active') 
+    ORDER BY s.id ASC LIMIT 12
+  ")->fetchAll();
 } catch (Exception $e) {
 }
 ?>

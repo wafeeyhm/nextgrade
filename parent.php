@@ -846,6 +846,19 @@ $parent = getParentUser();
           </span>
         </div>
 
+        <div>
+          <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">Account Status</label>
+          <select
+            id="form-kid-status"
+            class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-sky-500 focus:bg-white transition-all">
+            <option value="active" selected>Active (Child can log in & practice)</option>
+            <option value="inactive">Disabled (Child account locked)</option>
+          </select>
+          <span class="text-[10px] text-slate-400 font-bold block mt-1">
+            When disabled, your child will not be able to log in or take quizzes until re-enabled.
+          </span>
+        </div>
+
         <!-- Avatar Picker -->
         <div>
           <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-2">Choose Avatar:</label>
@@ -887,6 +900,52 @@ $parent = getParentUser();
         </div>
       </form>
 
+    </div>
+  </div>
+
+  <!-- Modal: Quick Change PIN for Child -->
+  <div id="parent-pin-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-3 border-amber-300 rounded-[2.5rem] max-w-sm w-full p-6 text-center shadow-2xl relative">
+      <div class="text-4xl mb-2">🔑</div>
+      <h3 id="parent-pin-modal-title" class="text-xl font-black text-slate-800">Change Child PIN</h3>
+      <p class="text-xs font-bold text-slate-400 mb-4">Set a simple 4-digit PIN for your child's login:</p>
+
+      <div id="parent-pin-modal-alert" class="hidden mb-3 p-2.5 rounded-xl text-xs font-bold"></div>
+
+      <input type="hidden" id="parent-pin-kid-id" value="">
+      <div class="mb-4">
+        <input 
+          type="text" 
+          id="parent-pin-input" 
+          maxlength="6"
+          placeholder="e.g. 1234"
+          class="w-full bg-slate-50 border-3 border-amber-200 rounded-2xl py-3 text-center text-2xl font-black font-mono text-amber-600 tracking-widest focus:outline-none focus:border-amber-400 focus:bg-white transition-all"
+        />
+        <div class="flex items-center justify-center gap-1.5 mt-2">
+          <span class="text-[10px] text-slate-400 font-bold">Presets:</span>
+          <button type="button" onclick="document.getElementById('parent-pin-input').value='1234'" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 cursor-pointer">1234</button>
+          <button type="button" onclick="document.getElementById('parent-pin-input').value='0000'" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 cursor-pointer">0000</button>
+          <button type="button" onclick="document.getElementById('parent-pin-input').value=String(Math.floor(1000 + Math.random() * 9000))" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer">🎲 Random</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-2">
+        <button 
+          type="button" 
+          onclick="closeParentPinModal()" 
+          class="btn-chunky btn-white text-xs py-2.5 px-4 rounded-xl font-bold cursor-pointer"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          id="btn-save-parent-pin"
+          onclick="submitParentChangePin()" 
+          class="btn-chunky btn-primary text-xs py-2.5 px-5 rounded-xl font-black cursor-pointer"
+        >
+          Update PIN
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1304,8 +1363,10 @@ $parent = getParentUser();
           return;
         }
 
-        grid.innerHTML = cachedKids.map(k => `
-        <div class="bg-white rounded-[2rem] p-6 border-3 border-slate-200 shadow-md hover:border-sky-300 transition-all flex flex-col justify-between relative overflow-hidden">
+        grid.innerHTML = cachedKids.map(k => {
+          const isInactive = k.status === 'inactive';
+          return `
+        <div class="bg-white rounded-[2rem] p-6 border-3 ${isInactive ? 'border-rose-200 bg-rose-50/20' : 'border-slate-200'} shadow-md hover:border-sky-300 transition-all flex flex-col justify-between relative overflow-hidden">
           
           <div>
             <!-- Kid Header -->
@@ -1315,7 +1376,7 @@ $parent = getParentUser();
                   ${avatarMap[k.avatar] || '⭐'}
                 </span>
                 <div>
-                  <h3 class="text-xl font-black text-slate-800">${k.name}</h3>
+                  <h3 class="text-xl font-black text-slate-800">${escapeHtml(k.name)}</h3>
                   <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                     <span class="text-xs font-black ${isYear6(k.grade_level) ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : (isKG3(k.grade_level) ? 'text-sky-700 bg-sky-50 border border-sky-200' : 'text-amber-800 bg-amber-50 border border-amber-200')} px-2 py-0.5 rounded-md inline-block">
                       ${k.grade_level || 'Kindergarten 3 (KG3)'}
@@ -1329,13 +1390,24 @@ $parent = getParentUser();
                   </div>
                 </div>
               </div>
+              <div>
+                ${isInactive 
+                  ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 border border-rose-200 inline-flex items-center gap-1 shadow-xs"><i class="fa-solid fa-ban text-[9px]"></i> Disabled</span>'
+                  : '<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1 shadow-xs"><i class="fa-solid fa-check text-[9px]"></i> Active</span>'
+                }
+              </div>
             </div>
 
             <!-- Credentials Box (Simple Kid Access) -->
             <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 space-y-2 mb-4">
-              <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
-                Kid Simple Login Access:
-              </span>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                  Kid Login Access:
+                </span>
+                <span class="text-[10px] font-bold ${isInactive ? 'text-rose-500' : 'text-emerald-600'}">
+                  ${isInactive ? 'Access Blocked' : 'Login Permitted'}
+                </span>
+              </div>
               <div class="flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-500 font-bold">Username:</span>
                 <span class="font-black text-sky-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
@@ -1344,9 +1416,19 @@ $parent = getParentUser();
               </div>
               <div class="flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-500 font-bold">4-Digit PIN:</span>
-                <span class="font-black text-amber-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
-                  ${k.pin_code || '1234'}
-                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-black text-amber-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                    ${k.pin_code || '1234'}
+                  </span>
+                  <button 
+                    type="button" 
+                    onclick="openParentChangePin(${k.id}, '${escapeHtml(k.name)}', '${escapeHtml(k.pin_code || '1234')}')"
+                    class="text-[10px] font-sans font-bold px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 cursor-pointer flex items-center gap-1 transition-all"
+                    title="Change 4-digit PIN"
+                  >
+                    <i class="fa-solid fa-key text-[9px]"></i> Change
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1365,27 +1447,44 @@ $parent = getParentUser();
 
           <!-- Action Buttons -->
           <div class="space-y-2 pt-3 border-t border-slate-100">
-            <!-- Start Child Session -->
-            <button 
-              onclick="launchKidSession(${k.id}, '${escapeHtml(k.name)}')"
-              class="btn-chunky btn-success w-full text-xs py-2.5 rounded-xl font-black flex items-center justify-center gap-1.5 shadow-sm"
-              title="Launch tablet learning session for this child"
-            >
-              <span>🚀</span>
-              <span>Start Learning as ${k.name}</span>
-            </button>
+            <!-- Start Child Session (if active) -->
+            ${isInactive 
+              ? `<button disabled class="w-full text-xs py-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5 bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed">
+                  <i class="fa-solid fa-lock text-xs"></i>
+                  <span>Disabled - Child cannot login</span>
+                </button>`
+              : `<button 
+                  onclick="launchKidSession(${k.id}, '${escapeHtml(k.name)}')"
+                  class="btn-chunky btn-success w-full text-xs py-2.5 rounded-xl font-black flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                  title="Launch tablet learning session for this child"
+                >
+                  <span>🚀</span>
+                  <span>Start Learning as ${escapeHtml(k.name)}</span>
+                </button>`
+            }
 
-            <!-- Edit & Delete Row -->
+            <!-- Status Toggle, Edit & Delete Row -->
             <div class="flex items-center gap-2">
               <button 
+                type="button"
+                onclick="toggleKidStatus(${k.id})"
+                class="flex-1 btn-chunky ${isInactive ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300' : 'bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 border border-slate-200'} text-xs py-2 px-2.5 rounded-xl font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                title="${isInactive ? 'Click to enable child account' : 'Click to disable child account'}"
+              >
+                <i class="fa-solid ${isInactive ? 'fa-toggle-off text-rose-500' : 'fa-toggle-on text-emerald-500'} text-sm"></i>
+                <span>${isInactive ? 'Enable' : 'Disable'}</span>
+              </button>
+              <button 
+                type="button"
                 onclick="openEditKidModal(${k.id})"
-                class="flex-1 btn-chunky btn-white text-xs py-2 px-3 rounded-xl font-bold flex items-center justify-center gap-1"
+                class="flex-1 btn-chunky btn-white text-xs py-2 px-2.5 rounded-xl font-bold flex items-center justify-center gap-1 cursor-pointer"
               >
                 <span>✏️</span> <span>Edit</span>
               </button>
               <button 
+                type="button"
                 onclick="confirmDeleteKid(${k.id}, '${escapeHtml(k.name)}')"
-                class="btn-chunky btn-white text-xs py-2 px-3 rounded-xl font-bold text-rose-600 hover:bg-rose-50 border-rose-200 flex items-center justify-center"
+                class="btn-chunky btn-white text-xs py-2 px-2.5 rounded-xl font-bold text-rose-600 hover:bg-rose-50 border-rose-200 flex items-center justify-center cursor-pointer"
                 title="Remove child"
               >
                 <i class="fa-solid fa-trash"></i>
@@ -1394,11 +1493,97 @@ $parent = getParentUser();
           </div>
 
         </div>
-      `).join('');
+      `;
+        }).join('');
 
       } catch (err) {
         console.error(err);
         grid.innerHTML = '<p class="text-rose-500 font-bold text-center col-span-full">Network error loading kids.</p>';
+      }
+    }
+
+    // Toggle Kid Active/Inactive Status
+    async function toggleKidStatus(id) {
+      SoundEffects.playPop();
+      try {
+        const resp = await fetch('api/parent_kids.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'toggle_status', id })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          SoundEffects.playChime();
+          loadKidsProfiles();
+        } else {
+          SoundEffects.playBoop();
+          alert(data.error || 'Could not change child account status.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error updating child status.');
+      }
+    }
+
+    // Kid PIN Modal Handlers
+    function openParentChangePin(id, name, currentPin) {
+      SoundEffects.playPop();
+      document.getElementById('parent-pin-kid-id').value = id;
+      document.getElementById('parent-pin-modal-title').textContent = `Change PIN for ${name}`;
+      document.getElementById('parent-pin-input').value = currentPin || '1234';
+      const alertBox = document.getElementById('parent-pin-modal-alert');
+      alertBox.className = 'hidden';
+      document.getElementById('parent-pin-modal').classList.remove('hidden');
+      document.getElementById('parent-pin-input').focus();
+      document.getElementById('parent-pin-input').select();
+    }
+
+    function closeParentPinModal() {
+      document.getElementById('parent-pin-modal').classList.add('hidden');
+    }
+
+    async function submitParentChangePin() {
+      SoundEffects.playPop();
+      const id = document.getElementById('parent-pin-kid-id').value;
+      const pin = document.getElementById('parent-pin-input').value.trim();
+      const alertBox = document.getElementById('parent-pin-modal-alert');
+      const btn = document.getElementById('btn-save-parent-pin');
+
+      if (!pin || pin.length < 4) {
+        alertBox.className = 'mb-3 p-2.5 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-800 block';
+        alertBox.textContent = 'Please enter a PIN of 4 to 6 characters/digits.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      try {
+        const resp = await fetch('api/parent_kids.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'update_pin', id: parseInt(id), pin_code: pin })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          SoundEffects.playChime();
+          alertBox.className = 'mb-3 p-2.5 rounded-xl text-xs font-bold bg-emerald-50 border border-emerald-200 text-emerald-800 block';
+          alertBox.textContent = data.message;
+          setTimeout(() => {
+            closeParentPinModal();
+            loadKidsProfiles();
+          }, 500);
+        } else {
+          SoundEffects.playBoop();
+          alertBox.className = 'mb-3 p-2.5 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-800 block';
+          alertBox.textContent = data.error || 'Failed to update PIN.';
+        }
+      } catch (err) {
+        console.error(err);
+        alertBox.className = 'mb-3 p-2.5 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-800 block';
+        alertBox.textContent = 'Network error.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update PIN';
       }
     }
 
@@ -1411,6 +1596,7 @@ $parent = getParentUser();
       document.getElementById('form-kid-username').value = '';
       document.getElementById('form-kid-pin').value = '1234';
       document.getElementById('form-kid-grade').value = 'Kindergarten 3 (KG3)';
+      document.getElementById('form-kid-status').value = 'active';
       document.querySelector('input[name="kid_avatar"][value="star_kid"]').checked = true;
 
       document.getElementById('kid-modal-alert').className = 'hidden';
@@ -1428,6 +1614,7 @@ $parent = getParentUser();
       document.getElementById('form-kid-username').value = k.username || '';
       document.getElementById('form-kid-pin').value = k.pin_code || '1234';
       document.getElementById('form-kid-grade').value = k.grade_level || 'Kindergarten 3 (KG3)';
+      document.getElementById('form-kid-status').value = k.status || 'active';
 
       const avRadio = document.querySelector(`input[name="kid_avatar"][value="${k.avatar}"]`);
       if (avRadio) avRadio.checked = true;
@@ -1462,6 +1649,7 @@ $parent = getParentUser();
         username: document.getElementById('form-kid-username').value.trim(),
         pin_code: document.getElementById('form-kid-pin').value.trim(),
         grade_level: document.getElementById('form-kid-grade').value,
+        status: document.getElementById('form-kid-status').value || 'active',
         avatar: document.querySelector('input[name="kid_avatar"]:checked')?.value || 'star_kid'
       };
 

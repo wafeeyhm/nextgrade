@@ -44,6 +44,13 @@ if (isParentLoggedIn()) {
 
       <div id="login-alert" class="hidden mb-5 p-3.5 rounded-xl text-xs font-bold"></div>
 
+      <?php if (isset($_GET['error']) && $_GET['error'] === 'deactivated'): ?>
+        <div class="mb-5 p-3.5 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-800 flex items-center gap-2">
+          <i class="fa-solid fa-circle-exclamation text-base shrink-0"></i>
+          <span>Akaun ibu bapa telah dinyahaktifkan oleh pentadbir. Sila hubungi pentadbir sistem. (Parent account is currently disabled. Please contact administrator.)</span>
+        </div>
+      <?php endif; ?>
+
       <form id="parent-login-form" class="space-y-4">
         <div>
           <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1.5">

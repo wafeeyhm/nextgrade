@@ -75,7 +75,7 @@ if ($method === 'GET') {
             }
 
             // Fetch from specific topic
-            $stmt = $pdo->prepare("SELECT * FROM questions WHERE topic_id = ? ORDER BY RAND() LIMIT ?");
+            $stmt = $pdo->prepare("SELECT * FROM questions WHERE topic_id = ? AND status = 'active' ORDER BY RAND() LIMIT ?");
             $stmt->bindValue(1, $topicId, PDO::PARAM_STR);
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
@@ -93,7 +93,7 @@ if ($method === 'GET') {
                         ? " AND (grade_level = 'Year 6 (PSR)') "
                         : " AND (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ";
 
-                    $sql = "SELECT * FROM questions WHERE subject_id = ? $gradeCondition AND id NOT IN ($placeholders) ORDER BY RAND() LIMIT ?";
+                    $sql = "SELECT * FROM questions WHERE subject_id = ? AND status = 'active' $gradeCondition AND id NOT IN ($placeholders) ORDER BY RAND() LIMIT ?";
                     $stmtExtra = $pdo->prepare($sql);
                     $paramIdx = 1;
                     $stmtExtra->bindValue($paramIdx++, $sId, PDO::PARAM_STR);
@@ -112,7 +112,7 @@ if ($method === 'GET') {
                 ? " AND (grade_level = 'Year 6 (PSR)') "
                 : " AND (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ";
 
-            $stmt = $pdo->prepare("SELECT * FROM questions WHERE subject_id = ? $gradeCondition ORDER BY RAND() LIMIT ?");
+            $stmt = $pdo->prepare("SELECT * FROM questions WHERE subject_id = ? AND status = 'active' $gradeCondition ORDER BY RAND() LIMIT ?");
             $stmt->bindValue(1, $subjectId, PDO::PARAM_STR);
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
@@ -120,9 +120,9 @@ if ($method === 'GET') {
         } else {
             // 10 mixed questions strictly from the student's curriculum grade
             if ($activeCurriculum === 'Year 6 (PSR)') {
-                $stmt = $pdo->prepare("SELECT * FROM questions WHERE grade_level = 'Year 6 (PSR)' ORDER BY RAND() LIMIT ?");
+                $stmt = $pdo->prepare("SELECT * FROM questions WHERE grade_level = 'Year 6 (PSR)' AND status = 'active' ORDER BY RAND() LIMIT ?");
             } else {
-                $stmt = $pdo->prepare("SELECT * FROM questions WHERE (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) ORDER BY RAND() LIMIT ?");
+                $stmt = $pdo->prepare("SELECT * FROM questions WHERE (grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL) AND status = 'active' ORDER BY RAND() LIMIT ?");
             }
             $stmt->bindValue(1, $limit, PDO::PARAM_INT);
             $stmt->execute();

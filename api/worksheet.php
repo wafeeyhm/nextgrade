@@ -72,7 +72,7 @@ try {
     }
 
     // Fetch up to 10 questions for this topic
-    $stmtQ = $pdo->prepare("SELECT * FROM questions WHERE topic_id = ? ORDER BY id ASC LIMIT 10");
+    $stmtQ = $pdo->prepare("SELECT * FROM questions WHERE topic_id = ? AND status = 'active' ORDER BY id ASC LIMIT 10");
     $stmtQ->execute([$topicId]);
     $questions = $stmtQ->fetchAll();
 

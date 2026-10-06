@@ -56,6 +56,7 @@ function getParentUser(): ?array {
 }
 
 function requireParent(bool $redirect = true) {
+    global $pdo;
     if (!isParentLoggedIn()) {
         if ($redirect) {
             header('Location: ' . BASE_URL . 'parent_login.php');
@@ -64,6 +65,31 @@ function requireParent(bool $redirect = true) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Parent login required']);
             exit;
+        }
+    }
+
+    // Verify parent status in database
+    if (isset($pdo) && !empty($_SESSION['parent_id'])) {
+        $stmtStatus = $pdo->prepare("SELECT status FROM parents WHERE id = ?");
+        $stmtStatus->execute([(int)$_SESSION['parent_id']]);
+        $status = $stmtStatus->fetchColumn();
+        if ($status !== 'active') {
+            unset(
+                $_SESSION['parent_id'], 
+                $_SESSION['parent_code'], 
+                $_SESSION['parent_username'], 
+                $_SESSION['parent_full_name'], 
+                $_SESSION['parent_email'], 
+                $_SESSION['parent_phone']
+            );
+            if ($redirect) {
+                header('Location: ' . BASE_URL . 'parent_login.php?error=deactivated');
+                exit;
+            } else {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'This parent account has been deactivated.']);
+                exit;
+            }
         }
     }
 }
@@ -88,6 +114,7 @@ function getStudentUser(): ?array {
 }
 
 function requireStudent(bool $redirect = true) {
+    global $pdo;
     if (!isStudentLoggedIn()) {
         if ($redirect) {
             header('Location: ' . BASE_URL . 'index.php');
@@ -96,6 +123,38 @@ function requireStudent(bool $redirect = true) {
             http_response_code(401);
             echo json_encode(['success' => false, 'error' => 'Kid login required']);
             exit;
+        }
+    }
+
+    // Verify student and linked parent status in database
+    if (isset($pdo) && !empty($_SESSION['student_id'])) {
+        $stmtChk = $pdo->prepare("
+            SELECT s.status as student_status, p.status as parent_status 
+            FROM students s 
+            LEFT JOIN parents p ON p.id = s.parent_id 
+            WHERE s.id = ?
+        ");
+        $stmtChk->execute([(int)$_SESSION['student_id']]);
+        $chk = $stmtChk->fetch();
+
+        if (!$chk || $chk['student_status'] !== 'active' || ($chk['parent_status'] !== null && $chk['parent_status'] !== 'active')) {
+            unset(
+                $_SESSION['student_name'], 
+                $_SESSION['student_id'], 
+                $_SESSION['student_avatar'], 
+                $_SESSION['student_username'], 
+                $_SESSION['student_parent_id'],
+                $_SESSION['student_grade']
+            );
+            setcookie('student_name', '', time() - 3600, '/');
+            if ($redirect) {
+                header('Location: ' . BASE_URL . 'index.php?error=deactivated');
+                exit;
+            } else {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Student or parent account is deactivated.']);
+                exit;
+            }
         }
     }
 }

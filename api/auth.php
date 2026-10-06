@@ -19,7 +19,7 @@ if ($method === 'GET') {
             SELECT s.id, s.name, s.username, s.avatar, s.grade_level, p.parent_code, p.full_name as parent_name
             FROM students s
             LEFT JOIN parents p ON p.id = s.parent_id
-            WHERE s.status = 'active'
+            WHERE s.status = 'active' AND (p.id IS NULL OR p.status = 'active')
         ";
         $params = [];
         if (!empty($parentCode)) {
@@ -44,11 +44,40 @@ if ($method === 'GET') {
     $studentId = $_SESSION['student_id'] ?? null;
     $avatar = $_SESSION['student_avatar'] ?? 'star_kid';
 
-    if ($studentName) {
-        $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ? OR name = ? ORDER BY id DESC LIMIT 1");
-        $stmt->execute([$studentId ?? 0, $studentName]);
+    if ($studentName || $studentId) {
+        $stmt = $pdo->prepare("
+            SELECT s.*, p.status as parent_status 
+            FROM students s 
+            LEFT JOIN parents p ON p.id = s.parent_id 
+            WHERE s.id = ? OR s.name = ? 
+            ORDER BY s.id DESC LIMIT 1
+        ");
+        $stmt->execute([$studentId ?? 0, $studentName ?? '']);
         $row = $stmt->fetch();
+
         if ($row) {
+            $isStudentInactive = ($row['status'] !== 'active');
+            $isParentInactive = (!empty($row['parent_id']) && $row['parent_status'] !== 'active');
+
+            if ($isStudentInactive || $isParentInactive) {
+                // Clear session if disabled
+                unset(
+                    $_SESSION['student_name'], 
+                    $_SESSION['student_id'], 
+                    $_SESSION['student_avatar'], 
+                    $_SESSION['student_username'], 
+                    $_SESSION['student_parent_id'],
+                    $_SESSION['student_grade']
+                );
+                setcookie('student_name', '', time() - 3600, '/');
+                echo json_encode([
+                    'authenticated' => false,
+                    'student' => null,
+                    'error' => $isParentInactive ? 'Parent account has been deactivated.' : 'Student account has been deactivated.'
+                ]);
+                exit;
+            }
+
             $studentId = (int)$row['id'];
             $avatar = $row['avatar'];
             $_SESSION['student_id'] = $studentId;
@@ -57,25 +86,26 @@ if ($method === 'GET') {
             $_SESSION['student_username'] = $row['username'];
             $_SESSION['student_parent_id'] = $row['parent_id'];
             $_SESSION['student_grade'] = $row['grade_level'];
-        }
 
-        echo json_encode([
-            'authenticated' => true,
-            'student' => [
-                'id' => $studentId,
-                'name' => $row['name'] ?? $studentName,
-                'username' => $row['username'] ?? '',
-                'avatar' => $avatar,
-                'grade_level' => $row['grade_level'] ?? 'Year 1',
-                'parent_id' => $row['parent_id'] ?? null
-            ]
-        ]);
-    } else {
-        echo json_encode([
-            'authenticated' => false,
-            'student' => null
-        ]);
+            echo json_encode([
+                'authenticated' => true,
+                'student' => [
+                    'id' => $studentId,
+                    'name' => $row['name'],
+                    'username' => $row['username'] ?? '',
+                    'avatar' => $avatar,
+                    'grade_level' => $row['grade_level'] ?? 'Year 1',
+                    'parent_id' => $row['parent_id'] ?? null
+                ]
+            ]);
+            exit;
+        }
     }
+
+    echo json_encode([
+        'authenticated' => false,
+        'student' => null
+    ]);
     exit;
 }
 
@@ -111,10 +141,22 @@ if ($method === 'POST') {
         }
 
         if ($studentId > 0) {
-            $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ? AND status = 'active' LIMIT 1");
+            $stmt = $pdo->prepare("
+                SELECT s.*, p.status as parent_status, p.full_name as parent_name 
+                FROM students s 
+                LEFT JOIN parents p ON p.id = s.parent_id 
+                WHERE s.id = ? 
+                LIMIT 1
+            ");
             $stmt->execute([$studentId]);
         } else {
-            $stmt = $pdo->prepare("SELECT * FROM students WHERE (username = ? OR name = ?) AND status = 'active' LIMIT 1");
+            $stmt = $pdo->prepare("
+                SELECT s.*, p.status as parent_status, p.full_name as parent_name 
+                FROM students s 
+                LEFT JOIN parents p ON p.id = s.parent_id 
+                WHERE (s.username = ? OR s.name = ?) 
+                LIMIT 1
+            ");
             $stmt->execute([$identifier, $identifier]);
         }
 
@@ -126,7 +168,27 @@ if ($method === 'POST') {
             exit;
         }
 
-        // Verify PIN if child has one set
+        // Check A: Student status (Enabled/Disabled)
+        if ($student['status'] !== 'active') {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false, 
+                'error' => 'Akaun murid telah dinyahaktifkan. Sila hubungi ibu bapa atau pentadbir. (This student account is currently disabled. Please contact your parent or teacher.)'
+            ]);
+            exit;
+        }
+
+        // Check B: Parent status (Parent Enabled/Disabled enforcement)
+        if (!empty($student['parent_id']) && $student['parent_status'] !== 'active') {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false, 
+                'error' => 'Akaun ibu bapa telah dinyahaktifkan. Anak tidak dapat log masuk sehingga akaun ibu bapa diaktifkan semula. (Parent account is disabled. Children cannot log in while the parent account is deactivated.)'
+            ]);
+            exit;
+        }
+
+        // Check C: Verify PIN
         if (!empty($student['pin_code'])) {
             if ($pinCode !== $student['pin_code']) {
                 http_response_code(401);

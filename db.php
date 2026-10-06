@@ -15,9 +15,9 @@ if (!defined('BASE_URL')) {
 // 2. Database Credentials:
 // For cPanel / Hostinger Web Hosting:
 $host = 'localhost'; // 'localhost' connects via unix socket on Linux (Hostinger/cPanel standard)
-$db   = 'u755141049_db_nextgrade';
-$user = 'u755141049_pengguna';
-$pass = 'k9#M2$xQ7!vL8@pW'; // Hosting MySQL database password
+$db = 'nextgrade_db';
+$user = 'root';
+$pass = ''; // Hosting MySQL database password
 
 $charset = 'utf8mb4';
 $options = [
@@ -31,7 +31,7 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
     // If running in local development environment, fallback to standard local XAMPP MySQL
-    $isLocal = (php_sapi_name() === 'cli') 
+    $isLocal = (php_sapi_name() === 'cli')
         || in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1', '::1'])
         || (isset($_SERVER['HTTP_HOST']) && str_starts_with($_SERVER['HTTP_HOST'], 'localhost'));
 

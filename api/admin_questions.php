@@ -22,6 +22,8 @@ if ($method === 'GET') {
             $topics = $pdo->query("SELECT id, subject_id, name, grade_level, icon FROM topics ORDER BY subject_id ASC, sort_order ASC, name ASC")->fetchAll();
 
             $totalAll = (int)$pdo->query("SELECT COUNT(*) FROM questions")->fetchColumn();
+            $totalActive = (int)$pdo->query("SELECT COUNT(*) FROM questions WHERE status = 'active'")->fetchColumn();
+            $totalInactive = (int)$pdo->query("SELECT COUNT(*) FROM questions WHERE status = 'inactive'")->fetchColumn();
             $totalKG3 = (int)$pdo->query("SELECT COUNT(*) FROM questions WHERE grade_level = 'Kindergarten 3 (KG3)' OR grade_level IS NULL")->fetchColumn();
             $totalPSR = (int)$pdo->query("SELECT COUNT(*) FROM questions WHERE grade_level = 'Year 6 (PSR)' OR topic_id LIKE 'psr_%'")->fetchColumn();
 
@@ -31,6 +33,8 @@ if ($method === 'GET') {
                 'topics' => $topics,
                 'stats' => [
                     'total' => $totalAll,
+                    'active' => $totalActive,
+                    'inactive' => $totalInactive,
                     'kg3' => $totalKG3,
                     'psr' => $totalPSR
                 ]
@@ -79,6 +83,7 @@ if ($method === 'GET') {
     $topicId = trim($_GET['topic_id'] ?? '');
     $qType = trim($_GET['question_type'] ?? '');
     $hasImage = trim($_GET['has_image'] ?? '');
+    $status = trim($_GET['status'] ?? '');
 
     $where = [];
     $params = [];
@@ -112,6 +117,11 @@ if ($method === 'GET') {
         $params[] = $qType;
     }
 
+    if ($status !== '' && in_array($status, ['active', 'inactive'])) {
+        $where[] = "q.status = ?";
+        $params[] = $status;
+    }
+
     if ($hasImage === 'yes') {
         $where[] = "q.image_url IS NOT NULL AND q.image_url != ''";
     } elseif ($hasImage === 'no') {
@@ -130,7 +140,7 @@ if ($method === 'GET') {
         $sql = "
             SELECT q.id, q.topic_id, q.subject_id, q.question_text, q.question_audio,
                    q.lang, q.question_type, q.image_url, q.options_json, q.correct_answer,
-                   q.hint_text, q.grade_level, q.sort_order,
+                   q.hint_text, q.grade_level, q.sort_order, q.status,
                    s.name as subject_name, s.icon as subject_icon,
                    t.name as topic_name, t.icon as topic_icon
             FROM questions q
@@ -183,6 +193,7 @@ if ($method === 'POST') {
         $hintAudio = trim($input['hint_audio'] ?? '') ?: $hintText;
         $gradeLevel = trim($input['grade_level'] ?? 'Kindergarten 3 (KG3)');
         $sortOrder = (int)($input['sort_order'] ?? 0);
+        $status = in_array($input['status'] ?? '', ['active', 'inactive']) ? $input['status'] : 'active';
 
         if (empty($topicId) || empty($subjectId) || empty($questionText) || empty($correctAnswer)) {
             sendJsonResponse(['success' => false, 'error' => 'Subject, Topic, Question Text, and Correct Answer are required.'], 400);
@@ -202,8 +213,8 @@ if ($method === 'POST') {
 
         try {
             $stmt = $pdo->prepare("
-                INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, grade_level, sort_order)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, grade_level, sort_order, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $topicId,
@@ -219,7 +230,8 @@ if ($method === 'POST') {
                 $hintText,
                 $hintAudio,
                 $gradeLevel,
-                $sortOrder
+                $sortOrder,
+                $status
             ]);
             $newId = (int)$pdo->lastInsertId();
 
@@ -250,6 +262,7 @@ if ($method === 'POST') {
         $hintAudio = trim($input['hint_audio'] ?? '') ?: $hintText;
         $gradeLevel = trim($input['grade_level'] ?? 'Kindergarten 3 (KG3)');
         $sortOrder = (int)($input['sort_order'] ?? 0);
+        $status = in_array($input['status'] ?? '', ['active', 'inactive']) ? $input['status'] : 'active';
 
         if ($id <= 0 || empty($topicId) || empty($subjectId) || empty($questionText) || empty($correctAnswer)) {
             sendJsonResponse(['success' => false, 'error' => 'Question ID, Subject, Topic, Question Text, and Correct Answer are required.'], 400);
@@ -268,7 +281,7 @@ if ($method === 'POST') {
                 UPDATE questions 
                 SET topic_id = ?, subject_id = ?, question_text = ?, question_audio = ?, lang = ?, 
                     question_type = ?, image_url = ?, passage = ?, options_json = ?, correct_answer = ?, 
-                    hint_text = ?, hint_audio = ?, grade_level = ?, sort_order = ?
+                    hint_text = ?, hint_audio = ?, grade_level = ?, sort_order = ?, status = ?
                 WHERE id = ?
             ");
             $stmt->execute([
@@ -286,6 +299,7 @@ if ($method === 'POST') {
                 $hintAudio,
                 $gradeLevel,
                 $sortOrder,
+                $status,
                 $id
             ]);
 
@@ -335,8 +349,8 @@ if ($method === 'POST') {
             }
 
             $stmtDup = $pdo->prepare("
-                INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, grade_level, sort_order)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO questions (topic_id, subject_id, question_text, question_audio, lang, question_type, image_url, passage, options_json, correct_answer, hint_text, hint_audio, grade_level, sort_order, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmtDup->execute([
                 $orig['topic_id'],
@@ -352,7 +366,8 @@ if ($method === 'POST') {
                 $orig['hint_text'],
                 $orig['hint_audio'],
                 $orig['grade_level'],
-                $orig['sort_order'] + 1
+                $orig['sort_order'] + 1,
+                $orig['status'] ?? 'active'
             ]);
             $newId = (int)$pdo->lastInsertId();
 
@@ -363,6 +378,37 @@ if ($method === 'POST') {
             ]);
         } catch (Exception $e) {
             sendJsonResponse(['success' => false, 'error' => 'Failed to duplicate question: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // E. Toggle Question Status (Enable / Disable)
+    if ($action === 'toggle_status') {
+        $id = (int)($input['id'] ?? 0);
+        if ($id <= 0) {
+            sendJsonResponse(['success' => false, 'error' => 'Valid Question ID is required.'], 400);
+        }
+
+        try {
+            $stmt = $pdo->prepare("SELECT status FROM questions WHERE id = ?");
+            $stmt->execute([$id]);
+            $curStatus = $stmt->fetchColumn();
+
+            if (!$curStatus) {
+                sendJsonResponse(['success' => false, 'error' => 'Question not found.'], 404);
+            }
+
+            $newStatus = ($curStatus === 'active') ? 'inactive' : 'active';
+            $stmtUpdate = $pdo->prepare("UPDATE questions SET status = ? WHERE id = ?");
+            $stmtUpdate->execute([$newStatus, $id]);
+
+            sendJsonResponse([
+                'success' => true,
+                'id' => $id,
+                'new_status' => $newStatus,
+                'message' => "Question #$id " . ($newStatus === 'active' ? 'enabled' : 'disabled') . " successfully."
+            ]);
+        } catch (Exception $e) {
+            sendJsonResponse(['success' => false, 'error' => 'Failed to toggle status: ' . $e->getMessage()], 500);
         }
     }
 
