@@ -8,9 +8,35 @@ require_once __DIR__ . '/verification_engine.php';
 requireAdmin();
 $admin = getAdminUser();
 
-// Initial server-side verification run
-$engine = new SystemVerificationEngine($pdo);
-$initialReport = $engine->runAllChecks();
+// Initial server-side verification run with safe exception recovery
+$initialReport = null;
+$initialError = null;
+try {
+    $engine = new SystemVerificationEngine($pdo);
+    $initialReport = $engine->runAllChecks();
+} catch (\Throwable $e) {
+    $initialError = $e->getMessage();
+    $initialReport = [
+        'timestamp' => date('Y-m-d H:i:s'),
+        'execution_time_ms' => 0,
+        'overall_status' => 'fail',
+        'health_score' => 0,
+        'summary' => ['total' => 1, 'passed' => 0, 'warnings' => 0, 'failed' => 1],
+        'categories' => [
+            'database' => [
+                'title' => 'System Verification Suite',
+                'checks' => [
+                    [
+                        'name' => 'Initial Diagnostic Suite Run',
+                        'status' => 'fail',
+                        'message' => 'Diagnostic encountered an initialization notice: ' . $e->getMessage(),
+                        'details' => ['file' => $e->getFile(), 'line' => $e->getLine()]
+                    ]
+                ]
+            ]
+        ]
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -181,6 +207,17 @@ $initialReport = $engine->runAllChecks();
         </button>
       </div>
     </div>
+
+    <?php if (!empty($initialError)): ?>
+    <!-- Notice Banner for Server Initial Warnings -->
+    <div class="bg-rose-950/40 border border-rose-500/50 p-4 rounded-2xl flex items-center gap-3 text-rose-300 text-sm shadow-lg">
+      <i class="fa-solid fa-triangle-exclamation text-rose-400 text-xl shrink-0"></i>
+      <div>
+        <strong class="text-white block font-bold">Initial Verification Notice:</strong>
+        <?= htmlspecialchars($initialError) ?>. You can click <strong class="text-white">Run Live Verification</strong> above to re-run the diagnostic checks.
+      </div>
+    </div>
+    <?php endif; ?>
 
     <!-- Health Scorecard & Summary Metrics -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">

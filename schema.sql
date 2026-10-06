@@ -181,7 +181,7 @@ ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
 
 -- 3. Initial Demo Students (Default PIN: 1234)
 INSERT INTO `students` (`id`, `parent_id`, `name`, `username`, `pin_code`, `avatar`, `grade_level`, `status`, `created_at`) VALUES
-(1, 1, 'Lana marissa', 'lana', '1234', 'unicorn', 'Kindergarten 3 (KG3)', 'active', NOW()),
+(1, 1, 'Lisa', 'lana', '1234', 'unicorn', 'Kindergarten 3 (KG3)', 'active', NOW()),
 (2, 1, 'Adam Rayyan', 'adam', '1234', 'astronaut', 'Kindergarten 3 (KG3)', 'active', NOW()),
 (3, 2, 'Danish Hakimi', 'danish', '1234', 'dino', 'Year 6 (PSR Brunei)', 'active', NOW())
 ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);

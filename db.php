@@ -13,15 +13,13 @@ if (!defined('BASE_URL')) {
 }
 
 // 2. Database Credentials:
-// For local XAMPP: host=127.0.0.1, db=nextgrade_db, user=root, pass=''
-// For cPanel / Web Hosting: update $db, $user, and $pass according to your hosting MySQL database details
-$host = '127.0.0.1';
-$db   = 'nextgrade_db';
-$user = 'root';
-$pass = ''; // Set your hosting MySQL database password here
+// For cPanel / Hostinger Web Hosting:
+$host = 'localhost'; // 'localhost' connects via unix socket on Linux (Hostinger/cPanel standard)
+$db   = 'u755141049_db_nextgrade';
+$user = 'u755141049_pengguna';
+$pass = 'k9#M2$xQ7!vL8@pW'; // Hosting MySQL database password
 
 $charset = 'utf8mb4';
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -29,7 +27,26 @@ $options = [
 ];
 
 try {
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    // If running in local development environment, fallback to standard local XAMPP MySQL
+    $isLocal = (php_sapi_name() === 'cli') 
+        || in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1', '::1'])
+        || (isset($_SERVER['HTTP_HOST']) && str_starts_with($_SERVER['HTTP_HOST'], 'localhost'));
+
+    if ($isLocal) {
+        try {
+            $pdo = new PDO("mysql:host=127.0.0.1;dbname=nextgrade_db;charset=$charset", "root", "", $options);
+        } catch (\PDOException $e2) {
+            die("Database connection failed: " . $e->getMessage());
+        }
+    } else {
+        // Try fallback to 127.0.0.1 in case hosting requires TCP instead of socket
+        try {
+            $pdo = new PDO("mysql:host=127.0.0.1;dbname=$db;charset=$charset", $user, $pass, $options);
+        } catch (\PDOException $e3) {
+            die("Database connection failed: " . $e->getMessage());
+        }
+    }
 }

@@ -11,9 +11,10 @@ requireAdmin(false);
 header('Content-Type: application/json; charset=utf-8');
 
 $action = $_GET['action'] ?? $_POST['action'] ?? 'run_all';
-$engine = new SystemVerificationEngine($pdo);
 
 try {
+    $engine = new SystemVerificationEngine($pdo);
+
     if ($action === 'run_all') {
         $results = $engine->runAllChecks();
         sendJsonResponse([
@@ -41,9 +42,9 @@ try {
             'error' => "Unknown verification action: $action"
         ], 400);
     }
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     sendJsonResponse([
         'success' => false,
         'error' => 'Verification failed: ' . $e->getMessage()
-    ], 500);
+    ], 200);
 }
